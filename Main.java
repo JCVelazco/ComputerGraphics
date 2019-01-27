@@ -38,7 +38,7 @@ public class Main extends JPanel{
 		//gradient house
 		// simple house:
 		red = 1f; green = 0.85f; blue = 0.7f; //light brown
-		for(int r = 400; r < 850; r ++){
+		for(int r = 500; r < 850; r ++){
 			for(int c = 50; c < 450; c++){
 				g.setColor(new Color(red, green, blue));
 				g.drawLine(c, r, c, r);	
@@ -56,8 +56,16 @@ public class Main extends JPanel{
 			}		
 			green =  green - 0.002f;
 		}
-
 		
+		// door:
+		red = 0.5f; green = 0.25f; blue = 0.15f; //brown
+		for(int r = 700; r < 850; r ++){
+			for(int c = 200; c < 300; c++){
+				g.setColor(new Color(red, green, blue));
+				g.drawLine(c, r, c, r);	
+			}		
+			green =  green - 0.0005f;
+		}
 		
 		
 	}
