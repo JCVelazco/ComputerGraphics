@@ -6,14 +6,22 @@ public class Main extends JPanel{
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		//sky
 		float red = 0f, green = 1f, blue = 1f;
-		
 		for(int r = 0; r < 1000; r ++){
 			for(int c = 0; c < 1950; c++){
 				g.setColor(new Color((float)red, (float)green, (float)blue));
 				g.drawLine(c, r, c, r);	
 			}	
 			red = red + 0.001f;		
+		}
+		//grass
+		red = 0f; green = 0.8f; blue = 0f;
+		for(int r = 800; r < 1000; r ++){
+			for(int c = 0; c < 1950; c++){
+				g.setColor(new Color((float)red, (float)green, (float)blue));
+				g.drawLine(c, r, c, r);	
+			}	
 		}
 	}
 
