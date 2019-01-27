@@ -67,6 +67,24 @@ public class Main extends JPanel{
 			green =  green - 0.0005f;
 		}
 		
+		//roof
+		red = 1f; green = 0.3f; blue = 0f; //red-orange
+		//first values:
+		int initialX = 50, initialY = 500, finalX = 250, finalY = 400;
+		//final: initialX: 450, initialY: 500, finalX: 450, finalY: 500
+	
+		for(int c = 0; c < 200; c ++){//the house is 400px long, so 200 will be the middle of the first line
+			g.setColor(new Color(red, green, blue));
+			g.drawLine(initialX, initialY, finalX, finalY);	
+
+			initialX = initialX + 2;
+			finalX++;
+			if(c % 2 == 0)
+			finalY = finalY + 1;	
+
+			red =  red - 0.0005f;
+		}
+		
 		
 	}
 	
