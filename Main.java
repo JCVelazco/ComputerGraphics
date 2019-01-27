@@ -6,10 +6,15 @@ public class Main extends JPanel{
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		//int ancho = getWidth();
-		//int alto  = getHeight();		
-		g.setColor(new Color(255, 0, 0));
-		g.drawLine(0, 0, 300, 200);	
+		float red = 0f, green = 1f, blue = 1f;
+		
+		for(int r = 0; r < 1000; r ++){
+			for(int c = 0; c < 1950; c++){
+				g.setColor(new Color((float)red, (float)green, (float)blue));
+				g.drawLine(c, r, c, r);	
+			}	
+			red = red + 0.001f;		
+		}
 	}
 
 	public static void main(String args[]){
@@ -20,3 +25,4 @@ public class Main extends JPanel{
 		application.setSize(1000, 600);
 		application.setVisible(true);
 	}
+}
