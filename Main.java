@@ -89,6 +89,21 @@ public class Main extends JPanel{
 		int [] yPointsRoof = new int[] {500, 500, 400};
 		g.setColor(new Color(red, green, blue));
 		g.fillPolygon(xPointsRoof, yPointsRoof, 3);	
+
+		//dog.. this will be interesting
+		//body?
+		red = 0.93f; green = 0.84f; blue = 0.72f; //bisquet
+		int [] xPointsBodyDod = new int[] {560, 680, 680, 560};
+		int [] yPointsBodyDod = new int[] {750,750,820,820};
+		g.setColor(new Color(red, green, blue));
+		g.fillPolygon(xPointsBodyDod, yPointsBodyDod, 4);	
+		//face
+		red = 0.93f; green = 0.84f; blue = 0.72f; //bisquet
+		int [] xPointsFaceDod = new int[] {560, 680, 680, 560};
+		int [] yPointsFaceDod = new int[] {750,750,820,820};
+		g.setColor(new Color(red, green, blue));
+		g.fillPolygon(xPointsBodyDod, yPointsBodyDod, 4);
+
 		
 	}
 	
