@@ -1,2 +1,2 @@
 # GraphicsDrawing
-Homework number 3 of Dan Perez, Tec 2019.
+Repo for the ComputerGraphics class of Dan Perez, Tec 2019.
