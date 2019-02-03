@@ -36,15 +36,16 @@ public class Main extends JPanel{
         
         double angle = 0;
         double anguloFinal = 0;
+        double anguloApetura;
         
         for(int i = 0; i < size; i++){
             randomizeColors();
             g.setColor(new Color(red,green,blue));
             //calculo angulo
+            anguloApetura = ((arrPercentages[i]*360.00)/100.00);
             anguloFinal = angle+(arrPercentages[i]*360.00)/100.00;
-            
-            g.fillArc(100, 100, 400, 400, (int)angle, (int)((arrPercentages[i]*360.00)/100.00));
-            
+            g.fillArc(100, 100, 400, 400, (int)angle, (int)anguloApetura);
+            paintSquares(g, i);
             angle = anguloFinal;
         }
         
@@ -58,6 +59,11 @@ public class Main extends JPanel{
         red = (float)Math.random();
         green = (float)Math.random();
         blue = (float)Math.random();
+    }
+    
+    public static void paintSquares(Graphics g, int nElement){
+        g.fillRect(550,(nElement*40)+100,20,20);
+        g.drawString(labels[nElement], 580, (nElement*40)+110);
     }
     
     
