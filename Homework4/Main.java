@@ -3,78 +3,81 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.lang.Math;
-import java.util.stream.*;
 import java.util.Scanner;
 import java.io.File; 
+import java.util.Random;
 
 public class Main extends JPanel{
     
-    public static int size;
-    public static int[] values;
+    //we make them public variables because they will be used in the paintComponent
+    public static double size;
+    public static double[] values;
     public static String[] labels;
     
-	
+    //colors
+    public static float red, green, blue;
+    
 	public void paintComponent(Graphics g){
-		super.paintComponent(g);
-        float red = 0f, green = 1f, blue = 1f; //aqua
-        System.out.println("Running paintComponent");
+        super.paintComponent(g);
+        paintPieChart(g);
+        paintBarGraph(g);  
+    }
+    
+    public static void paintPieChart(Graphics g){
+        double sum = 0;
+        
+        for(int i = 0 ; i < size ; i++)
+        sum += values[i];
+        
+        double arrPercentages [] = new double[(int)size];
+        for(int i =0; i < size; i++){
+            arrPercentages[i] = (values[i]*100)/sum;
+        }
+        
+        double angle = 0;
+        double anguloFinal = 0;
+        
+        for(int i = 0; i < size; i++){
+            randomizeColors();
+            g.setColor(new Color(red,green,blue));
+            //calculo angulo
+            anguloFinal = angle+(arrPercentages[i]*360.00)/100.00;
+            
+            g.fillArc(100, 100, 400, 400, (int)angle, (int)((arrPercentages[i]*360.00)/100.00));
+            
+            angle = anguloFinal;
+        }
         
     }
     
-    
-    /*
-    */
-    /*
-    int size = 3;
-    
-    int [] values = new int[] {25,50,25};
-    String [] labels = new String[] {"First", "Second", "Third"};
-    
-    int sum = IntStream.of(values).sum();
-    //System.out.println(sum);
-    
-    double arrPercentages [] = new double[size];
-    for(int i =0; i < size; i++){
-        arrPercentages[i] = (values[i]*100)/sum;
+    public static void paintBarGraph(Graphics g){
+        
     }
     
-    
-    
-    double angle = 0;
-    double anguloFinal = 0;
-    for(int i = 0; i < size; i++){
-        g.setColor(new Color(red,green,blue));
-        //calculo angulo
-        anguloFinal = angle+(arrPercentages[i]*360)/100;
-        
-        System.out.println(i + ": "+angle+" , "+anguloFinal);
-        
-        g.fillArc(300, 200, 400, 400, (int)angle, (int)anguloFinal);
-        
-        angle = anguloFinal;
-        green = green - 0.1f;
+    public static void randomizeColors(){
+        red = (float)Math.random();
+        green = (float)Math.random();
+        blue = (float)Math.random();
     }
-    
-    
-    
-    
-    
-    
-    */
     
     
     
 	public static void readInput() {
         try{
+            /*the format is:
+            n (number of elements)
+            (n values)
+            (n labels)
+            */
             File file = new File("input.txt"); 
             Scanner sc = new Scanner(file); 
             size = sc.nextInt();
-            values = new int[size];
-            labels = new String[size];
+            values = new double[(int)size];
+            labels = new String[(int)size];
             for(int i=0; i<size; i++){
                 values[i]=sc.nextInt();
             }
-            
+            //using next() isntead of nextLine, because we dont want to read the first \n
             for(int i=0; i<size; i++){
                 labels[i]=sc.next();
             }
@@ -86,6 +89,7 @@ public class Main extends JPanel{
 	
 	public static void main(String[] args)
     { 
+        //try to find a input.txt and read it
         readInput();
 		Main panel = new Main();
 		JFrame application = new JFrame();
