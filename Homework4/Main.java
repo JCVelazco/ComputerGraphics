@@ -50,7 +50,6 @@ public class Main extends JPanel{
             paintPieGraph(g, arrPercentages, i);
             paintBarGraph(g, arrPercentages, i);
             paintSquares(g, i);
-            //paintPercentages(g, angle, anguloFinal, arrPercentages, i);
             angle = anguloFinal;
         }
         
@@ -91,48 +90,6 @@ public class Main extends JPanel{
         g.fillRect(550,(nElement*30)+100,20,20);
         g.drawString(labels[nElement], 580, (nElement*30)+110);
     }
-
-    public static void paintPercentages(Graphics g, double initialAngle, double finalAngle, double [] arrPercentages, int nElement){
-        /* NOT TOTALLY WORKING
-        String myPercentage = arrPercentages[nElement] + " %";
-        g.setColor(new Color(1f,1f,1f));
-        //check the 4 "cuadrantes"
-        double middleAngle = (initialAngle+finalAngle)/2;
-
-        if(middleAngle >= 0 && middleAngle <= 90){
-            //y-- and x++
-            int yMove = (int)middleAngle;
-            int xMove = 180 - yMove;
-            g.drawString(myPercentage, 280+xMove, 280-yMove);
-        }
-        if(middleAngle > 90 && middleAngle <= 180){
-            //y-- and x--
-            //normalize the angle to be from 0 - 90
-            middleAngle -= 90;
-            middleAngle = 90 - middleAngle;
-
-            int yMove = (int)middleAngle;
-            int xMove = 180 - yMove;
-            g.drawString(myPercentage, 280-xMove, 280-yMove);
-        }
-        if(middleAngle > 180 && middleAngle <= 270){
-            //y++ and x--
-            //normalize the angle to be from 0 - 90
-            middleAngle -= 180;
-            int yMove = (int)middleAngle ;
-            int xMove = 180 - yMove;
-            g.drawString(myPercentage, 280-xMove, 280+yMove);
-        }
-        if(middleAngle > 270 && middleAngle <= 360){
-            //y++ and x++
-            //normalize the angle to be from 0 - 90
-            middleAngle -= 270;
-            int yMove = (int)middleAngle;
-            int xMove = 180 - yMove;
-            g.drawString(myPercentage, 280+xMove, 280+yMove);
-        }*/
-    }
-    
     
     
 	public static void readInput() {
