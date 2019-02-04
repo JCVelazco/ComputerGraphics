@@ -67,7 +67,7 @@ public class Main extends JPanel{
         xBarPosition += 25;
         //calculate height of the bar
         double heightBar = 300-((300*arrPercentages[nElement])/100);
-        System.out.println(arrPercentages[nElement]+" "+(300-heightBar));
+        
         int finalX = (int)(xBarPosition+barLength);
         int [] xArray = new int []{(int)xBarPosition, (int)xBarPosition, finalX, finalX};
         int [] yArray = new int []{(int)heightBar, 400, 400, (int)heightBar};
@@ -125,7 +125,7 @@ public class Main extends JPanel{
 		JFrame application = new JFrame();
 		application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		application.add(panel);
-		application.setSize(800, 600);
+		application.setSize(1000, 500);
 		application.setVisible(true);
 	}
 }
