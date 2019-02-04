@@ -1,5 +1,9 @@
-2
-60
+4
 40
-JC
+30
+60
+70
+Danny
+Jc
+Tono
 Pato

@@ -18,6 +18,9 @@ public class Main extends JPanel{
     //angles
     public static double angle;
     public static double anguloFinal;
+
+    public static double barLength;
+    public static double xBarPosition = 700;
     
 	public void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -26,7 +29,7 @@ public class Main extends JPanel{
     
     public static void paintGraphs(Graphics g){
         double sum = 0;
-        
+        xBarPosition = 700;
         for(int i = 0 ; i < size ; i++)
         sum += values[i];
         
@@ -34,15 +37,20 @@ public class Main extends JPanel{
         for(int i =0; i < size; i++){
             arrPercentages[i] = (values[i]*100)/sum;
         }
-    
+
+        //the total length is 600px, we ill not use the 50px at each corner
+        int totalXSpace = 600;
+        totalXSpace = totalXSpace - 25 - (25)*(values.length);
+        barLength = totalXSpace/values.length;
         
         for(int i = 0; i < size; i++){
+            paintSquareForBarGraph(g);
             randomizeColors();
             g.setColor(new Color(red,green,blue));
             paintPieGraph(g, arrPercentages, i);
             paintBarGraph(g, arrPercentages, i);
             paintSquares(g, i);
-            paintPercentages(g, angle, anguloFinal, arrPercentages, i);
+            //paintPercentages(g, angle, anguloFinal, arrPercentages, i);
             angle = anguloFinal;
         }
         
@@ -56,8 +64,21 @@ public class Main extends JPanel{
     }
 
     
-    public static void paintBarGraph(Graphics g){
-        
+    public static void paintBarGraph(Graphics g, double [] arrPercentages, int nElement){
+        xBarPosition += 25;
+        //calculate height of the bar
+        double heightBar = 300-((300*arrPercentages[nElement])/100);
+        System.out.println(arrPercentages[nElement]+" "+(300-heightBar));
+        int finalX = (int)(xBarPosition+barLength);
+        int [] xArray = new int []{(int)xBarPosition, (int)xBarPosition, finalX, finalX};
+        int [] yArray = new int []{(int)heightBar, 400, 400, (int)heightBar};
+        g.fillPolygon(xArray, yArray, 4);
+        xBarPosition += barLength;
+    }
+
+    public static void paintSquareForBarGraph(Graphics g){
+        g.setColor(new Color(0.7f, 0.7f, 0.7f));
+        g.drawPolygon(new int[] {700,700,1300,1300}, new int[] {100, 400, 400,100}, 4);
     }
     
     public static void randomizeColors(){
@@ -72,6 +93,7 @@ public class Main extends JPanel{
     }
 
     public static void paintPercentages(Graphics g, double initialAngle, double finalAngle, double [] arrPercentages, int nElement){
+        /* NOT TOTALLY WORKING
         String myPercentage = arrPercentages[nElement] + " %";
         g.setColor(new Color(1f,1f,1f));
         //check the 4 "cuadrantes"
@@ -108,7 +130,7 @@ public class Main extends JPanel{
             int yMove = (int)middleAngle;
             int xMove = 180 - yMove;
             g.drawString(myPercentage, 280+xMove, 280+yMove);
-        }
+        }*/
     }
     
     
