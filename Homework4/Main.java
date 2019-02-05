@@ -65,13 +65,14 @@ public class Main extends JPanel{
     
     public static void paintBarGraph(Graphics g, double [] arrPercentages, int nElement){
         xBarPosition += 25;
-        //calculate height of the bar
-        double heightBar = 300-((300*arrPercentages[nElement])/100);
-        
+        //calculate height of the bar (400 start of the bar)
+        double heightBar = 400-((300*arrPercentages[nElement])/100);
+        String percentageMessage = arrPercentages[nElement]+" %";
         int finalX = (int)(xBarPosition+barLength);
         int [] xArray = new int []{(int)xBarPosition, (int)xBarPosition, finalX, finalX};
         int [] yArray = new int []{(int)heightBar, 400, 400, (int)heightBar};
         g.fillPolygon(xArray, yArray, 4);
+        g.drawString(percentageMessage, (int)(xBarPosition+(barLength/2.5)), (int)(heightBar-10));
         xBarPosition += barLength;
     }
 
