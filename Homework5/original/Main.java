@@ -47,25 +47,40 @@ Upload a ZIP file containing 4 folders with a Main.java file each one
 */
 
 public class Main extends JPanel{
+
+	public static double generalAngle = 0;
+	public static int generalX = 0;
+	public static int generalY = 0;
+
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);	
+		position (200, 300);
+		goFowardDrawing (g,100);
+		rotate (90);
+		goFowardDrawing (g,100);
+		rotate (90);
+		goFowardDrawing (g,100);
+		rotate (90);
+		goFowardDrawing (g,100);
+		rotate (90);
 	}
 	
-	public void position (Graphics g, int x, int y){
-		
+	public void position (int x, int y){
+		generalX = x;
+		generalY = y;
 	}
 	//Goes foward and draws a line using the last specified color
 	public void goFowardDrawing (Graphics g, double pixels){
-		
+		g.drawLine(c, r, c, r);	
 	}
 	//Goes foward without drawing
 	public void goFoward (Graphics g, double pixels){
-		
+
 	}
 	//It only changes the direction where the thing that draws "points"
-	public void rotate (Graphics g, double angle){
-		
+	public void rotate (double angle){
+		generalAngle += angle;
 	}
 	
 	
