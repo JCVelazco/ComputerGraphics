@@ -52,6 +52,7 @@ public class Main extends JPanel{
             paintSquares(g, i);
             angle = anguloFinal;
         }
+        angle = 0;
         
     }
 
@@ -59,6 +60,19 @@ public class Main extends JPanel{
         double anguloApetura = ((arrPercentages[nElement]*360.00)/100.00);
         anguloFinal = angle+(arrPercentages[nElement]*360.00)/100.00;
         g.fillArc(100, 100, 360, 360, (int)angle, (int)anguloApetura);
+        //putting the % in the pie chart:
+        String percentageMessage = arrPercentages[nElement]+" %";
+        double angleTotal = (angle + (angle+anguloApetura))/2;
+        System.out.println(angleTotal);
+        double moveOnX = 90*(Math.cos(Math.toRadians(angleTotal)));
+        double moveOnY = 90*(Math.sin(Math.toRadians(angleTotal)));
+        //add the coordenates where the radio of the circle is:
+        Color rememberColor = new Color(red, green, blue);
+        moveOnX = 280 + Math.round(moveOnX);
+        moveOnY = 280 - Math.round(moveOnY);
+        g.setColor(new Color(0,0,0));
+        g.drawString(percentageMessage, (int)(moveOnX), (int)(moveOnY));
+        g.setColor(rememberColor);
         angle = anguloFinal;
     }
 
