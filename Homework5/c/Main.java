@@ -16,7 +16,7 @@ public class Main extends JPanel{
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		//Instructions to draw the house
-		position(0, 0);
+		position(30, 40);
 		rotate(-70);	
 		goFoward(g, 200);
 		rotate(-20);

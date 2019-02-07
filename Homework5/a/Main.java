@@ -18,27 +18,27 @@ public class Main extends JPanel{
 		//Instructions to draw the house
 		position(0, 0);
 		rotate(-70);	
-		goFoward(g, 200);
+		goFoward(g, 200*0.6);
 		rotate(-20);
-		goFowardDrawing(g, 200);
+		goFowardDrawing(g, 200*0.6);
 		rotate(90);
-		goFowardDrawing(g, 300);
+		goFowardDrawing(g, 300*0.6);
 		rotate(90);
-		goFowardDrawing(g, 200);
+		goFowardDrawing(g, 200*0.6);
 		rotate(56.443);
-		goFowardDrawing(g, 180);
+		goFowardDrawing(g, 180*0.6);
 		rotate(67.114);
-		goFowardDrawing(g, 180);
+		goFowardDrawing(g, 180*0.6);
 		rotate(123.557);
-		goFoward(g, 130);
+		goFoward(g, 130*0.6);
 		rotate(-67.114);
-		goFowardDrawing(g, 100);
+		goFowardDrawing(g, 100*0.6);
 		rotate(90);
-		goFowardDrawing(g, 50);
+		goFowardDrawing(g, 50*0.6);
 		rotate(90);
-		goFowardDrawing(g, 100);
+		goFowardDrawing(g, 100*0.6);
 		rotate(90);
-		goFowardDrawing(g, 50);
+		goFowardDrawing(g, 50*0.6);
 	}
 	
 	public void position (int x, int y){
