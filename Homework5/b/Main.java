@@ -44,7 +44,7 @@ public class Main extends JPanel{
 	public void position (int x, int y){
 		generalX = x;
 		generalY = y;
-		generalAngle=0;
+		generalAngle=15;
 	}
 	//Goes foward and draws a line using the last specified color
 	public void goFowardDrawing (Graphics g, double pixels){
