@@ -15,27 +15,27 @@ public class Main extends JPanel{
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);	
-		position (200, 300);
-		goFowardDrawing (g,100);
-		rotate (90);
-		goFowardDrawing (g,100);
-		rotate (90);
-		goFowardDrawing (g,100);
-		rotate (90);
-		goFowardDrawing (g,100);
-		rotate (90);
+		position (200, 300);//360 and (200,300)
+		goFowardDrawing (g,100);//(300,300) right
+		rotate (90);//90
+		goFowardDrawing (g,100);//(300,200) up
+		rotate (90);//180
+		goFowardDrawing (g,100);//(200,200) left
+		rotate (90);//270
+		goFowardDrawing (g,100);//(200,300) down
+		rotate (90);//360
 	}
 	
 	public void position (int x, int y){
 		generalX = x;
-		generalY = -y;
+		generalY = y;
 		//debug
 		System.out.println("My new x is: "+generalX+" and my new Y is: "+generalY);
 	}
 	//Goes foward and draws a line using the last specified color
 	public void goFowardDrawing (Graphics g, double pixels){
 		double finalX = (generalX)+(pixels*(Math.cos(Math.toRadians(generalAngle))));
-		double finalY = (generalY)+(pixels*(Math.sin(Math.toRadians(generalAngle))));
+		double finalY = (generalY)-(pixels*(Math.sin(Math.toRadians(generalAngle))));
 		g.drawLine((int)generalX, (int)generalY, (int)finalX, (int)finalY);	
 		generalX = Math.round(finalX);
 		generalY = Math.round(finalY);
