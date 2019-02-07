@@ -7,11 +7,11 @@ import javax.swing.JFrame;
 import java.lang.Math;
 
 public class Main extends JPanel{
-
+	
 	public static double generalAngle = 0;
 	public static double generalX = 0;
 	public static double generalY = 0;
-
+	public static float red = 0f, green = 0f, blue = 0f;
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);	
@@ -28,16 +28,18 @@ public class Main extends JPanel{
 	
 	public void position (int x, int y){
 		generalX = x;
-		generalY = y;
+		generalY = -y;
+		//debug
 		System.out.println("My new x is: "+generalX+" and my new Y is: "+generalY);
 	}
 	//Goes foward and draws a line using the last specified color
 	public void goFowardDrawing (Graphics g, double pixels){
-		double finalX = pixels*(Math.cos(generalAngle));
-		double finalY = pixels*(Math.sin(generalAngle));
+		double finalX = (generalX)+(pixels*(Math.cos(Math.toRadians(generalAngle))));
+		double finalY = (generalY)+(pixels*(Math.sin(Math.toRadians(generalAngle))));
 		g.drawLine((int)generalX, (int)generalY, (int)finalX, (int)finalY);	
-		generalX = finalX;
-		generalY = finalY;
+		generalX = Math.round(finalX);
+		generalY = Math.round(finalY);
+		//debug
 		System.out.println("My new x is: "+generalX+" and my new Y is: "+generalY);
 	}
 	//Goes foward without drawing
@@ -51,9 +53,10 @@ public class Main extends JPanel{
 			double inbetweenAngle = 360 - generalAngle;
 			generalAngle = angle - inbetweenAngle;
 		}else{
-		generalAngle += angle;
+			generalAngle += angle;
 		}
-		System.out.println("My new angle is: "+generalAngle);
+		//debug
+		//System.out.println("My new angle is: "+generalAngle);
 	}
 	
 	
