@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Array;
+
 import javax.swing.*;
 
 public class KeyboardFocus extends JApplet 
@@ -7,12 +9,6 @@ implements KeyListener, FocusListener, MouseListener {
     // (Note:  MouseListener is implemented only so that
     //         the applet can request the input focus when
     //         the user clicks on it.)
-    
-    static final int SQUARE_SIZE = 40;  // Length of a side of the square.
-    
-    Color squareColor;  // The color of the square.
-    
-    int squareTop, squareLeft;  // Coordinates of top-left corner of square.
     
     boolean focussed = false;   // True when this applet has input focus.
     
@@ -27,30 +23,29 @@ implements KeyListener, FocusListener, MouseListener {
     //matrix for scaling
     public static double scalingMatrix [][] = new double[][]{{0,0,0}, {0,0,0}, {0,0,1}};
     
-    public static double generalArray[] = new double[]{0,0,0};
+    public static double generalArray[] = new double[]{0,0,1};
     
     public static double generalAngle = 0;
     
+    public static double stateOfScaling = 1;
     
-    
-    public static int[] xPointsSuperman = {348,345,343,341,341,356,350,350,360,369,385,385,400,395,395,402,402,414,416,415,409,404,403,399,396,394,390,387,376};
-    public static int[] yPointsSuperman = {851,861,874,880,895,895,890,883,870,870,875,895,895,888,872,861,846,846,842,837,835,828,819,826,818,830,834,844,849};
+    //right now superman is a dog
+    public static double[] xPointsSuperman = {348,345,343,341,341,356,350,350,360,369,385,385,400,395,395,402,402,414,416,415,409,404,403,399,396,394,390,387,376};
+    public static double[] yPointsSuperman = {351,361,374,380,395,395,390,383,370,370,375,395,395,388,372,361,346,346,342,337,335,328,319,326,318,330,334,344,349};
     
     public void init() {
         // Initialize the applet; set it up to receive keyboard
         // and focus events.  Place the square in the middle of
-        // the applet, and make the initial color of the square red.
         // Then, set up the drawing surface.
         
-        setSize(800,600); 
-        
+        setSize(1000,600); 
+        /*
         squareTop = getSize().height / 2 - SQUARE_SIZE / 2;
         squareLeft = getSize().width / 2 - SQUARE_SIZE / 2;
         
         squareTop = getSize().height / 2 - SQUARE_SIZE / 2;
         squareLeft = getSize().width / 2 - SQUARE_SIZE / 2;
-        
-        squareColor = Color.red;
+        */
         
         canvas = new DisplayPanel();  // Create drawing surface and 
         setContentPane(canvas);       //    install it as the applet's content pane.
@@ -80,7 +75,7 @@ implements KeyListener, FocusListener, MouseListener {
             keyboard focus, or in light gray if it does not. */
             
             if (focussed) 
-            g.setColor(Color.cyan);
+            g.setColor(Color.green);
             else
             g.setColor(Color.lightGray);
             
@@ -92,10 +87,8 @@ implements KeyListener, FocusListener, MouseListener {
             g.drawRect(1,1,width-3,height-3);
             g.drawRect(2,2,width-5,height-5);
             
-            /* Draw the square. */
-            
-            g.setColor(squareColor);
-            g.fillRect(squareLeft, squareTop, SQUARE_SIZE, SQUARE_SIZE);
+            /* Draw superman. */
+            drawSuperman(g);
             
             /* If the applet does not have input focus, print a message. */
             
@@ -112,18 +105,31 @@ implements KeyListener, FocusListener, MouseListener {
     
     // ------------------- Event handling methods ----------------------
     
+    
+	public void drawSuperman(Graphics g){
+        //convert the doubkle points to int
+        int[] xintArray = new int[xPointsSuperman.length];
+        int[] yintArray = new int[yPointsSuperman.length];
+
+        for (int i=0; i< xintArray.length; ++i){
+        xintArray[i] = (int) xPointsSuperman[i];
+        yintArray[i] = (int) yPointsSuperman[i];
+        }
+		//Dog body with mapped points
+		g.setColor(new Color(215,157,81));
+		g.fillPolygon(xintArray, yintArray,29);
+	}
+    
     //transaletes on +1 all the coordenates of an element (not totally sure)
-    public void translation(){
-        for(int i = 0; i < xPointsSuperman.length; i++){
-            
-            double resultMatrix[] = new double[3];
-            //add dx and dy
-            translationMatrix[0][2] = 1;
-            translationMatrix[1][2] = 1;
+    public void translation(double moveX, double moveY){
+        double resultMatrix[] = new double[3];
+        //add dx and dy
+        translationMatrix[0][2] = moveX;
+        translationMatrix[1][2] = moveY;
+        for( int i = 0; i < xPointsSuperman.length; i++){
             //add actual x and y
             generalArray[0] = xPointsSuperman[i];
             generalArray[1] = yPointsSuperman[i];
-            
             for(int row = 0; row < 3; row++){
                 double sum = 0;
                 for(int col = 0; col < 3; col++){
@@ -137,14 +143,15 @@ implements KeyListener, FocusListener, MouseListener {
     }
     
     //rotates
-    public void rotation(){
+    /*
+    public void rotation(double sumOrRest){
+        
+        double resultMatrix[] = new double[3];
+        rotationMatrix[0][0] = Math.cos(Math.toRadians(generalAngle));
+        rotationMatrix[0][1] = -Math.sin(Math.toRadians(generalAngle));
+        rotationMatrix[1][0] = Math.sin(Math.toRadians(generalAngle));
+        rotationMatrix[1][1] = Math.cos(Math.toRadians(generalAngle));
         for(int i = 0; i < xPointsSuperman.length; i++){
-            
-            double resultMatrix[] = new double[3];
-            rotationMatrix[0][0] = Math.cos(Math.toRadians(generalAngle));
-            rotationMatrix[0][1] = -Math.sin(Math.toRadians(generalAngle));
-            rotationMatrix[1][0] = Math.sin(Math.toRadians(generalAngle));
-            rotationMatrix[1][1] = Math.cos(Math.toRadians(generalAngle));
             //add actual x and y
             generalArray[0] = xPointsSuperman[i];
             generalArray[1] = yPointsSuperman[i];
@@ -156,20 +163,21 @@ implements KeyListener, FocusListener, MouseListener {
                 }
                 resultMatrix[row] =  sum; 
             }
-            xPointsSuperman[i] = resultMatrix[0];
-            yPointsSuperman[i] = resultMatrix[1];
+            xPointsSuperman[i] = (int)resultMatrix[0];
+            yPointsSuperman[i] = (int)resultMatrix[1];
         }
         
-    }
+    }*/
     
     //scales
-    public void escalation(){
-        for(int i = 0; i < xPointsSuperman.length; i++){
-            
-            double resultMatrix[] = new double[3];
-            scalingMatrix[0][0] = 1;
-            scalingMatrix[1][1] = 1;
-
+    public void escalation(double sumOrRest){
+        
+        stateOfScaling += sumOrRest;
+        
+        double resultMatrix[] = new double[3];
+        scalingMatrix[0][0] = stateOfScaling;
+        scalingMatrix[1][1] = stateOfScaling;
+        for(int i = 0; i < xPointsSuperman.length; i++){            
             //add actual x and y
             generalArray[0] = xPointsSuperman[i];
             generalArray[1] = yPointsSuperman[i];
@@ -185,6 +193,15 @@ implements KeyListener, FocusListener, MouseListener {
             yPointsSuperman[i] = resultMatrix[1];
         }
         
+    }
+    
+    public void debugPrintMatrix(double[][] matrix){
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                System.out.printf("%d", (int)matrix[i][j]);
+            }
+            System.out.println();
+        }
     }
     
     public void focusGained(FocusEvent evt) {
@@ -208,21 +225,28 @@ implements KeyListener, FocusListener, MouseListener {
         // the color of the square and redraw the applet.
         
         char ch = evt.getKeyChar();  // The character typed.
-        
-        if (ch == 'B' || ch == 'b') {
-            squareColor = Color.blue;
+        //rotation ++
+        if (ch == 'E' || ch == 'e') {
+            generalAngle++;
+            // rotation(1);
             canvas.repaint();
         }
-        else if (ch == 'G' || ch == 'g') {
-            squareColor = Color.green;
+        //rotation --
+        else if (ch == 'D' || ch == 'd') {
+            generalAngle--;
+            //rotation(-1);
             canvas.repaint();
         }
+        //scalation ++
         else if (ch == 'R' || ch == 'r') {
-            squareColor = Color.red;
+            System.out.println("Debug scalation++");
+            escalation(0.1);
             canvas.repaint();
         }
-        else if (ch == 'K' || ch == 'k') {
-            squareColor = Color.black;
+        //scalation --
+        else if (ch == 'F' || ch == 'f') {
+            System.out.println("Debug scalation--");
+            escalation(-0.1);
             canvas.repaint();
         }
         
@@ -239,31 +263,19 @@ implements KeyListener, FocusListener, MouseListener {
         int key = evt.getKeyCode();  // keyboard code for the key that was pressed
         
         if (key == KeyEvent.VK_LEFT) {
-            squareLeft -= 8;
-            if (squareLeft < 3)
-            squareLeft = 3;
+            translation(-1,0);
             canvas.repaint();
         }
         else if (key == KeyEvent.VK_RIGHT) {
-            translation();
-            
-            
-            
-            squareLeft += 8;
-            if (squareLeft > getSize().width - 3 - SQUARE_SIZE)
-            squareLeft = getSize().width - 3 - SQUARE_SIZE;
+            translation(1,0);
             canvas.repaint();
         }
         else if (key == KeyEvent.VK_UP) {
-            squareTop -= 8;
-            if (squareTop < 3)
-            squareTop = 3;
+            translation(0,-1);
             canvas.repaint();
         }
         else if (key == KeyEvent.VK_DOWN) {
-            squareTop += 8;
-            if (squareTop > getSize().height - 3 - SQUARE_SIZE)
-            squareTop = getSize().height - 3 - SQUARE_SIZE;
+            translation(0,1);
             canvas.repaint();
         }
         
