@@ -1,3 +1,5 @@
+//Juan Carlos Velazco Rossell A01326707
+//Carlos Parrodi Martinez A01421454
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;
@@ -115,8 +117,7 @@ public class GraphHW extends JPanel{
             (n values)
             (n labels)
             */
-            File file = new File("in.txt"); 
-            Scanner sc = new Scanner(file); 
+            Scanner sc = new Scanner(System.in); 
             size = sc.nextInt();
             values = new double[(int)size];
             labels = new String[(int)size];
