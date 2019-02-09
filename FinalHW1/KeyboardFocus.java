@@ -20,9 +20,21 @@ implements KeyListener, FocusListener, MouseListener {
     // belonging to a nested class DisplayPanel, which
     // is defined below.
     
-    //matrix for scanling
-    public static double scalingMatrix [][] = new double[][]{{1,0,0}, {0,1,0}, {0,0,0}};
-    //matrix
+    //matrix for translation
+    public static double translationMatrix [][] = new double[][]{{1,0,0}, {0,1,0}, {0,0,1}};
+    //matrix for rotation
+    public static double rotationMatrix [][] = new double[][]{{1,1,0}, {1,1,0}, {0,0,1}};
+    //matrix for scaling
+    public static double scalingMatrix [][] = new double[][]{{0,0,0}, {0,0,0}, {0,0,1}};
+    
+    public static double generalArray[] = new double[]{0,0,0};
+    
+    public static double generalAngle = 0;
+    
+    
+    
+    public static int[] xPointsSuperman = {348,345,343,341,341,356,350,350,360,369,385,385,400,395,395,402,402,414,416,415,409,404,403,399,396,394,390,387,376};
+    public static int[] yPointsSuperman = {851,861,874,880,895,895,890,883,870,870,875,895,895,888,872,861,846,846,842,837,835,828,819,826,818,830,834,844,849};
     
     public void init() {
         // Initialize the applet; set it up to receive keyboard
@@ -100,24 +112,79 @@ implements KeyListener, FocusListener, MouseListener {
     
     // ------------------- Event handling methods ----------------------
     
+    //transaletes on +1 all the coordenates of an element (not totally sure)
     public void translation(){
-        double resultMatrix[] = new double[3];
-        //add dx and dy
-        scalingMatrix[0][2] = 1;
-        scalingMatrix[1][2] = 1;
-        
-        for(int row = 0; row < 3; row++){
-            double sum = 0;
-            for(int col = 0; col < 3; col++){
-                System.out.println(scalingMatrix[col][row]);//1 0 1, 0 1 1, 0 0 1
-                sum = sum + scalingMatrix[row][col];
+        for(int i = 0; i < xPointsSuperman.length; i++){
+            
+            double resultMatrix[] = new double[3];
+            //add dx and dy
+            translationMatrix[0][2] = 1;
+            translationMatrix[1][2] = 1;
+            //add actual x and y
+            generalArray[0] = xPointsSuperman[i];
+            generalArray[1] = yPointsSuperman[i];
+            
+            for(int row = 0; row < 3; row++){
+                double sum = 0;
+                for(int col = 0; col < 3; col++){
+                    sum = sum + (translationMatrix[row][col]*generalArray[col]);
+                }
+                resultMatrix[row] =  sum; 
             }
-            resultMatrix[row] =  sum; 
+            xPointsSuperman[i] = resultMatrix[0];
+            yPointsSuperman[i] = resultMatrix[1];
+        } 
+    }
+    
+    //rotates
+    public void rotation(){
+        for(int i = 0; i < xPointsSuperman.length; i++){
+            
+            double resultMatrix[] = new double[3];
+            rotationMatrix[0][0] = Math.cos(Math.toRadians(generalAngle));
+            rotationMatrix[0][1] = -Math.sin(Math.toRadians(generalAngle));
+            rotationMatrix[1][0] = Math.sin(Math.toRadians(generalAngle));
+            rotationMatrix[1][1] = Math.cos(Math.toRadians(generalAngle));
+            //add actual x and y
+            generalArray[0] = xPointsSuperman[i];
+            generalArray[1] = yPointsSuperman[i];
+            
+            for(int row = 0; row < 3; row++){
+                double sum = 0;
+                for(int col = 0; col < 3; col++){
+                    sum = sum + (rotationMatrix[row][col]*generalArray[col]);
+                }
+                resultMatrix[row] =  sum; 
+            }
+            xPointsSuperman[i] = resultMatrix[0];
+            yPointsSuperman[i] = resultMatrix[1];
         }
         
-        for(int i = 0; i < 3; i ++){
-            System.out.println("matrix: "+resultMatrix[i]);
+    }
+    
+    //scales
+    public void escalation(){
+        for(int i = 0; i < xPointsSuperman.length; i++){
+            
+            double resultMatrix[] = new double[3];
+            scalingMatrix[0][0] = 1;
+            scalingMatrix[1][1] = 1;
+
+            //add actual x and y
+            generalArray[0] = xPointsSuperman[i];
+            generalArray[1] = yPointsSuperman[i];
+            
+            for(int row = 0; row < 3; row++){
+                double sum = 0;
+                for(int col = 0; col < 3; col++){
+                    sum = sum + (scalingMatrix[row][col]*generalArray[col]);
+                }
+                resultMatrix[row] =  sum; 
+            }
+            xPointsSuperman[i] = resultMatrix[0];
+            yPointsSuperman[i] = resultMatrix[1];
         }
+        
     }
     
     public void focusGained(FocusEvent evt) {
@@ -179,9 +246,9 @@ implements KeyListener, FocusListener, MouseListener {
         }
         else if (key == KeyEvent.VK_RIGHT) {
             translation();
-
-
-
+            
+            
+            
             squareLeft += 8;
             if (squareLeft > getSize().width - 3 - SQUARE_SIZE)
             squareLeft = getSize().width - 3 - SQUARE_SIZE;
