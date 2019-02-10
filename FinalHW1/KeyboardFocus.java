@@ -30,10 +30,11 @@ implements KeyListener, FocusListener, MouseListener {
     public static double stateOfScaling = 1;
     
     // SUPERMAN
-    public static double[] xPointsSuperman = {510,510,509,509,510,510,511,511,510,510,509,509,508,507,507,505,505,506,506,505,505,504,503,502,501,501,500,500,501,501,497,496,495,494,494,492,491,490,490,492,493,493,492,491,490,489,489,488,488,489,488,487,486,485,484,483,482,481,480,479,479,478,477,476,476,477,477,478,478,479,479,480,481,481,482,484,484,485,485,486,487,489,490,491,492,493,494,495,496,496,497,498,499,500,502,502,503,504,505,505,506,507,511,511,512,518,519,519,518,518,517,517,516,516,515,515,514,514,513,513,512,512,511,511,510,509,508,508,508,509,510,510,511,511,512,512,513,513,514,514,513,513,512,512,511
-    };
+    public static double[] xPointsSuperman = {510,510,509,509,510,510,511,511,510,510,509,509,508,507,507,505,505,506,506,505,505,504,503,502,501,501,500,500,501,501,497,496,495,494,494,492,491,490,490,492,493,493,492,491,490,489,489,488,488,489,488,487,486,485,484,483,482,481,480,479,479,478,477,476,476,477,477,478,478,479,479,480,481,481,482,484,484,485,485,486,487,489,490,491,492,493,494,495,496,496,497,498,499,500,502,502,503,504,505,505,506,507,511,511,512,518,519,519,518,518,517,517,516,516,515,515,514,514,513,513,512,512,511,511,510,509,508,508,508,509,510,510,511,511,512,512,513,513,514,514,513,513,512,512,511};
     public static double[] yPointsSuperman = {245,246,247,249,250,251,252,255,256,262,263,265,266,267,269,269,267,266,264,263,262,261,260,260,261,263,263,266,267,270,270,271,271,272,274,274,275,275,271,271,270,269,268,268,269,269,271,272,280,281,282,283,284,284,285,286,287,288,289,290,291,292,293,294,299,300,303,303,301,301,300,299,298,297,296,296,304,305,307,308,309,309,310,311,312,312,313,313,314,315,316,317,318,319,319,328,329,330,328,321,320,318,318,321,322,322,321,316,315,311,311,308,307,306,305,304,303,302,301,299,298,295,294,291,290,289,288,283,283,281,280,278,277,275,274,270,269,261,261,255,254,248,247,246,245};
     
+    public static double xSupermanHeart = 500;
+    public static double ySupermanHeart = 290;
     public void init() {
         // Initialize the applet; set it up to receive keyboard
         // and focus events.  Place the square in the middle of
@@ -111,14 +112,15 @@ implements KeyListener, FocusListener, MouseListener {
         //convert the doubkle points to int
         int[] xintArray = new int[xPointsSuperman.length];
         int[] yintArray = new int[yPointsSuperman.length];
-
+        
         for (int i=0; i< xintArray.length; ++i){
-        xintArray[i] = (int) xPointsSuperman[i];
-        yintArray[i] = (int) yPointsSuperman[i];
+            xintArray[i] = (int) xPointsSuperman[i];
+            yintArray[i] = (int) yPointsSuperman[i];
         }
 		//Dog body with mapped points
 		g.setColor(new Color(255,0,0));
-		g.fillPolygon(xintArray, yintArray,144);
+        g.fillPolygon(xintArray, yintArray,144);
+        g.setColor(new Color(0,0,0));
 	}
     
     //transaletes on +1 all the coordenates of an element (not totally sure)
@@ -174,14 +176,14 @@ implements KeyListener, FocusListener, MouseListener {
     public void escalation(double sumOrRest){
         
         stateOfScaling += sumOrRest;
-        
+        System.out.println("Debug scaleL "+stateOfScaling);
         double resultMatrix[] = new double[3];
         scalingMatrix[0][0] = stateOfScaling;
-        scalingMatrix[1][1] = stateOfScaling;
-        for(int i = 0; i < xPointsSuperman.length; i++){            
+        scalingMatrix[1][1] = stateOfScaling;   
+        for(int i = 0; i < xPointsSuperman.length; i++){         
             //add actual x and y
-            generalArray[0] = xPointsSuperman[i];
-            generalArray[1] = yPointsSuperman[i];
+            generalArray[0] = xPointsSuperman[i] - xSupermanHeart;
+            generalArray[1] = yPointsSuperman[i] - ySupermanHeart;
             
             for(int row = 0; row < 3; row++){
                 double sum = 0;
@@ -190,9 +192,10 @@ implements KeyListener, FocusListener, MouseListener {
                 }
                 resultMatrix[row] =  sum; 
             }
-            xPointsSuperman[i] = resultMatrix[0];
-            yPointsSuperman[i] = resultMatrix[1];
+            xPointsSuperman[i] = resultMatrix[0]+xSupermanHeart;
+            yPointsSuperman[i] = resultMatrix[1]+ySupermanHeart;
         }
+        canvas.repaint();
         
     }
     
@@ -240,15 +243,19 @@ implements KeyListener, FocusListener, MouseListener {
         }
         //scalation ++
         else if (ch == 'R' || ch == 'r') {
-            System.out.println("Debug scalation++");
-            escalation(0.1);
-            canvas.repaint();
+            if(stateOfScaling < 2){
+                System.out.println("Debug scalation++");
+                escalation(0.1);
+                canvas.repaint();
+            }
         }
         //scalation --
         else if (ch == 'F' || ch == 'f') {
-            System.out.println("Debug scalation--");
-            escalation(-0.1);
-            canvas.repaint();
+            if(stateOfScaling > -1){
+                System.out.println("Debug scalatio--");
+                escalation(-0.1);
+                canvas.repaint();
+            }
         }
         
     }  // end keyTyped()
