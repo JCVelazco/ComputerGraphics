@@ -90,6 +90,9 @@ implements KeyListener, FocusListener, MouseListener {
             g.drawRect(2,2,width-5,height-5);
             
             /* Draw superman. */
+            System.out.println("Debug");
+            System.out.println("GeneralAngle: "+generalAngle);
+            System.out.println("GeneralScale: "+stateOfScaling);
             drawSuperman(g);
             
             /* If the applet does not have input focus, print a message. */
@@ -148,18 +151,16 @@ implements KeyListener, FocusListener, MouseListener {
     }
     
     //rotates
-    /*
-    public void rotation(double sumOrRest){
-        
+    public void rotation(double sumRest){
         double resultMatrix[] = new double[3];
-        rotationMatrix[0][0] = Math.cos(Math.toRadians(generalAngle));
-        rotationMatrix[0][1] = -Math.sin(Math.toRadians(generalAngle));
-        rotationMatrix[1][0] = Math.sin(Math.toRadians(generalAngle));
-        rotationMatrix[1][1] = Math.cos(Math.toRadians(generalAngle));
+        rotationMatrix[0][0] = Math.cos(Math.toRadians(sumRest));
+        rotationMatrix[0][1] = -Math.sin(Math.toRadians(sumRest));
+        rotationMatrix[1][0] = Math.sin(Math.toRadians(sumRest));
+        rotationMatrix[1][1] = Math.cos(Math.toRadians(sumRest));
         for(int i = 0; i < xPointsSuperman.length; i++){
             //add actual x and y
-            generalArray[0] = xPointsSuperman[i];
-            generalArray[1] = yPointsSuperman[i];
+            generalArray[0] = xPointsSuperman[i] - xSupermanHeart;
+            generalArray[1] = yPointsSuperman[i] - ySupermanHeart;
             
             for(int row = 0; row < 3; row++){
                 double sum = 0;
@@ -168,11 +169,11 @@ implements KeyListener, FocusListener, MouseListener {
                 }
                 resultMatrix[row] =  sum; 
             }
-            xPointsSuperman[i] = (int)resultMatrix[0];
-            yPointsSuperman[i] = (int)resultMatrix[1];
+            xPointsSuperman[i] = resultMatrix[0] + xSupermanHeart;
+            yPointsSuperman[i] = resultMatrix[1] + ySupermanHeart;
         }
         
-    }*/
+    }
     
     //scales
     public void escalation(double sumOrRest){
@@ -233,14 +234,15 @@ implements KeyListener, FocusListener, MouseListener {
         char ch = evt.getKeyChar();  // The character typed.
         //rotation ++
         if (ch == 'E' || ch == 'e') {
-            generalAngle++;
-            // rotation(1);
+            generalAngle = (generalAngle<359)?(generalAngle+1):0;
+            rotation(1);
             canvas.repaint();
+            
         }
         //rotation --
         else if (ch == 'D' || ch == 'd') {
-            generalAngle--;
-            //rotation(-1);
+            generalAngle = (generalAngle>0)?(generalAngle-1):359;
+            rotation(-1);
             canvas.repaint();
         }
         //scalation ++
