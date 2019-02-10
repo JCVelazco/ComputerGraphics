@@ -125,6 +125,8 @@ implements KeyListener, FocusListener, MouseListener {
     
     //transaletes on +1 all the coordenates of an element (not totally sure)
     public void translation(double moveX, double moveY){
+        xSupermanHeart += moveX;
+        ySupermanHeart += moveY;
         double resultMatrix[] = new double[3];
         //add dx and dy
         translationMatrix[0][2] = moveX;
