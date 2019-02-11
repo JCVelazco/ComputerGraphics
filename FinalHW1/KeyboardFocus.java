@@ -98,9 +98,6 @@ implements KeyListener, FocusListener, MouseListener {
             g.drawRect(2,2,width-5,height-5);
             
             /* Draw superman. */
-            System.out.println("Debug");
-            System.out.println("GeneralAngle: "+generalAngle);
-            System.out.println("GeneralScale: "+stateOfScaling);
             drawSuperman(g);
             
             /* If the applet does not have input focus, print a message. */
@@ -136,6 +133,8 @@ implements KeyListener, FocusListener, MouseListener {
     
     //transletes
     public void translation(){
+        double oldXHeart = xSupermanHeart;
+        double oldYHeart = ySupermanHeart;
         xSupermanHeart += moveOnX;
         ySupermanHeart += moveOnY;
         double resultMatrix[] = new double[3];
@@ -155,6 +154,9 @@ implements KeyListener, FocusListener, MouseListener {
             }
             xPointsSuperman[i] = resultMatrix[0];
             yPointsSuperman[i] = resultMatrix[1];
+
+            scaleXPointsSuperman[i] = (scaleXPointsSuperman[i] - oldXHeart) + xSupermanHeart;
+            scaleYPointsSuperman[i] = (scaleYPointsSuperman[i] - oldYHeart) + ySupermanHeart;
         } 
     }
     
@@ -197,7 +199,6 @@ implements KeyListener, FocusListener, MouseListener {
     //scales
     public void escalation(double sumOrRest){
         stateOfScaling += sumOrRest;
-        System.out.println("Debug scaleL "+stateOfScaling);
         double resultMatrix[] = new double[3];
         scalingMatrix[0][0] = stateOfScaling;
         scalingMatrix[1][1] = stateOfScaling;   
