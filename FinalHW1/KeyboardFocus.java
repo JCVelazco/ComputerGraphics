@@ -30,6 +30,9 @@ implements KeyListener, FocusListener, MouseListener {
     
     public static double stateOfScaling = 1;
     
+    public static double moveOnX;
+    public static double moveOnY;
+    
     // SUPERMAN
     //this points will never been moved too much, because it's important to remember the scale 1.0 (tho, they will be roted)
     public static  double[] scaleXPointsSuperman = {510,510,509,509,510,510,511,511,510,510,509,509,508,507,507,505,505,506,506,505,505,504,503,502,501,501,500,500,501,501,497,496,495,494,494,492,491,490,490,492,493,493,492,491,490,489,489,488,488,489,488,487,486,485,484,483,482,481,480,479,479,478,477,476,476,477,477,478,478,479,479,480,481,481,482,484,484,485,485,486,487,489,490,491,492,493,494,495,496,496,497,498,499,500,502,502,503,504,505,505,506,507,511,511,512,518,519,519,518,518,517,517,516,516,515,515,514,514,513,513,512,512,511,511,510,509,508,508,508,509,510,510,511,511,512,512,513,513,514,514,513,513,512,512,511};
@@ -131,14 +134,14 @@ implements KeyListener, FocusListener, MouseListener {
         g.setColor(new Color(0,0,0));
 	}
     
-    //transaletes on +1 all the coordenates of an element (not totally sure)
-    public void translation(double moveX, double moveY){
-        xSupermanHeart += moveX;
-        ySupermanHeart += moveY;
+    //transletes
+    public void translation(){
+        xSupermanHeart += moveOnX;
+        ySupermanHeart += moveOnY;
         double resultMatrix[] = new double[3];
         //add dx and dy
-        translationMatrix[0][2] = moveX;
-        translationMatrix[1][2] = moveY;
+        translationMatrix[0][2] = moveOnX;
+        translationMatrix[1][2] = moveOnY;
         for( int i = 0; i < xPointsSuperman.length; i++){
             //add actual x and y
             generalArray[0] = xPointsSuperman[i];
@@ -171,7 +174,7 @@ implements KeyListener, FocusListener, MouseListener {
             //adding rotation to the scale points
             scalegeneralArray[0] = scaleXPointsSuperman[i] - xSupermanHeart;
             scalegeneralArray[1] = scaleYPointsSuperman[i] - ySupermanHeart;
-
+            
             for(int row = 0; row < 3; row++){
                 double sum = 0;
                 double sum2 = 0;
@@ -193,7 +196,6 @@ implements KeyListener, FocusListener, MouseListener {
     
     //scales
     public void escalation(double sumOrRest){
-        
         stateOfScaling += sumOrRest;
         System.out.println("Debug scaleL "+stateOfScaling);
         double resultMatrix[] = new double[3];
@@ -217,7 +219,18 @@ implements KeyListener, FocusListener, MouseListener {
             yPointsSuperman[i] = resultMatrix[1]+ySupermanHeart;
         }
         canvas.repaint();
-        
+    }
+    
+    public static void calculateMoveOn(double xMove, double yMove) {
+        //when i want to go up or down
+        if(yMove!=0){
+            moveOnX = yMove*Math.sin(Math.toRadians(generalAngle));
+            moveOnY = yMove*Math.cos(Math.toRadians(generalAngle));
+        }else{
+            moveOnX = xMove*Math.cos(Math.toRadians(generalAngle));
+            //the - in Y is because here y to the top is - and to the botton is +
+            moveOnY = -xMove*Math.sin(Math.toRadians(generalAngle));
+        }
     }
     
     public void debugPrintMatrix(double[][] matrix){
@@ -253,20 +266,19 @@ implements KeyListener, FocusListener, MouseListener {
         //rotation ++
         if (ch == 'E' || ch == 'e') {
             generalAngle = (generalAngle<359)?(generalAngle+1):0;
-            rotation(1);
+            rotation(-1);
             canvas.repaint();
             
         }
         //rotation --
         else if (ch == 'D' || ch == 'd') {
             generalAngle = (generalAngle>0)?(generalAngle-1):359;
-            rotation(-1);
+            rotation(1);
             canvas.repaint();
         }
         //scalation ++
         else if (ch == 'R' || ch == 'r') {
             if(stateOfScaling < 2){
-                System.out.println("Debug scalation++");
                 escalation(0.1);
                 canvas.repaint();
             }
@@ -274,7 +286,6 @@ implements KeyListener, FocusListener, MouseListener {
         //scalation --
         else if (ch == 'F' || ch == 'f') {
             if(stateOfScaling > -1){
-                System.out.println("Debug scalatio--");
                 escalation(-0.1);
                 canvas.repaint();
             }
@@ -293,19 +304,23 @@ implements KeyListener, FocusListener, MouseListener {
         int key = evt.getKeyCode();  // keyboard code for the key that was pressed
         
         if (key == KeyEvent.VK_LEFT) {
-            translation(-1,0);
+            calculateMoveOn(-1, 0);
+            translation();
             canvas.repaint();
         }
         else if (key == KeyEvent.VK_RIGHT) {
-            translation(1,0);
+            calculateMoveOn(1, 0);
+            translation();
             canvas.repaint();
         }
         else if (key == KeyEvent.VK_UP) {
-            translation(0,-1);
+            calculateMoveOn(0, -1);
+            translation();
             canvas.repaint();
         }
         else if (key == KeyEvent.VK_DOWN) {
-            translation(0,1);
+            calculateMoveOn(0, 1);
+            translation();
             canvas.repaint();
         }
         
