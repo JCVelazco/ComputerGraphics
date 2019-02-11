@@ -24,15 +24,17 @@ implements KeyListener, FocusListener, MouseListener {
     public static double scalingMatrix [][] = new double[][]{{0,0,0}, {0,0,0}, {0,0,1}};
     
     public static double generalArray[] = new double[]{0,0,1};
+    public static double scalegeneralArray[] = new double[]{0,0,1};
     
     public static double generalAngle = 0;
     
     public static double stateOfScaling = 1;
     
     // SUPERMAN
-    public static final double[] constantXPointsSuperman = {510,510,509,509,510,510,511,511,510,510,509,509,508,507,507,505,505,506,506,505,505,504,503,502,501,501,500,500,501,501,497,496,495,494,494,492,491,490,490,492,493,493,492,491,490,489,489,488,488,489,488,487,486,485,484,483,482,481,480,479,479,478,477,476,476,477,477,478,478,479,479,480,481,481,482,484,484,485,485,486,487,489,490,491,492,493,494,495,496,496,497,498,499,500,502,502,503,504,505,505,506,507,511,511,512,518,519,519,518,518,517,517,516,516,515,515,514,514,513,513,512,512,511,511,510,509,508,508,508,509,510,510,511,511,512,512,513,513,514,514,513,513,512,512,511};
-    public static final double[] constantYPointsSuperman = {245,246,247,249,250,251,252,255,256,262,263,265,266,267,269,269,267,266,264,263,262,261,260,260,261,263,263,266,267,270,270,271,271,272,274,274,275,275,271,271,270,269,268,268,269,269,271,272,280,281,282,283,284,284,285,286,287,288,289,290,291,292,293,294,299,300,303,303,301,301,300,299,298,297,296,296,304,305,307,308,309,309,310,311,312,312,313,313,314,315,316,317,318,319,319,328,329,330,328,321,320,318,318,321,322,322,321,316,315,311,311,308,307,306,305,304,303,302,301,299,298,295,294,291,290,289,288,283,283,281,280,278,277,275,274,270,269,261,261,255,254,248,247,246,245};
-
+    //this points will never been moved too much, because it's important to remember the scale 1.0 (tho, they will be roted)
+    public static  double[] scaleXPointsSuperman = {510,510,509,509,510,510,511,511,510,510,509,509,508,507,507,505,505,506,506,505,505,504,503,502,501,501,500,500,501,501,497,496,495,494,494,492,491,490,490,492,493,493,492,491,490,489,489,488,488,489,488,487,486,485,484,483,482,481,480,479,479,478,477,476,476,477,477,478,478,479,479,480,481,481,482,484,484,485,485,486,487,489,490,491,492,493,494,495,496,496,497,498,499,500,502,502,503,504,505,505,506,507,511,511,512,518,519,519,518,518,517,517,516,516,515,515,514,514,513,513,512,512,511,511,510,509,508,508,508,509,510,510,511,511,512,512,513,513,514,514,513,513,512,512,511};
+    public static  double[] scaleYPointsSuperman = {245,246,247,249,250,251,252,255,256,262,263,265,266,267,269,269,267,266,264,263,262,261,260,260,261,263,263,266,267,270,270,271,271,272,274,274,275,275,271,271,270,269,268,268,269,269,271,272,280,281,282,283,284,284,285,286,287,288,289,290,291,292,293,294,299,300,303,303,301,301,300,299,298,297,296,296,304,305,307,308,309,309,310,311,312,312,313,313,314,315,316,317,318,319,319,328,329,330,328,321,320,318,318,321,322,322,321,316,315,311,311,308,307,306,305,304,303,302,301,299,298,295,294,291,290,289,288,283,283,281,280,278,277,275,274,270,269,261,261,255,254,248,247,246,245};
+    //this points will be used to make any change
     public static double[] xPointsSuperman = {510,510,509,509,510,510,511,511,510,510,509,509,508,507,507,505,505,506,506,505,505,504,503,502,501,501,500,500,501,501,497,496,495,494,494,492,491,490,490,492,493,493,492,491,490,489,489,488,488,489,488,487,486,485,484,483,482,481,480,479,479,478,477,476,476,477,477,478,478,479,479,480,481,481,482,484,484,485,485,486,487,489,490,491,492,493,494,495,496,496,497,498,499,500,502,502,503,504,505,505,506,507,511,511,512,518,519,519,518,518,517,517,516,516,515,515,514,514,513,513,512,512,511,511,510,509,508,508,508,509,510,510,511,511,512,512,513,513,514,514,513,513,512,512,511};
     public static double[] yPointsSuperman = {245,246,247,249,250,251,252,255,256,262,263,265,266,267,269,269,267,266,264,263,262,261,260,260,261,263,263,266,267,270,270,271,271,272,274,274,275,275,271,271,270,269,268,268,269,269,271,272,280,281,282,283,284,284,285,286,287,288,289,290,291,292,293,294,299,300,303,303,301,301,300,299,298,297,296,296,304,305,307,308,309,309,310,311,312,312,313,313,314,315,316,317,318,319,319,328,329,330,328,321,320,318,318,321,322,322,321,316,315,311,311,308,307,306,305,304,303,302,301,299,298,295,294,291,290,289,288,283,283,281,280,278,277,275,274,270,269,261,261,255,254,248,247,246,245};
     
@@ -156,6 +158,8 @@ implements KeyListener, FocusListener, MouseListener {
     //rotates
     public void rotation(double sumRest){
         double resultMatrix[] = new double[3];
+        //result matrix to add rotation to the original points that are use in the escalation
+        double scaleResultMatrix[] = new double[3];
         rotationMatrix[0][0] = Math.cos(Math.toRadians(sumRest));
         rotationMatrix[0][1] = -Math.sin(Math.toRadians(sumRest));
         rotationMatrix[1][0] = Math.sin(Math.toRadians(sumRest));
@@ -164,16 +168,25 @@ implements KeyListener, FocusListener, MouseListener {
             //add actual x and y
             generalArray[0] = xPointsSuperman[i] - xSupermanHeart;
             generalArray[1] = yPointsSuperman[i] - ySupermanHeart;
-            
+            //adding rotation to the scale points
+            scalegeneralArray[0] = scaleXPointsSuperman[i] - xSupermanHeart;
+            scalegeneralArray[1] = scaleYPointsSuperman[i] - ySupermanHeart;
+
             for(int row = 0; row < 3; row++){
                 double sum = 0;
+                double sum2 = 0;
                 for(int col = 0; col < 3; col++){
                     sum = sum + (rotationMatrix[row][col]*generalArray[col]);
+                    sum2 = sum2 + (rotationMatrix[row][col]*scalegeneralArray[col]);
                 }
+                scaleResultMatrix[row] = sum2;
                 resultMatrix[row] =  sum; 
             }
             xPointsSuperman[i] = resultMatrix[0] + xSupermanHeart;
             yPointsSuperman[i] = resultMatrix[1] + ySupermanHeart;
+            //adding the rotation to the original points
+            scaleXPointsSuperman[i] = scaleResultMatrix[0] + xSupermanHeart;
+            scaleYPointsSuperman[i] = scaleResultMatrix[1] + ySupermanHeart;
         }
         
     }
@@ -190,8 +203,8 @@ implements KeyListener, FocusListener, MouseListener {
             //add actual x and y
             //i use the first points of superman because if not we start to scale the new points
             //creating each time a bigger or minor scale (10 -> 90% = 9 (-1)... 9 -> 80% = 7.2 (-1.2))
-            generalArray[0] = constantXPointsSuperman[i] - xSupermanHeart;
-            generalArray[1] = constantYPointsSuperman[i] - ySupermanHeart;
+            generalArray[0] = scaleXPointsSuperman[i] - xSupermanHeart;
+            generalArray[1] = scaleYPointsSuperman[i] - ySupermanHeart;
             
             for(int row = 0; row < 3; row++){
                 double sum = 0;
