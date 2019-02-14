@@ -1,11 +1,92 @@
+//Juan Carlos Velazco Rossell A01326707
+//Carlos Parrodi Martínez A01421454
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Array;
-
 import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+public class Main{
+      public static void main(String[] args) {
+      KeyboardFocus applet = new KeyboardFocus();
+      applet.init();
 
-public class KeyboardFocus extends JApplet 
+      // Construct a JFrame.
+      final JFrame frame = new JFrame("Keyboard and Focus Demo");
+
+      // Transfer the applet's context pane to the JFrame.
+      frame.setContentPane(applet.getContentPane());
+
+      // Transfer the applet's menu bar into the JFrame.
+      // This line can be omitted if the applet
+      // does not create a menu bar.
+      frame.setJMenuBar(applet.getJMenuBar());
+
+      // Make the application shut down when the user clicks
+      // on the close button.
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+      // Set the size of the frame.
+      // To pack the frame as tightly as possible
+      // replace the setSize() message with the following.
+      // frame.pack();
+      frame.setSize(1000, 600);
+
+      // Set the location of the frame.
+      frame.setLocation(100, 100);
+
+      // Show the frame.
+      frame.setVisible(true);
+
+      // Invoke the applet's start() method.
+      // This line can be omitted if the applet
+      // does not define a start method.
+      applet.start();
+
+    }
+
+}
+
+class KeyboardFocus extends JApplet 
 implements KeyListener, FocusListener, MouseListener {
+
+  public static void main(String[] args) {
+    KeyboardFocus applet = new KeyboardFocus();
+    applet.init();
+
+    // Construct a JFrame.
+    final JFrame frame = new JFrame("Keyboard and Focus Demo");
+
+    // Transfer the applet's context pane to the JFrame.
+    frame.setContentPane(applet.getContentPane());
+
+    // Transfer the applet's menu bar into the JFrame.
+    // This line can be omitted if the applet
+    // does not create a menu bar.
+    frame.setJMenuBar(applet.getJMenuBar());
+
+    // Make the application shut down when the user clicks
+    // on the close button.
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    // Set the size of the frame.
+    // To pack the frame as tightly as possible
+    // replace the setSize() message with the following.
+    // frame.pack();
+    frame.setSize(1000, 600);
+
+    // Set the location of the frame.
+    frame.setLocation(100, 100);
+
+    // Show the frame.
+    frame.setVisible(true);
+
+    // Invoke the applet's start() method.
+    // This line can be omitted if the applet
+    // does not define a start method.
+    applet.start();
+
+  }
     // (Note:  MouseListener is implemented only so that
     //         the applet can request the input focus when
     //         the user clicks on it.)
@@ -48,14 +129,6 @@ implements KeyListener, FocusListener, MouseListener {
         // and focus events.  Place the square in the middle of
         // Then, set up the drawing surface.
         
-        //setSize(1000,600); 
-        /*
-        squareTop = getSize().height / 2 - SQUARE_SIZE / 2;
-        squareLeft = getSize().width / 2 - SQUARE_SIZE / 2;
-        
-        squareTop = getSize().height / 2 - SQUARE_SIZE / 2;
-        squareLeft = getSize().width / 2 - SQUARE_SIZE / 2;
-        */
         
         canvas = new DisplayPanel();  // Create drawing surface and 
         setContentPane(canvas);       //    install it as the applet's content pane.
@@ -255,8 +328,7 @@ implements KeyListener, FocusListener, MouseListener {
         focussed = false;
         canvas.repaint();  // redraw without cyan border
     }
-    
-    
+      
     public void keyTyped(KeyEvent evt) {
         // The user has typed a character, while the
         // applet has the input focus.  If it is one
@@ -304,22 +376,22 @@ implements KeyListener, FocusListener, MouseListener {
         
         int key = evt.getKeyCode();  // keyboard code for the key that was pressed
         
-        if (key == KeyEvent.VK_LEFT) {
+        if (key == KeyEvent.VK_LEFT && xSupermanHeart-60 >0) {
             calculateMoveOn(-1, 0);
             translation();
             canvas.repaint();
         }
-        else if (key == KeyEvent.VK_RIGHT) {
+        else if (key == KeyEvent.VK_RIGHT && xSupermanHeart+60 < 1000) {
             calculateMoveOn(1, 0);
             translation();
             canvas.repaint();
         }
-        else if (key == KeyEvent.VK_UP) {
+        else if (key == KeyEvent.VK_UP && ySupermanHeart -60 >0) {
             calculateMoveOn(0, -1);
             translation();
             canvas.repaint();
         }
-        else if (key == KeyEvent.VK_DOWN) {
+        else if (key == KeyEvent.VK_DOWN && ySupermanHeart+60 < 600) {
             calculateMoveOn(0, 1);
             translation();
             canvas.repaint();
