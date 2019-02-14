@@ -48,7 +48,7 @@ implements KeyListener, FocusListener, MouseListener {
         // and focus events.  Place the square in the middle of
         // Then, set up the drawing surface.
         
-        setSize(1000,600); 
+        //setSize(1000,600); 
         /*
         squareTop = getSize().height / 2 - SQUARE_SIZE / 2;
         squareLeft = getSize().width / 2 - SQUARE_SIZE / 2;
