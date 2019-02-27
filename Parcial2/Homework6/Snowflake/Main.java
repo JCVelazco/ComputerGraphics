@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 class Point{
 	public int x;
 	public int y;
@@ -20,40 +21,35 @@ class Point{
 		this.y = y;
 	}
 }
-/*
-class Line{
-	public Point intial;
-	public Point finish;
-	
-	public Line(Point initial, Point finish){
-		initial = this.intial;
-		finish = this.finish;
-	}
-}*/
-
 public class Main extends JPanel{
 	
+	public int red = 0, green = 255, blue = 255;
+	
 	public void paintComponent(Graphics g){
+		int red = 0, green = 255, blue = 255;
 		super.paintComponent(g);
 		int arrX[] = new int[]{200,500,350};
 		int arrY[] = new int[]{500,500,240};
-		
+		g.setColor(new Color(red,green,blue));
 		g.drawPolygon(arrX, arrY, 3);
-
+		
 		int iterations = 5;
 		
 		for(int i = 0; i < 3; i++){
 			if(i == 2){
+				green = 255;
 				Point myFirstPoint = new Point(arrX[0], arrY[0]);
 				Point mySecondPoint = new Point(arrX[2], arrY[2]);
 				drawTriangle(g, myFirstPoint, mySecondPoint, iterations, 60);
 			}
 			else if(i == 1){
+				green = 255;
 				Point myFirstPoint = new Point(arrX[2], arrY[2]);
 				Point mySecondPoint = new Point(arrX[1], arrY[1]);
 				drawTriangle(g, myFirstPoint, mySecondPoint, iterations, 300);
 			}
 			else if(i == 0){
+				green = 255;
 				Point myFirstPoint = new Point(arrX[1], arrY[1]);
 				Point mySecondPoint = new Point(arrX[0], arrY[0]);
 				drawTriangle(g, myFirstPoint, mySecondPoint, iterations, 180);
@@ -64,10 +60,12 @@ public class Main extends JPanel{
 	}
 	
 	public void drawTriangle(Graphics g, Point firstP, Point secondP, int iterations, int angle){
+		
 		//if i finish my iterations i roll back
-		if(iterations == 0)return;
-		float red = 0f, green = 0f, blue = 1f;
-		g.setColor(new Color(red,green,blue));
+		if(iterations == 0){
+			return;
+		}
+		
 		Point myActualPosition = firstP;
 		Point lastPosition = new Point(0,0);
 		
@@ -76,7 +74,6 @@ public class Main extends JPanel{
 		//lengthOftheSizeOfthenewTriangle
 		
 		double lengthOfTriangle = distanceBTwoPoints/3;
-		//System.out.println("size of new side: "+lengthOfTriangle);
 		
 		//move to the trianngle and check
 		lastPosition.setPoints(myActualPosition.x, myActualPosition.y);
@@ -85,24 +82,48 @@ public class Main extends JPanel{
 		
 		//paint the triangle to the top and check
 		lastPosition.setPoints(myActualPosition.x, myActualPosition.y);
-		goFowardDrawing(g, lengthOfTriangle, myActualPosition, angle+60);
+		goFowardDrawing(g, lengthOfTriangle, myActualPosition, angle+60, iterations);
 		drawTriangle(g, lastPosition, myActualPosition, iterations-1, angle+60);
 		//paint to the down and check
 		lastPosition.setPoints(myActualPosition.x, myActualPosition.y);
-		goFowardDrawing(g, lengthOfTriangle, myActualPosition, angle-60);
+		goFowardDrawing(g, lengthOfTriangle, myActualPosition, angle-60, iterations);
 		drawTriangle(g, lastPosition, myActualPosition, iterations-1, angle-60);
 		
 		//move at the end and check
 		lastPosition.setPoints(myActualPosition.x, myActualPosition.y);
 		goFoward(g, lengthOfTriangle, myActualPosition, angle);
 		drawTriangle(g, lastPosition, myActualPosition, iterations-1, angle);
-		
-		
-		
+	
 	}
 	
 	//Goes foward and draws a line using the last specified color
-	public void goFowardDrawing (Graphics g, double pixels, Point myPoint, int degrees){
+	public void goFowardDrawing (Graphics g, double pixels, Point myPoint, int degrees, int iterations){
+
+		//define color
+		if(iterations == 5){
+			green = 200;
+			blue = 255;
+		}
+		if(iterations == 4){
+			green = 180;
+			blue = 230;
+		}
+		if(iterations == 3){
+			green = 155;
+			blue = 220;
+		}
+		if(iterations == 2){
+			green = 80;
+			blue = 200;
+		}
+		if(iterations == 1){
+			green = 0;
+			blue = 150;
+		}
+		//System.out.println(green);
+		g.setColor(new Color(red,green,blue));
+
+
 		double finalX = (myPoint.x)+(pixels*(Math.cos(Math.toRadians(degrees))));
 		double finalY = (myPoint.y)-(pixels*(Math.sin(Math.toRadians(degrees))));
 		g.drawLine((int)myPoint.x, (int)myPoint.y, (int)finalX, (int)finalY);	
@@ -116,7 +137,6 @@ public class Main extends JPanel{
 	}
 	
 	public double distanceBTwoPoints(Point first, Point second){
-		//System.out.println("x: "+first.x+" and x2: "+second.x+" , y: "+first.y+" second y: "+second.y);
 		double distance = Math.sqrt(Math.pow((first.x-second.x), 2) + Math.pow((first.y-second.y), 2));
 		return distance;
 	}
