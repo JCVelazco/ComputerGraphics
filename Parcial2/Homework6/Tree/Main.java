@@ -23,45 +23,43 @@ class Point{
 }
 public class Main extends JPanel{
 	
-	public int red = 0, green = 0, blue = 0;
-	public int iterations = 2;
+	public float red = 0.5f, green = 0.25f, blue = 0.1f;
+	public int iterations = 5;
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		System.out.println("-----------------------------------");
+		red = 0.5f; green = 0.25f; blue = 0.1f;
+		g.setColor(new Color(red, green, blue));
 		Point fPoint = new Point(400, 600);
-		Point sPoint = new Point(400, 400);
+		Point sPoint = new Point(400, 200);
 		g.drawLine(fPoint.x, fPoint.y, sPoint.x, sPoint.y);
 		drawTree(g, fPoint, sPoint, iterations, 90);
-
+		
 		
 	}
 	
 	public void drawTree(Graphics g, Point firstP, Point secondP, int iterations, int angle){
 		if(iterations == 0)return;
-
+		
 		double numOfBranches = getRandomNumberOfBranches();
 		for(int i = 0; i < numOfBranches; i++){
 			int angleForTheNewBranch = getRandomAngle();
 			double lenghtForTheNewBranch = getRandomLength();
 			double sizeOfBranch = distanceBTwoPoints(firstP, secondP);
 			lenghtForTheNewBranch *= sizeOfBranch;
-
-			System.out.println("("+firstP.x+","+firstP.y+")"+" to ("+secondP.x+","+secondP.y+")");
-			Point newPoint = getPointOfStart(firstP, secondP);
+			Point newPoint = getPointOfStart(firstP, lenghtForTheNewBranch, angle);
 			//i create this second one, because when i use goForwardDrawing the values of this points will be updated to the end of the line
 			Point startOfPoint = new Point(newPoint.x, newPoint.y);
-			System.out.println("selected point ("+newPoint.x+","+newPoint.y+")");
-
+			
 			if(i%2 == 0){
 				//to the right
 				//angle that i have minus the angle that i get
 				goFowardDrawing(g, lenghtForTheNewBranch, newPoint, angle-angleForTheNewBranch, iterations);
-				drawTree(g, startOfPoint, newPoint, iterations-1, angleForTheNewBranch);
+				drawTree(g, startOfPoint, newPoint, iterations-1, angle-angleForTheNewBranch);
 			}else{
 				//to the left
 				goFowardDrawing(g, lenghtForTheNewBranch, newPoint, angle+angleForTheNewBranch, iterations);
-				drawTree(g, startOfPoint, newPoint, iterations-1, angleForTheNewBranch);
+				drawTree(g, startOfPoint, newPoint, iterations-1, angle+angleForTheNewBranch);
 			}
 		}
 		
@@ -72,9 +70,41 @@ public class Main extends JPanel{
 	public void goFowardDrawing (Graphics g, double pixels, Point myPoint, int degrees, int iterations){
 		double finalX = (myPoint.x)+(pixels*(Math.cos(Math.toRadians(degrees))));
 		double finalY = (myPoint.y)-(pixels*(Math.sin(Math.toRadians(degrees))));
+		
+		//sorry for the hardcoded, i was bored
+		//define color
+		if(iterations == 5){
+			red = .4f;
+			green = .35f;
+		}
+		if(iterations == 4){
+			red = .3f;
+			green = .50f;
+		}
+		if(iterations == 3){
+			red = .2f;
+			green = .65f;
+		}
+		if(iterations == 2){
+			red = .1f;
+			green = .80f;
+		}
+		if(iterations == 1){
+			red = 0f;
+			green = 1f;
+		}
+		
+		g.setColor(new Color(red, green, blue));
+		
+		
 		g.drawLine((int)myPoint.x, (int)myPoint.y, (int)finalX, (int)finalY);	
 		myPoint.x = (int)Math.round(finalX);
 		myPoint.y = (int)Math.round(finalY);
+	}
+	
+	public void goFoward (double pixels, Point myActuaPoint, int degree){
+		myActuaPoint.x = (int)Math.round((myActuaPoint.x)+(pixels*(Math.cos(Math.toRadians(degree)))));
+		myActuaPoint.y = (int)Math.round((myActuaPoint.y)-(pixels*(Math.sin(Math.toRadians(degree)))));
 	}
 	
 	public double distanceBTwoPoints(Point first, Point second){
@@ -100,21 +130,14 @@ public class Main extends JPanel{
 		return ThreadLocalRandom.current().nextDouble(min, max);
 	}
 	
-	public Point getPointOfStart(Point firstP, Point secondP){
-		int greatX;
-		int smallX;
-		//this is needed because if i go to the left x will decrees and if i go to right it will increese
-		if(firstP.x>= secondP.x){
-			greatX = firstP.x;
-			smallX = secondP.x;
-		}else{
-			smallX = firstP.x;
-			greatX = secondP.x;
-		}
-		int pointForX = ThreadLocalRandom.current().nextInt(smallX, (greatX)+1);
-		int pointForY = ThreadLocalRandom.current().nextInt(secondP.y, (firstP.y)+1);
-		Point myPoint = new Point(pointForX, pointForY);
-		return myPoint;
+	public Point getPointOfStart(Point firstP, double length, int angle){
+		double min = 0, max = 1.1;
+		double lengthToNewPoint = ThreadLocalRandom.current().nextDouble(min, max);
+		lengthToNewPoint *= length;
+		Point myNewPoint = new Point(firstP.x,firstP.y);
+		goFoward(lengthToNewPoint, myNewPoint, angle);
+		return myNewPoint;
+		
 	}
 	
 	public static void main(String args[]){
