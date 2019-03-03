@@ -2,10 +2,11 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.ArrayList;
 
 class Point3D {
-   public int x, y, z;
-   public Point3D( int x, int y, int z ) {
+   public double x, y, z;
+   public Point3D( double x, double y, double z ) {
       this.x = x;  
       this.y = y;  
       this.z = z;
@@ -27,7 +28,7 @@ public class WireframeJApplet extends JApplet
 
    int azimuth = 35, elevation = 30;
    //rotation y, and x
-
+   
    Point3D[] vertices;
    Edge[] edges;
 
@@ -57,20 +58,19 @@ public class WireframeJApplet extends JApplet
 
    public void init() {
 
-      System.out.println(xSize);
-
       vertices = new Point3D[ 8 ];
       //origin
-      vertices[0] = new Point3D( -1, -1, -1 );
-      vertices[1] = new Point3D( -1, -1,  1 );
-      vertices[2] = new Point3D( -1,  1, -1 );
-      vertices[3] = new Point3D( -1,  1,  1 );
+      vertices[0] = new Point3D( -1, -1, -zSize ); //move zSize closer (point: first face, left down)
+      vertices[1] = new Point3D( -1, -1,  1 ); //origin (0,0,0) (point: face behind, left down)
+      vertices[2] = new Point3D( -1,  ySize, -zSize ); //move ySize to the top and zSize closer (point: first face, left top)
+      vertices[3] = new Point3D( -1,  ySize,  1 );////move ySize to the top (point: face behind, left top)
+      //same that the ones above but with move in xSize:
+      vertices[4] = new Point3D(  xSize, -1, -zSize );
+      vertices[5] = new Point3D(  xSize, -1,  1 );
+      vertices[6] = new Point3D(  xSize,  ySize, -zSize );
+      vertices[7] = new Point3D(  xSize,  ySize,  1 );
 
-      vertices[4] = new Point3D(  1, -1, -1 );
-      vertices[5] = new Point3D(  1, -1,  1 );
-      vertices[6] = new Point3D(  1,  1, -1 );
-      vertices[7] = new Point3D(  1,  1,  1 );
-
+      //makes the main edges of the box, according to the vertices
       edges = new Edge[ 12 ];
       edges[ 0] = new Edge( 0, 1 );
       edges[ 1] = new Edge( 0, 2 );
@@ -113,6 +113,7 @@ public class WireframeJApplet extends JApplet
             g.setColor(Color.magenta);
             g.drawString("Click to activate",100,120);
             g.drawString("Use arrow keys to change azimuth and elevation",100,150);
+            g.drawString("If you didn't insert values for length of X, Y or Z. Or the divisions that you want, this values will be 1 as default.",100,180);
          }
          else {
             double theta = Math.toRadians(azimuth);
@@ -130,17 +131,17 @@ public class WireframeJApplet extends JApplet
             int j;
             int scaleFactor = width/8;
             float near = 3;  // distance from eye to near plane
-            float nearToObj = 1.5f;  // distance from near plane to center of object
+            float nearToObj = 3f;  // distance from near plane to center of object
             
             for ( j = 0; j < vertices.length; ++j ) {
-               int x0 = vertices[j].x;
-               int y0 = vertices[j].y;
-               int z0 = vertices[j].z;
+               double x0 = vertices[j].x;
+               double y0 = vertices[j].y;
+               double z0 = vertices[j].z;
 
                // compute an orthographic projection
-               float x1 = cosT*x0 + sinT*z0;
-               float y1 = -sinTsinP*x0 + cosP*y0 + cosTsinP*z0;
-               float z1 = cosTcosP*z0 - sinTcosP*x0 - sinP*y0;
+               double x1 = cosT*x0 + sinT*z0;
+               double y1 = -sinTsinP*x0 + cosP*y0 + cosTsinP*z0;
+               double z1 = cosTcosP*z0 - sinTcosP*x0 - sinP*y0;
 
                // now adjust things to get a perspective projection
                x1 = x1*near/(z1+near+nearToObj);
