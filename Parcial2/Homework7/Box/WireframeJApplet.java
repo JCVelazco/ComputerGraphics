@@ -88,6 +88,7 @@ public class WireframeJApplet extends JApplet
 
       addLayersForX();
       addLayersForY();
+      addLayersForZ();
 
 
       canvas = new DisplayPanel();  // Create drawing surface and 
@@ -126,6 +127,25 @@ public class WireframeJApplet extends JApplet
          Point3D newPoint1 = new Point3D(vertices.get(1).x, (vertices.get(1).y)+distanceForEachSection*i, vertices.get(1).z);
          Point3D newPoint2 = new Point3D(vertices.get(5).x, (vertices.get(5).y)+distanceForEachSection*i, vertices.get(5).z);
          Point3D newPoint3 = new Point3D(vertices.get(4).x, (vertices.get(4).y)+distanceForEachSection*i, vertices.get(4).z);
+         vertices.add(newPoint0); vertices.add(newPoint1); vertices.add(newPoint2); vertices.add(newPoint3);
+         //get first index of this new subdivision:
+         int indexOfStart = vertices.indexOf(newPoint0);
+         Edge edge0To1 = new Edge(indexOfStart, indexOfStart+1);
+         Edge edge1To3 = new Edge(indexOfStart+1, indexOfStart+2);
+         Edge edge3To2 = new Edge(indexOfStart+2, indexOfStart+3);
+         Edge edge2To0 = new Edge(indexOfStart+3, indexOfStart);
+         edges.add(edge0To1);edges.add(edge1To3);edges.add(edge3To2);edges.add(edge2To0);
+      }
+   }
+
+   public void addLayersForZ(){
+      if(zSections == 1)return;
+      double distanceForEachSection = zSize/zSections;
+      for(int i = 1; i < zSections; i++){
+         Point3D newPoint0 = new Point3D(vertices.get(0).x, (vertices.get(0).y), (vertices.get(0).z)+distanceForEachSection*i);
+         Point3D newPoint1 = new Point3D(vertices.get(2).x, (vertices.get(2).y), (vertices.get(2).z)+distanceForEachSection*i);
+         Point3D newPoint2 = new Point3D(vertices.get(6).x, (vertices.get(6).y), (vertices.get(6).z)+distanceForEachSection*i);
+         Point3D newPoint3 = new Point3D(vertices.get(4).x, (vertices.get(4).y), (vertices.get(4).z)+distanceForEachSection*i);
          vertices.add(newPoint0); vertices.add(newPoint1); vertices.add(newPoint2); vertices.add(newPoint3);
          //get first index of this new subdivision:
          int indexOfStart = vertices.indexOf(newPoint0);
