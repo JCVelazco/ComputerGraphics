@@ -1,3 +1,5 @@
+//Juan Carlos Velazco A01326707
+//Carlos Parrodi A01421454
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 

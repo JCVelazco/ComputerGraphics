@@ -1,4 +1,5 @@
-
+//Juan Carlos Velazco A01326707
+//Carlos Parrodi A01421454
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
