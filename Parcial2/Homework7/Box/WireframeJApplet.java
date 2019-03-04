@@ -29,8 +29,8 @@ public class WireframeJApplet extends JApplet
    int azimuth = 35, elevation = 30;
    //rotation y, and x
    
-   Point3D[] vertices;
-   Edge[] edges;
+   ArrayList<Point3D> vertices;
+   ArrayList<Edge> edges;
 
    boolean focussed = false;   // True when this applet has input focus.
    
@@ -58,33 +58,35 @@ public class WireframeJApplet extends JApplet
 
    public void init() {
 
-      vertices = new Point3D[ 8 ];
+      vertices = new ArrayList<Point3D>();
       //origin
-      vertices[0] = new Point3D( -1, -1, -zSize ); //move zSize closer (point: first face, left down)
-      vertices[1] = new Point3D( -1, -1,  1 ); //origin (0,0,0) (point: face behind, left down)
-      vertices[2] = new Point3D( -1,  ySize, -zSize ); //move ySize to the top and zSize closer (point: first face, left top)
-      vertices[3] = new Point3D( -1,  ySize,  1 );////move ySize to the top (point: face behind, left top)
+
+      vertices.add(new Point3D( -1, -1, -zSize )); //move zSize closer (point: first face, left down)
+      vertices.add(new Point3D( -1, -1,  1 )); //origin (0,0,0) (point: face behind, left down)
+      vertices.add(new Point3D( -1,  ySize, -zSize )); //move ySize to the top and zSize closer (point: first face, left top)
+      vertices.add(new Point3D( -1,  ySize,  1 ));////move ySize to the top (point: face behind, left top)
       //same that the ones above but with move in xSize:
-      vertices[4] = new Point3D(  xSize, -1, -zSize );
-      vertices[5] = new Point3D(  xSize, -1,  1 );
-      vertices[6] = new Point3D(  xSize,  ySize, -zSize );
-      vertices[7] = new Point3D(  xSize,  ySize,  1 );
+      vertices.add(new Point3D(  xSize, -1, -zSize ));
+      vertices.add(new Point3D(  xSize, -1,  1 ));
+      vertices.add(new Point3D(  xSize,  ySize, -zSize ));
+      vertices.add(new Point3D(  xSize,  ySize,  1 ));
 
       //makes the main edges of the box, according to the vertices
-      edges = new Edge[ 12 ];
-      edges[ 0] = new Edge( 0, 1 );
-      edges[ 1] = new Edge( 0, 2 );
-      edges[ 2] = new Edge( 0, 4 );
-      edges[ 3] = new Edge( 1, 3 );
-      edges[ 4] = new Edge( 1, 5 );
-      edges[ 5] = new Edge( 2, 3 );
-      edges[ 6] = new Edge( 2, 6 );
-      edges[ 7] = new Edge( 3, 7 );
-      edges[ 8] = new Edge( 4, 5 );
-      edges[ 9] = new Edge( 4, 6 );
-      edges[10] = new Edge( 5, 7 );
-      edges[11] = new Edge( 6, 7 );
-    
+      edges = new ArrayList<Edge>();
+      edges.add(new Edge( 0, 1 ));
+      edges.add(new Edge( 0, 2 ));
+      edges.add(new Edge( 0, 4 ));
+      edges.add(new Edge( 1, 3 ));
+      edges.add(new Edge( 1, 5 ));
+      edges.add(new Edge( 2, 3 ));
+      edges.add(new Edge( 2, 6 ));
+      edges.add(new Edge( 3, 7 ));
+      edges.add(new Edge( 4, 5 ));
+      edges.add(new Edge( 4, 6 ));
+      edges.add(new Edge( 5, 7 ));
+      edges.add(new Edge( 6, 7 ));
+
+
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
    
@@ -97,6 +99,7 @@ public class WireframeJApplet extends JApplet
    class DisplayPanel extends JPanel {
       public void paintComponent(Graphics g) {
          super.paintComponent(g);  
+         
 
          if (focussed) 
             g.setColor(Color.cyan);
@@ -127,16 +130,16 @@ public class WireframeJApplet extends JApplet
 
             // project vertices onto the 2D viewport
             Point[] points;
-            points = new Point[ vertices.length ];
+            points = new Point[ vertices.size() ];
             int j;
             int scaleFactor = width/8;
             float near = 3;  // distance from eye to near plane
             float nearToObj = 3f;  // distance from near plane to center of object
             
-            for ( j = 0; j < vertices.length; ++j ) {
-               double x0 = vertices[j].x;
-               double y0 = vertices[j].y;
-               double z0 = vertices[j].z;
+            for ( j = 0; j < vertices.size(); ++j ) {
+               double x0 = vertices.get(j).x;
+               double y0 = vertices.get(j).y;
+               double z0 = vertices.get(j).z;
 
                // compute an orthographic projection
                double x1 = cosT*x0 + sinT*z0;
@@ -159,10 +162,10 @@ public class WireframeJApplet extends JApplet
             g.fillRect( 0, 0, width, height );
             g.setColor( Color.white );
 
-            for ( j = 0; j < edges.length; ++j ) {
+            for ( j = 0; j < edges.size(); ++j ) {
                g.drawLine(
-                  points[ edges[j].a ].x, points[ edges[j].a ].y,
-                  points[ edges[j].b ].x, points[ edges[j].b ].y
+                  points[ (edges.get(j).a) ].x, points[ (edges.get(j).a) ].y,
+                  points[ (edges.get(j).b) ].x, points[ (edges.get(j).b) ].y
                );
             }
 

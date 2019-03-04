@@ -8,7 +8,7 @@ class Box{
             double xSize = 1;
             double ySize = 1;
             double zSize = 1;
-            
+
             int xSections = 1;
             int ySections = 1;
             int zSections = 1;
@@ -21,7 +21,7 @@ class Box{
                   ySections = Integer.parseInt(args[4]);
                   zSections = Integer.parseInt(args[5]);
             }catch(Exception e){
-                  System.out.println(e);
+                  System.out.println("No se ingreso parametros para las medidas");
             }
             
             WireframeJApplet applet = new WireframeJApplet();
