@@ -61,15 +61,15 @@ public class WireframeJApplet extends JApplet
       vertices = new ArrayList<Point3D>();
       //origin
 
-      vertices.add(new Point3D( -1, -1, -zSize )); //move zSize closer (point: first face, left down)
+      vertices.add(new Point3D( -1, -1, -zSize+1 )); //move zSize closer (point: first face, left down)
       vertices.add(new Point3D( -1, -1,  1 )); //origin (0,0,0) (point: face behind, left down)
-      vertices.add(new Point3D( -1,  ySize, -zSize )); //move ySize to the top and zSize closer (point: first face, left top)
-      vertices.add(new Point3D( -1,  ySize,  1 ));////move ySize to the top (point: face behind, left top)
+      vertices.add(new Point3D( -1,  ySize-1, -zSize+1 )); //move ySize to the top and zSize closer (point: first face, left top)
+      vertices.add(new Point3D( -1,  ySize-1,  1 ));////move ySize to the top (point: face behind, left top)
       //same that the ones above but with move in xSize:
-      vertices.add(new Point3D(  xSize, -1, -zSize ));
-      vertices.add(new Point3D(  xSize, -1,  1 ));
-      vertices.add(new Point3D(  xSize,  ySize, -zSize ));
-      vertices.add(new Point3D(  xSize,  ySize,  1 ));
+      vertices.add(new Point3D(  xSize-1, -1, -zSize+1 ));
+      vertices.add(new Point3D(  xSize-1, -1,  1 ));
+      vertices.add(new Point3D(  xSize-1,  ySize-1, -zSize+1 ));
+      vertices.add(new Point3D(  xSize-1,  ySize-1,  1 ));
 
       //makes the main edges of the box, according to the vertices
       edges = new ArrayList<Edge>();
@@ -86,6 +86,8 @@ public class WireframeJApplet extends JApplet
       edges.add(new Edge( 5, 7 ));
       edges.add(new Edge( 6, 7 ));
 
+      addLayersForX();
+
 
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
@@ -95,6 +97,46 @@ public class WireframeJApplet extends JApplet
       canvas.addMouseListener(this);
       
    } // end init();
+
+   public void addLayersForX(){
+      if(xSections == 1)return;
+      double distanceForEachSection = xSize/xSections;
+      for(int i = 1; i < xSections; i++){
+         Point3D newPoint0 = new Point3D((vertices.get(0).x)+distanceForEachSection*i, vertices.get(0).y, vertices.get(0).z);
+         Point3D newPoint1 = new Point3D((vertices.get(1).x)+distanceForEachSection*i, vertices.get(1).y, vertices.get(1).z);
+         Point3D newPoint2 = new Point3D((vertices.get(3).x)+distanceForEachSection*i, vertices.get(3).y, vertices.get(3).z);
+         Point3D newPoint3 = new Point3D((vertices.get(2).x)+distanceForEachSection*i, vertices.get(2).y, vertices.get(2).z);
+         vertices.add(newPoint0); vertices.add(newPoint1); vertices.add(newPoint2); vertices.add(newPoint3);
+         //get first index of this new subdivision:
+         int indexOfStart = vertices.indexOf(newPoint0);
+         Edge edge0To1 = new Edge(indexOfStart, indexOfStart+1);
+         Edge edge1To3 = new Edge(indexOfStart+1, indexOfStart+2);
+         Edge edge3To2 = new Edge(indexOfStart+2, indexOfStart+3);
+         Edge edge2To0 = new Edge(indexOfStart+3, indexOfStart);
+         edges.add(edge0To1);edges.add(edge1To3);edges.add(edge3To2);edges.add(edge2To0);
+      }
+   }
+/*
+   public void addLayersForY(){
+      if(xSections == 1)return;
+      double distanceForEachSection = ySize/ySections;
+      for(int i = 1; i < ySections; i++){
+         Point3D newPoint0 = new Point3D();
+         Point3D newPoint1 = new Point3D();
+         Point3D newPoint2 = new Point3D();
+         Point3D newPoint3 = new Point3D();
+         vertices.add(newPoint0); vertices.add(newPoint1); vertices.add(newPoint2); vertices.add(newPoint3);
+         //get first index of this new subdivision:
+         int indexOfStart = vertices.indexOf(newPoint0);
+         Edge edge0To1 = new Edge(indexOfStart, indexOfStart+1);
+         Edge edge1To3 = new Edge(indexOfStart+1, indexOfStart+2);
+         Edge edge3To2 = new Edge(indexOfStart+2, indexOfStart+3);
+         Edge edge2To0 = new Edge(indexOfStart+3, indexOfStart);
+         edges.add(edge0To1);edges.add(edge1To3);edges.add(edge3To2);edges.add(edge2To0);
+      }
+   }
+*/
+   
    
    class DisplayPanel extends JPanel {
       public void paintComponent(Graphics g) {
@@ -134,8 +176,9 @@ public class WireframeJApplet extends JApplet
             int j;
             int scaleFactor = width/8;
             float near = 3;  // distance from eye to near plane
-            float nearToObj = 3f;  // distance from near plane to center of object
-            
+            float nearToObj = 0.5f;  // distance from near plane to center of object
+
+            //point3D -> point2D
             for ( j = 0; j < vertices.size(); ++j ) {
                double x0 = vertices.get(j).x;
                double y0 = vertices.get(j).y;
