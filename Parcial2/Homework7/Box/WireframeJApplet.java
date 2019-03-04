@@ -87,6 +87,7 @@ public class WireframeJApplet extends JApplet
       edges.add(new Edge( 6, 7 ));
 
       addLayersForX();
+      addLayersForY();
 
 
       canvas = new DisplayPanel();  // Create drawing surface and 
@@ -116,15 +117,15 @@ public class WireframeJApplet extends JApplet
          edges.add(edge0To1);edges.add(edge1To3);edges.add(edge3To2);edges.add(edge2To0);
       }
    }
-/*
+
    public void addLayersForY(){
-      if(xSections == 1)return;
+      if(ySections == 1)return;
       double distanceForEachSection = ySize/ySections;
       for(int i = 1; i < ySections; i++){
-         Point3D newPoint0 = new Point3D();
-         Point3D newPoint1 = new Point3D();
-         Point3D newPoint2 = new Point3D();
-         Point3D newPoint3 = new Point3D();
+         Point3D newPoint0 = new Point3D(vertices.get(0).x, (vertices.get(0).y)+distanceForEachSection*i, vertices.get(0).z);
+         Point3D newPoint1 = new Point3D(vertices.get(1).x, (vertices.get(1).y)+distanceForEachSection*i, vertices.get(1).z);
+         Point3D newPoint2 = new Point3D(vertices.get(5).x, (vertices.get(5).y)+distanceForEachSection*i, vertices.get(5).z);
+         Point3D newPoint3 = new Point3D(vertices.get(4).x, (vertices.get(4).y)+distanceForEachSection*i, vertices.get(4).z);
          vertices.add(newPoint0); vertices.add(newPoint1); vertices.add(newPoint2); vertices.add(newPoint3);
          //get first index of this new subdivision:
          int indexOfStart = vertices.indexOf(newPoint0);
@@ -135,7 +136,7 @@ public class WireframeJApplet extends JApplet
          edges.add(edge0To1);edges.add(edge1To3);edges.add(edge3To2);edges.add(edge2To0);
       }
    }
-*/
+
    
    
    class DisplayPanel extends JPanel {
