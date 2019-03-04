@@ -61,15 +61,15 @@ public class WireframeJApplet extends JApplet
 
       vertices = new ArrayList<Point3D>();
       //origin
-      vertices.add(new Point3D( -1, -1, -zSize+1 )); //move zSize closer (point: first face, left down)
-      vertices.add(new Point3D( -1, -1,  1 )); //origin (0,0,0) (point: face behind, left down)
-      vertices.add(new Point3D( -1,  ySize-1, -zSize+1 )); //move ySize to the top and zSize closer (point: first face, left top)
-      vertices.add(new Point3D( -1,  ySize-1,  1 ));////move ySize to the top (point: face behind, left top)
+      vertices.add(new Point3D( -xSize/2, -ySize/2, -zSize/2 )); //(point: first face, left down)
+      vertices.add(new Point3D( -xSize/2, -ySize/2,  zSize/2 )); //(point: face behind, left down)
+      vertices.add(new Point3D( -xSize/2,  ySize/2, -zSize/2 )); //(point: first face, left top)
+      vertices.add(new Point3D( -xSize/2,  ySize/2,  zSize/2 ));////(point: face behind, left top)
       //same that the ones above but with move in xSize:
-      vertices.add(new Point3D(  xSize-1, -1, -zSize+1 ));
-      vertices.add(new Point3D(  xSize-1, -1,  1 ));
-      vertices.add(new Point3D(  xSize-1,  ySize-1, -zSize+1 ));
-      vertices.add(new Point3D(  xSize-1,  ySize-1,  1 ));
+      vertices.add(new Point3D(  xSize/2, -ySize/2, -zSize/2 ));
+      vertices.add(new Point3D(  xSize/2, -ySize/2,  zSize/2 ));
+      vertices.add(new Point3D(  xSize/2,  ySize/2, -zSize/2 ));
+      vertices.add(new Point3D(  xSize/2,  ySize/2,  zSize/2 ));
 
       //makes the main edges of the box, according to the vertices
       edges = new ArrayList<Edge>();
