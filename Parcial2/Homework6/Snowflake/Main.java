@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 class Point{
 	public int x;
 	public int y;
-	
+	 
 	public Point(int x, int y){
 		this.x = x;
 		this.y = y;
@@ -99,6 +99,7 @@ public class Main extends JPanel{
 	//Goes foward and draws a line using the last specified color
 	public void goFowardDrawing (Graphics g, double pixels, Point myPoint, int degrees, int iterations){
 
+		//sorry for the hardcoded, i was bored
 		//define color
 		if(iterations == 5){
 			green = 200;
@@ -120,7 +121,6 @@ public class Main extends JPanel{
 			green = 0;
 			blue = 150;
 		}
-		//System.out.println(green);
 		g.setColor(new Color(red,green,blue));
 
 

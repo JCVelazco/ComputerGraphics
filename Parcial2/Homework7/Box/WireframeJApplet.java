@@ -1,4 +1,5 @@
-
+//Juan Carlos Velazco A01326707
+//Carlos Parrodi A01421454
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -60,7 +61,6 @@ public class WireframeJApplet extends JApplet
 
       vertices = new ArrayList<Point3D>();
       //origin
-
       vertices.add(new Point3D( -1, -1, -zSize+1 )); //move zSize closer (point: first face, left down)
       vertices.add(new Point3D( -1, -1,  1 )); //origin (0,0,0) (point: face behind, left down)
       vertices.add(new Point3D( -1,  ySize-1, -zSize+1 )); //move ySize to the top and zSize closer (point: first face, left top)
@@ -85,12 +85,11 @@ public class WireframeJApplet extends JApplet
       edges.add(new Edge( 4, 6 ));
       edges.add(new Edge( 5, 7 ));
       edges.add(new Edge( 6, 7 ));
-
+      
       addLayersForX();
       addLayersForY();
       addLayersForZ();
-
-
+      
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
    
