@@ -60,10 +60,10 @@ implements KeyListener, FocusListener, MouseListener {
       
       Point3D origin = new Point3D(0, 0, 0);
       Point3D starPoint = new Point3D(0, heightCone, 0);
+      //vertices[0] will be origin and [1] my starPoint
       vertices.add(origin);
-      vertices.add(starPoint);//vertices[0] will be origin and [1] my starPoint, the next 360 will be my base:
-      insertPointsForBase(360);
-      insertDivisionsOnBase();
+      vertices.add(starPoint);
+      insertPointsForBase();
       
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
@@ -74,31 +74,30 @@ implements KeyListener, FocusListener, MouseListener {
       
    } // end init();
    
-   public void insertPointsForBase(int numbPoints){
+   public void insertPointsForBase(){
       double angleOfCone = Math.atan(heightCone/radioCone);
       angleOfCone = Math.toDegrees(angleOfCone);
       double currentHeight = heightCone;
       double newRadio;
       double heightForEachSection = heightCone/heightSections;
+      double degreesForEachSection = 360/baseSections;
 
       for(int i = 0; i < heightSections; i++){
          currentHeight = heightCone - i*heightForEachSection;
          newRadio = currentHeight/Math.tan(Math.toRadians(angleOfCone));
-
-         for(int j = 1; j <= numbPoints; j++){
-            vertices.add(new Point3D(newRadio*Math.cos(Math.toRadians(j)), i*heightForEachSection, newRadio*Math.sin(Math.toRadians(j))));
+         for(int j = 1; j <= baseSections+1; j++){
+            Point3D myVertice = new Point3D(newRadio*Math.cos(Math.toRadians(degreesForEachSection*j)), i*heightForEachSection, newRadio*Math.sin(Math.toRadians(degreesForEachSection*j)));
+            vertices.add(myVertice);
+            int actualIndex = vertices.indexOf(myVertice);
             if(j != 1){
-               edges.add(new Edge(((360*i)+j), (360*i)+j+1));
+               edges.add(new Edge(actualIndex-1, actualIndex));
+            }
+            //the base
+            if(i ==0){
+               edges.add(new Edge(0, actualIndex));
+               edges.add(new Edge(1, actualIndex));
             }
          }
-      }
-   }
-   
-   public void insertDivisionsOnBase(){
-      double degreesForEachSection = 360/baseSections;
-      for(int i = 1; i <= baseSections; i++){
-         edges.add(new Edge(0, (int)(i*degreesForEachSection)+1));
-         edges.add(new Edge(1, (int)(i*degreesForEachSection)+1));
       }
    }
    
