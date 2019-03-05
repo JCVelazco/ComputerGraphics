@@ -75,6 +75,7 @@ implements KeyListener, FocusListener, MouseListener {
    } // end init();
    
    public void insertPointsForBase(){
+      double actualHeight = -heightCone/2;
       //angulo exterior
       double angleOfCone = Math.atan(heightCone/radioCone);
       angleOfCone = Math.toDegrees(angleOfCone);
@@ -84,21 +85,23 @@ implements KeyListener, FocusListener, MouseListener {
       double heightForEachSection = heightCone/heightSections;
       double degreesForEachSection = 360.00/baseSections;
 
-      double actualHeight = -heightCone/2;
-
+      //for para agregar los diferentes niveles de altura
       for(int i = 0; i < heightSections; i++){
-         actualHeight = -heightCone/2;
-         actualHeight = actualHeight + i*heightForEachSection;
+         //-heightCone/2 es donde esta la base, en cada iteracion subimos de altura
+         actualHeight = -heightCone/2 + i*heightForEachSection;
+         //formulas para obtener nuevo radio del nuevo nivel de altura
          diffHeight = heightCone - i*heightForEachSection;
          newRadio = diffHeight/Math.tan(Math.toRadians(angleOfCone));
+         //creamos la seccion, la primera iteracion es la base
          for(int j = 1; j <= baseSections+1; j++){
             Point3D myVertice = new Point3D(newRadio*Math.cos(Math.toRadians(degreesForEachSection*j)), actualHeight, newRadio*Math.sin(Math.toRadians(degreesForEachSection*j)));
             vertices.add(myVertice);
             int actualIndex = vertices.indexOf(myVertice);
+            //apartir del segundo punto uniremos el actual con el pasado
             if(j != 1){
                edges.add(new Edge(actualIndex-1, actualIndex));
             }
-            //the base
+            //si estamos en los puntos de la base, agregar edges de estos puntos a la punta y al centro de la base
             if(i ==0){
                edges.add(new Edge(0, actualIndex));
                edges.add(new Edge(1, actualIndex));
