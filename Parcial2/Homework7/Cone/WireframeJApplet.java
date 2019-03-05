@@ -58,10 +58,10 @@ implements KeyListener, FocusListener, MouseListener {
       vertices = new ArrayList<Point3D>();
       edges = new ArrayList<Edge>();
       
-      Point3D origin = new Point3D(0, 0, 0);
-      Point3D starPoint = new Point3D(0, heightCone, 0);
-      //vertices[0] will be origin and [1] my starPoint
-      vertices.add(origin);
+      Point3D centerOfBase = new Point3D(0, -heightCone/2, 0);
+      Point3D starPoint = new Point3D(0, heightCone/2, 0);
+      //vertices[0] will be centerOfBase and [1] my starPoint
+      vertices.add(centerOfBase);
       vertices.add(starPoint);
       insertPointsForBase();
       
@@ -75,18 +75,24 @@ implements KeyListener, FocusListener, MouseListener {
    } // end init();
    
    public void insertPointsForBase(){
+      //angulo exterior
       double angleOfCone = Math.atan(heightCone/radioCone);
       angleOfCone = Math.toDegrees(angleOfCone);
-      double currentHeight = heightCone;
+      //data to calculate the new radio of each new section
+      double diffHeight = heightCone;
       double newRadio;
       double heightForEachSection = heightCone/heightSections;
-      double degreesForEachSection = 360/baseSections;
+      double degreesForEachSection = 360.00/baseSections;
+
+      double actualHeight = -heightCone/2;
 
       for(int i = 0; i < heightSections; i++){
-         currentHeight = heightCone - i*heightForEachSection;
-         newRadio = currentHeight/Math.tan(Math.toRadians(angleOfCone));
+         actualHeight = -heightCone/2;
+         actualHeight = actualHeight + i*heightForEachSection;
+         diffHeight = heightCone - i*heightForEachSection;
+         newRadio = diffHeight/Math.tan(Math.toRadians(angleOfCone));
          for(int j = 1; j <= baseSections+1; j++){
-            Point3D myVertice = new Point3D(newRadio*Math.cos(Math.toRadians(degreesForEachSection*j)), i*heightForEachSection, newRadio*Math.sin(Math.toRadians(degreesForEachSection*j)));
+            Point3D myVertice = new Point3D(newRadio*Math.cos(Math.toRadians(degreesForEachSection*j)), actualHeight, newRadio*Math.sin(Math.toRadians(degreesForEachSection*j)));
             vertices.add(myVertice);
             int actualIndex = vertices.indexOf(myVertice);
             if(j != 1){
