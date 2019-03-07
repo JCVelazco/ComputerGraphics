@@ -10,8 +10,8 @@ class Cone{
             double radioCone = 1;
             double heightCone = 1;
 
-            int baseSections = 1;
-            int heightSections = 1;
+            int baseSections = 10;
+            int heightSections = 4;
 
             try{
                   radioCone = Double.parseDouble(args[0]);

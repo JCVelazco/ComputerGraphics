@@ -38,19 +38,17 @@ implements KeyListener, FocusListener, MouseListener {
    DisplayPanel canvas;
    
    double radioSphere;
-   double heightSphere;
-
-   int meridianos;
-   int paralelos;
    
-   public void setSizes(double radioSphere, double heightSphere){
-      this.heightSphere = heightSphere;
+   int yCuts;
+   int xzCuts;
+   
+   public void setSizes(double radioSphere){
       this.radioSphere = radioSphere;
    }
    
-   public void setSections(int meridianos, int paralelos){
-      this.meridianos = meridianos;
-      this.paralelos = paralelos;
+   public void setSections(int yCuts, int xzCuts){
+      this.yCuts = yCuts;
+      this.xzCuts = xzCuts;
    }
    
    public void init() {
@@ -58,9 +56,12 @@ implements KeyListener, FocusListener, MouseListener {
       vertices = new ArrayList<Point3D>();
       edges = new ArrayList<Edge>();
       
-      Point3D starPoint = new Point3D(0, heightCone, 0);
-      vertices.add(starPoint);//[0] my topPoint, the next 360 will be my center:
-      //insertPointsForBase(360);
+      Point3D northPole = new Point3D(0, radioSphere, 0);
+      Point3D southPole = new Point3D(0, -radioSphere, 0);
+      //vertices[0] will be northPole and [1] my southPole
+      vertices.add(northPole);
+      vertices.add(southPole);
+      insertPointsForBase();
       
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
@@ -70,27 +71,65 @@ implements KeyListener, FocusListener, MouseListener {
       canvas.addMouseListener(this);
       
    } // end init();
-   /*
-   public void insertPointsForBase(int numbPoints){
-      double angleOfCone = Math.atan(heightCone/radioCone);
-      angleOfCone = Math.toDegrees(angleOfCone);
-      double currentHeight = heightCone;
-      double newRadio;
-      double heightForEachSection = heightCone/heightSections;
-
-      for(int i = 0; i < heightSections; i++){
-         currentHeight = heightCone - i*heightForEachSection;
-         newRadio = currentHeight/Math.tan(Math.toRadians(angleOfCone));
-
-         for(int j = 1; j <= numbPoints; j++){
-            vertices.add(new Point3D(newRadio*Math.cos(Math.toRadians(j)), i*heightForEachSection, newRadio*Math.sin(Math.toRadians(j))));
-            if(j != 1){
-               edges.add(new Edge(((360*i)+j), (360*i)+j+1));
-            }
-         }
-      }
-   }*/
    
+   public void insertPointsForBase(){
+      double actualHeight;
+      double newRadio;
+      double heightForEachSection = radioSphere/xzCuts*2;
+      double degreesForEachSection = 360.00/yCuts;
+
+      for(int i = 0; i < (xzCuts/2)+xzCuts%2; i++){
+         if(xzCuts%2!=0 && i!=0){
+            actualHeight = (i*heightForEachSection)-(heightForEachSection/2);
+         }else{
+            actualHeight = i*heightForEachSection;
+         }
+         newRadio = Math.sqrt((Math.pow(radioSphere,2))-(Math.pow(heightForEachSection*i,2)));
+         for(int j = 1; j <= yCuts+1; j++){
+            Point3D myVertice = new Point3D(newRadio*Math.cos(Math.toRadians(degreesForEachSection*j)), actualHeight, newRadio*Math.sin(Math.toRadians(degreesForEachSection*j)));
+            vertices.add(myVertice);
+            int actualIndex = vertices.indexOf(myVertice);
+            if(j != 1){
+               if(xzCuts%2!=0 && i!=0) 
+                  edges.add(new Edge(actualIndex-1, actualIndex));
+                  else if(xzCuts%2==0)
+                  edges.add(new Edge(actualIndex-1, actualIndex));
+            }
+            if(i ==((xzCuts/2)+xzCuts%2)-1){
+               edges.add(new Edge(0, actualIndex));
+            }
+            if(i !=0){
+               edges.add(new Edge(actualIndex, actualIndex-yCuts-1));
+            }
+      }
+      }
+
+      for(int i = 0; i < (xzCuts/2)+xzCuts%2; i++){
+         if(xzCuts%2!=0 && i!=0){
+            actualHeight = (i*heightForEachSection)-(heightForEachSection/2);
+         }else{
+            actualHeight = i*heightForEachSection;
+         }
+         newRadio = Math.sqrt((Math.pow(radioSphere,2))-(Math.pow(heightForEachSection*i,2)));
+         for(int j = 1; j <= yCuts+1; j++){
+            Point3D myVertice = new Point3D(newRadio*Math.cos(Math.toRadians(degreesForEachSection*j)), -actualHeight, newRadio*Math.sin(Math.toRadians(degreesForEachSection*j)));
+            vertices.add(myVertice);
+            int actualIndex = vertices.indexOf(myVertice);
+            if(j != 1){
+               if(xzCuts%2!=0 && i!=0) 
+                  edges.add(new Edge(actualIndex-1, actualIndex));
+                  else if(xzCuts%2==0)
+                  edges.add(new Edge(actualIndex-1, actualIndex));
+            }
+            if(i ==((xzCuts/2)+xzCuts%2)-1){
+               edges.add(new Edge(1, actualIndex));
+            }
+            if(i !=0){
+               edges.add(new Edge(actualIndex, actualIndex-yCuts-1));
+            }
+      }
+      }    
+   }
    
    class DisplayPanel extends JPanel {
       public void paintComponent(Graphics g) {
