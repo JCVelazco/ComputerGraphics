@@ -44,10 +44,9 @@ public class Main extends JPanel{
 		double numOfBranches = getRandomNumberOfBranches();
 		for(int i = 0; i < numOfBranches; i++){
 			int angleForTheNewBranch = getRandomAngle();
-			double lenghtForTheNewBranch = getRandomLength();
 			double sizeOfBranch = distanceBTwoPoints(firstP, secondP);
-			lenghtForTheNewBranch *= sizeOfBranch;
-			Point newPoint = getPointOfStart(firstP, lenghtForTheNewBranch, angle);
+			double lenghtForTheNewBranch = sizeOfBranch/2;
+			Point newPoint = getPointOfStart(firstP, sizeOfBranch, angle);
 			//i create this second one, because when i use goForwardDrawing the values of this points will be updated to the end of the line
 			Point startOfPoint = new Point(newPoint.x, newPoint.y);
 			
@@ -113,8 +112,8 @@ public class Main extends JPanel{
 	}
 	
 	public double getRandomNumberOfBranches(){
-		//from 2 to 5
-		int min = 2, max = 6;
+		//from 3 to 8
+		int min = 3, max = 7;
 		return ThreadLocalRandom.current().nextInt(min, max);
 	}
 	
@@ -124,14 +123,8 @@ public class Main extends JPanel{
 		return ThreadLocalRandom.current().nextInt(min, max);
 	}
 	
-	public double getRandomLength(){
-		//from 0.3 to 0.7
-		double min = 0.3, max = 0.8;
-		return ThreadLocalRandom.current().nextDouble(min, max);
-	}
-	
 	public Point getPointOfStart(Point firstP, double length, int angle){
-		double min = 0, max = 1.1;
+		double min = 0.3, max = 1;
 		double lengthToNewPoint = ThreadLocalRandom.current().nextDouble(min, max);
 		lengthToNewPoint *= length;
 		Point myNewPoint = new Point(firstP.x,firstP.y);
