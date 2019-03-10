@@ -39,9 +39,9 @@ public class WireframeJApplet extends JApplet
    
    DisplayPanel canvas;
    
-   double xSize = 6;
+   double xSize = 7;
    double ySize = 1;
-   double zSize = 6;
+   double zSize = 7;
    
    int xSections;
    int ySections;
@@ -61,33 +61,20 @@ public class WireframeJApplet extends JApplet
 
    public void init() {
 
-      vertices = new ArrayList<Point3D>();
-      vertices.add(new Point3D( -xSize/2, getRandom(-ySize, ySize), zSize/2 )); 
-      vertices.add(new Point3D( -xSize/2, getRandom(-ySize, ySize), 0 )); 
-      vertices.add(new Point3D( -xSize/2, getRandom(-ySize, ySize), -zSize/2 ));
-
-      vertices.add(new Point3D( 0,  getRandom(-ySize, ySize), zSize/2 ));
-      vertices.add(new Point3D(0, getRandom(-ySize, ySize), 0));
-      vertices.add(new Point3D( 0,  getRandom(-ySize, ySize), -zSize/2 ));
-
-      vertices.add(new Point3D( xSize/2,  getRandom(-ySize, ySize), zSize/2 ));
-      vertices.add(new Point3D( xSize/2,  getRandom(-ySize, ySize), 0 ));
-      vertices.add(new Point3D( xSize/2,  getRandom(-ySize, ySize), -zSize/2 ));
-
+      //Primeros cuatro puntos del plano 2x2
+      Point3D a = new Point3D( -xSize/2, getRandom(-ySize, ySize), zSize/2 ); 
+      Point3D b = new Point3D( -xSize/2, getRandom(-ySize, ySize), -zSize/2 );
+      Point3D c = new Point3D( xSize/2, getRandom(-ySize, ySize), -zSize/2 ); 
+      Point3D d = new Point3D( xSize/2, getRandom(-ySize, ySize), zSize/2 );
+      
+      vertices = new ArrayList<Point3D>(); 
       edges = new ArrayList<Edge>();
-      edges.add(new Edge(0, 1));
-      edges.add(new Edge(1, 2));
-      edges.add(new Edge(3, 4));
-      edges.add(new Edge(4, 5));
-      edges.add(new Edge(6, 7));
-      edges.add(new Edge(7, 8));
-      edges.add(new Edge(0, 3));
-      edges.add(new Edge(3, 6));
-      edges.add(new Edge(1, 4));
-      edges.add(new Edge(4, 7));
-      edges.add(new Edge(2, 5));
-      edges.add(new Edge(5, 8));
-
+      Point3D[][] matrix = {{a,d},{b,c}};
+      int iterations = 6;
+      //Aquí comienza el procedimiento
+      Point3D[][] finalMatrix = squaredDiamond(matrix, iterations);
+      //Una vez teniendo la matriz completa, se manda a formato vertices/edges
+      setEdges(finalMatrix);
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
    
@@ -97,6 +84,121 @@ public class WireframeJApplet extends JApplet
       
    } // end init();
 
+   //Este método controla los pasos del procedimiento
+   public Point3D[][] squaredDiamond(Point3D[][] matrix, int iterations){
+      Point3D[][] actualMatrix = matrix;
+      Point3D[][] newMatrix;
+      for(int i=0; i<iterations; i++){
+      newMatrix = placeValues(actualMatrix); 
+      newMatrix = getCenters(newMatrix,i+1);
+      newMatrix = getAdyacent(newMatrix,i+1);
+      //printMatrix(newMatrix);
+      actualMatrix = newMatrix;
+      }
+      return actualMatrix;
+   }
+
+   //Se crea matriz 2*n-1 y se ingresan los valores de la matriz pasada en sus respectivos lugares
+   public Point3D[][] placeValues(Point3D[][] actualMatrix){
+
+      Point3D[][] newMatrix = new Point3D[(actualMatrix[0].length*2)-1][(actualMatrix[0].length*2)-1];
+
+      for(int i=0; i<actualMatrix[0].length;i++){
+         for(int j=0; j<actualMatrix[0].length;j++){
+            newMatrix[i*2][j*2] = actualMatrix[i][j]; 
+         }
+      }
+      return newMatrix;
+   }
+   
+   //Se calculan los centros de la matriz
+   public Point3D[][] getCenters(Point3D[][] matrix, int times){
+      for(int i=0; i<matrix[0].length/2;i++){
+         for(int j=0; j<matrix[0].length/2;j++){
+            int newi = (i*2)+1, newj= (j*2)+1;
+            double averagex = (matrix[newi-1][newj-1].x + matrix[newi+1][newj+1].x)/2;
+            double averagez = (matrix[newi-1][newj-1].z + matrix[newi+1][newj+1].z)/2;
+            double averagey = (matrix[newi-1][newj-1].y + matrix[newi+1][newj+1].y + matrix[newi+1][newj-1].y + matrix[newi-1][newj+1].y)/4;
+            //Aquí se calcula el delta y times es el smoother
+            averagey += (getRandom(-1, 1))/times;
+            matrix[newi][newj] = new Point3D(averagex,averagey,averagez); 
+         }
+      }
+
+      return matrix;
+   }
+
+   //Se calculan todos los espacios adyacentes restantes
+   public Point3D[][] getAdyacent(Point3D[][] matrix, int times){
+      double x,averagey,z;
+      for(int i=0; i<matrix[0].length;i++){
+         for(int j=0; j<matrix[0].length;j++){
+            if(matrix[i][j] == null){
+               if(i==0){
+                  x = matrix[i+1][j].x;
+                  z = matrix[i][j+1].z;
+                  averagey = (matrix[i][j+1].y+matrix[i][j-1].y+matrix[i+1][j].y)/3;
+               }else if(j==0){
+                  x = matrix[i+1][j].x;
+                  z = matrix[i][j+1].z;
+                  averagey = (matrix[i][j+1].y+matrix[i-1][j].y+matrix[i+1][j].y)/3;
+               }else if(i==matrix[0].length-1){
+                  x = matrix[i-1][j].x;
+                  z = matrix[i][j+1].z;
+                  averagey = (matrix[i][j+1].y+matrix[i][j-1].y+matrix[i-1][j].y)/3;
+               }else if(j==matrix[0].length-1){
+                  x = matrix[i+1][j].x;
+                  z = matrix[i][j-1].z;
+                  averagey = (matrix[i][j-1].y+matrix[i-1][j].y+matrix[i+1][j].y)/3;
+               }else{
+                  x = matrix[i+1][j].x;
+                  z = matrix[i][j+1].z;
+                  averagey = (matrix[i][j+1].y+matrix[i][j-1].y+matrix[i+1][j].y+matrix[i-1][j].y)/4;
+               }
+               averagey += getRandom(-1,1)/times;
+               matrix[i][j]= new Point3D(x, averagey, z);
+            }
+         }
+      }
+
+      return matrix;
+   }
+   //Aquí se ingresan los vertices y se crean los edges para enviar a dibujar
+   public void setEdges(Point3D[][] matrix){
+      for(int i=0; i<matrix[0].length;i++){
+         for(int j=0; j<matrix[0].length;j++){
+            vertices.add(matrix[i][j]);
+         }
+      }
+      int count = (int)Math.sqrt(vertices.size());
+      
+      for(int k=0; k<vertices.size(); k++){
+         if(k-count>= 0 ){
+            edges.add(new Edge(k-count,k ));
+         }
+         if(k-1>=0 && k%count !=0){
+            edges.add(new Edge(k-1, k));
+         }
+         if(k+1<vertices.size() && (k+1)%count !=0 ){
+            edges.add(new Edge(k, k+1));
+         }
+         if(k+count<vertices.size()){
+            edges.add(new Edge(k, k+count));
+         }
+      }
+   }
+
+   //Método para debugear que imprime la matriz
+   public void printMatrix(Point3D[][] matrix){
+      for(int i=0; i<matrix[0].length;i++){
+         for(int j=0; j<matrix[0].length;j++){
+            System.out.print(matrix[i][j].x + "  ");
+         }
+         System.out.println();
+      }
+   }
+
+   //Devuelve un valor random
    public static double getRandom(double min, double max){
 		return ThreadLocalRandom.current().nextDouble(min, max);
    } 
@@ -166,8 +268,18 @@ public class WireframeJApplet extends JApplet
             g.setColor( Color.black );
             g.fillRect( 0, 0, width, height );
             g.setColor( Color.white );
+            
 
             for ( j = 0; j < edges.size(); ++j ) {
+
+               //Aquí se calculan los colores dependiendo de la altura en 'y', tomando en cuenta que el centro de 'y' es 400
+               /*if((points[ (edges.get(j).a) ].y + points[ (edges.get(j).b) ].y)/2 < 350)
+               g.setColor( Color.GREEN );
+            else if((points[ (edges.get(j).a) ].y + points[ (edges.get(j).b) ].y)/2 > 450)
+               g.setColor( Color.BLUE );
+            else 
+               g.setColor(new Color(101, 67, 33));*/
+
                g.drawLine(
                   points[ (edges.get(j).a) ].x, points[ (edges.get(j).a) ].y,
                   points[ (edges.get(j).b) ].x, points[ (edges.get(j).b) ].y

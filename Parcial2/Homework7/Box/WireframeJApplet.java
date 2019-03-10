@@ -3,7 +3,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.Arrays;
 
 class Point3D {
    public double x, y, z;
@@ -11,6 +12,25 @@ class Point3D {
       this.x = x;  
       this.y = y;  
       this.z = z;
+   }
+}
+
+class Face {
+   public Point3D a,b,c,d;
+   public Face(Point3D a, Point3D b, Point3D c, Point3D d) {
+      this.a = a;  
+      this.b = b;  
+      this.c = c;
+      this.d = d;
+   }
+}
+
+class FaceAv implements Comparable<FaceAv> {
+   public int index;
+   public double avg;
+   public FaceAv(int index, double avg) {
+      this.index = index;  
+      this.avg = avg;  
    }
 }
 
@@ -29,7 +49,12 @@ public class WireframeJApplet extends JApplet
 
    int azimuth = 35, elevation = 30;
    //rotation y, and x
-   
+   Point3D a = new Point3D(1,2,3);
+   Point3D b = new Point3D(4,5,6);
+   Point3D c = new Point3D(7,8,9);
+   Point3D d = new Point3D(10,11,12);
+   Face myface = new Face(a,b,c,d);
+   double myavg = zAvg(myface);
    ArrayList<Point3D> vertices;
    ArrayList<Edge> edges;
 
@@ -58,6 +83,14 @@ public class WireframeJApplet extends JApplet
    }
 
    public void init() {
+      ArrayList<FaceAv> thisavg = new ArrayList<FaceAv>();
+      thisavg.add(new FaceAv(1,2.5)); 
+      thisavg.add(new FaceAv(2,0.3));
+      thisavg.add(new FaceAv(3,5.7));
+      Collections.sort(thisavg);
+      for(FaceAv face : thisavg){
+         System.out.println(face);
+      }
 
       vertices = new ArrayList<Point3D>();
       //origin
@@ -154,6 +187,16 @@ public class WireframeJApplet extends JApplet
          Edge edge2To0 = new Edge(indexOfStart+3, indexOfStart);
          edges.add(edge0To1);edges.add(edge1To3);edges.add(edge3To2);edges.add(edge2To0);
       }
+   }
+
+   public double zAvg(Face face){
+      Point3D a = face.a;
+      Point3D b = face.b;
+      Point3D c = face.c;
+      Point3D d = face.d;
+      double avg = (a.z + b.z + c.z + d.z)/4;
+      System.out.println(avg);
+      return avg;
    }
 
    
