@@ -38,26 +38,10 @@ public class WireframeJApplet extends JApplet
    boolean focussed = false;   // True when this applet has input focus.
    
    DisplayPanel canvas;
-   
-   double xSize = 7;
+   //hardcoded values for x and z, y will be the -+ySize max o min value
+   double xSize = 6;
    double ySize = 1;
-   double zSize = 7;
-   
-   int xSections;
-   int ySections;
-   int zSections;
-
-   public void setSizes(double xSize, double ySize, double zSize){
-      this.xSize = xSize;
-      this.ySize = ySize;
-      this.zSize = zSize;
-   }
-
-   public void setSections(int xSections, int ySections, int zSections){
-      this.xSections = xSections;
-      this.ySections = ySections;
-      this.zSections = zSections;
-   }
+   double zSize = 6;
 
    public void init() {
 
@@ -69,12 +53,16 @@ public class WireframeJApplet extends JApplet
       
       vertices = new ArrayList<Point3D>(); 
       edges = new ArrayList<Edge>();
-      Point3D[][] matrix = {{a,d},{b,c}};
+
+      Point3D[][] matrix = {{a,d},
+                            {b,c}};
+
       int iterations = 6;
-      //Aquí comienza el procedimiento
+      //Aquí comienza el procedimiento of creating the new matrix
       Point3D[][] finalMatrix = squaredDiamond(matrix, iterations);
       //Una vez teniendo la matriz completa, se manda a formato vertices/edges
       setEdges(finalMatrix);
+
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
    
@@ -88,21 +76,19 @@ public class WireframeJApplet extends JApplet
    public Point3D[][] squaredDiamond(Point3D[][] matrix, int iterations){
       Point3D[][] actualMatrix = matrix;
       Point3D[][] newMatrix;
+
       for(int i=0; i<iterations; i++){
-      newMatrix = placeValues(actualMatrix); 
+      newMatrix = placeInitialValues(actualMatrix); 
       newMatrix = getCenters(newMatrix,i+1);
       newMatrix = getAdyacent(newMatrix,i+1);
-      //printMatrix(newMatrix);
       actualMatrix = newMatrix;
       }
       return actualMatrix;
    }
 
    //Se crea matriz 2*n-1 y se ingresan los valores de la matriz pasada en sus respectivos lugares
-   public Point3D[][] placeValues(Point3D[][] actualMatrix){
-
+   public Point3D[][] placeInitialValues(Point3D[][] actualMatrix){
       Point3D[][] newMatrix = new Point3D[(actualMatrix[0].length*2)-1][(actualMatrix[0].length*2)-1];
-
       for(int i=0; i<actualMatrix[0].length;i++){
          for(int j=0; j<actualMatrix[0].length;j++){
             newMatrix[i*2][j*2] = actualMatrix[i][j]; 
@@ -118,6 +104,7 @@ public class WireframeJApplet extends JApplet
             int newi = (i*2)+1, newj= (j*2)+1;
             double averagex = (matrix[newi-1][newj-1].x + matrix[newi+1][newj+1].x)/2;
             double averagez = (matrix[newi-1][newj-1].z + matrix[newi+1][newj+1].z)/2;
+            //we calculate 4 with 4 values because all the y's that surround it are totally different
             double averagey = (matrix[newi-1][newj-1].y + matrix[newi+1][newj+1].y + matrix[newi+1][newj-1].y + matrix[newi-1][newj+1].y)/4;
             //Aquí se calcula el delta y times es el smoother
             averagey += (getRandom(-1, 1))/times;
@@ -133,38 +120,45 @@ public class WireframeJApplet extends JApplet
       double x,averagey,z;
       for(int i=0; i<matrix[0].length;i++){
          for(int j=0; j<matrix[0].length;j++){
+            //if there is no value...
             if(matrix[i][j] == null){
+               //if i am in the first row (i can't i-1)
                if(i==0){
                   x = matrix[i+1][j].x;
                   z = matrix[i][j+1].z;
                   averagey = (matrix[i][j+1].y+matrix[i][j-1].y+matrix[i+1][j].y)/3;
+               //if i am in the first col (i can't j-1)
                }else if(j==0){
                   x = matrix[i+1][j].x;
                   z = matrix[i][j+1].z;
                   averagey = (matrix[i][j+1].y+matrix[i-1][j].y+matrix[i+1][j].y)/3;
+               //if i am in the last row (i can't i+1)
                }else if(i==matrix[0].length-1){
                   x = matrix[i-1][j].x;
                   z = matrix[i][j+1].z;
                   averagey = (matrix[i][j+1].y+matrix[i][j-1].y+matrix[i-1][j].y)/3;
+               //if i am in the last col (i can't j+1)
                }else if(j==matrix[0].length-1){
                   x = matrix[i+1][j].x;
                   z = matrix[i][j-1].z;
                   averagey = (matrix[i][j-1].y+matrix[i-1][j].y+matrix[i+1][j].y)/3;
+               //middle cases
                }else{
                   x = matrix[i+1][j].x;
                   z = matrix[i][j+1].z;
                   averagey = (matrix[i][j+1].y+matrix[i][j-1].y+matrix[i+1][j].y+matrix[i-1][j].y)/4;
                }
+               //times as smother
                averagey += getRandom(-1,1)/times;
                matrix[i][j]= new Point3D(x, averagey, z);
             }
          }
       }
-
       return matrix;
    }
    //Aquí se ingresan los vertices y se crean los edges para enviar a dibujar
    public void setEdges(Point3D[][] matrix){
+      //add all the points of the matrix in the array
       for(int i=0; i<matrix[0].length;i++){
          for(int j=0; j<matrix[0].length;j++){
             vertices.add(matrix[i][j]);
