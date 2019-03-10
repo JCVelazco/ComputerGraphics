@@ -158,26 +158,31 @@ public class WireframeJApplet extends JApplet
    }
    //Aquí se ingresan los vertices y se crean los edges para enviar a dibujar
    public void setEdges(Point3D[][] matrix){
-      //add all the points of the matrix in the array
       for(int i=0; i<matrix[0].length;i++){
          for(int j=0; j<matrix[0].length;j++){
-            vertices.add(matrix[i][j]);
-         }
-      }
-      int count = (int)Math.sqrt(vertices.size());
-      
-      for(int k=0; k<vertices.size(); k++){
-         if(k-count>= 0 ){
-            edges.add(new Edge(k-count,k ));
-         }
-         if(k-1>=0 && k%count !=0){
-            edges.add(new Edge(k-1, k));
-         }
-         if(k+1<vertices.size() && (k+1)%count !=0 ){
-            edges.add(new Edge(k, k+1));
-         }
-         if(k+count<vertices.size()){
-            edges.add(new Edge(k, k+count));
+            int actualIndex;
+            //check if the actual Point is already in the vertices array and save the index
+            if(vertices.indexOf(matrix[i][j]) !=  -1){
+               actualIndex = vertices.indexOf(matrix[i][j]);
+            }else{
+               //add it and save the index
+               vertices.add(matrix[i][j]);
+               actualIndex= vertices.indexOf(matrix[i][j]);
+            }
+            //try to connect with my right side: 
+            if(j+1 < matrix[0].length ){
+               Point3D rightPoint = matrix[i][j+1];
+               vertices.add(rightPoint);
+               int rightindex= vertices.indexOf(rightPoint);
+               edges.add(new Edge(actualIndex, rightindex));
+            }
+            //try to connect with my right side:
+            if(i+1 < matrix[0].length ){
+               Point3D downPoint = matrix[i+1][j];
+               vertices.add(downPoint);
+               int downIndex= vertices.indexOf(downPoint);
+               edges.add(new Edge(actualIndex, downIndex));
+            }
          }
       }
    }
