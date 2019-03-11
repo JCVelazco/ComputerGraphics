@@ -33,6 +33,10 @@ implements KeyListener, FocusListener, MouseListener {
    int azimuth = 35, elevation = 30;
    //rotation y, and x
    
+   //ranges for colors in the landscape
+   double startOfWaterHeight = -0.3;//for blue
+   double startOfGreenZonesHeight = 0.3;//for green
+   
    ArrayList<Point3D> vertices;
    ArrayList<Edge> edges;
    
@@ -175,14 +179,24 @@ implements KeyListener, FocusListener, MouseListener {
                Point3D rightPoint = matrix[i][j+1];
                vertices.add(rightPoint);
                int rightindex= vertices.indexOf(rightPoint);
-               edges.add(new Edge(actualIndex, rightindex, defineColor(actualIndex, rightindex)));
+               Color myColor = defineColor(actualIndex, rightindex);
+               edges.add(new Edge(actualIndex, rightindex, myColor));
+               //RANDOM to check if add tree or not (only in green and brown sections)
+               if(myColor != Color.BLUE && getRandomInt(0, 101) < 1){//1% of prob and check if no lake
+                  addTreeEdges(actualIndex);
+               }
             }
             //try to connect with my right side
             if(i+1 < matrix[0].length ){
                Point3D downPoint = matrix[i+1][j];
                vertices.add(downPoint);
                int downIndex= vertices.indexOf(downPoint);
-               edges.add(new Edge(actualIndex, downIndex, defineColor(actualIndex, downIndex)));
+               Color myColor = defineColor(actualIndex, downIndex);
+               edges.add(new Edge(actualIndex, downIndex, myColor));
+               //RANDOM to check if add tree or not (only in green and brown sections)
+               if(myColor != Color.BLUE && getRandomInt(0, 101) < 1){//1% of prob and check if no lake
+                  addTreeEdges(actualIndex);
+               }
             }
          }
       }
@@ -193,10 +207,10 @@ implements KeyListener, FocusListener, MouseListener {
       Point3D firstP = vertices.get(firstIndex);
       Point3D secondP = vertices.get(secondIndex);
       double promedioY = (firstP.y + secondP.y)/2;
-
-      if(promedioY < -0.5){
+      
+      if(promedioY < startOfWaterHeight){
          return Color.BLUE;
-      }else if(promedioY > 0.5){
+      }else if(promedioY > startOfGreenZonesHeight){
          return Color.GREEN;
       }else{
          return new Color(100,65,30);
@@ -217,6 +231,79 @@ implements KeyListener, FocusListener, MouseListener {
    public static double getRandom(double min, double max){
       return ThreadLocalRandom.current().nextDouble(min, max);
    } 
+   
+   //Devuelve un valor random int
+   public static int getRandomInt(int min, int max){
+      return ThreadLocalRandom.current().nextInt(min, max);
+   } 
+   
+   //according to a point this method will create a random fractl tree over it
+   public void addTreeEdges(int indexOfPoint){
+      //Main branch of the tree (brown)
+      Point3D startOfMainTree = vertices.get(indexOfPoint);
+      double heightOfMainTree = getRandom(0.3, 0.6);
+      Point3D endOfMainTree = new Point3D(startOfMainTree.x, startOfMainTree.y + heightOfMainTree, startOfMainTree.z);
+      vertices.add(startOfMainTree);
+      int indexOfStart = vertices.indexOf(startOfMainTree);
+      vertices.add(endOfMainTree);
+      int indexOfEnd = vertices.indexOf(endOfMainTree);
+      edges.add(new Edge(indexOfStart, indexOfEnd, new Color(175,95,15)));
+      
+      //with this branch Points i call the method that will create the other branches for the tree
+      int numOfIterations = getRandomInt(3, 7);
+      addBranchesToEdges(startOfMainTree, endOfMainTree, numOfIterations, 90, 90);
+   }
+   
+   //zngle is the angle of z, it;s diffrent that the one of x and y because this will be random in some occasions
+   public void addBranchesToEdges(Point3D firstP, Point3D secondP, int iterations, int angle, int zAngle){
+      if(iterations == 0)return;
+      
+      double numOfBranches = getRandomInt(2, 6);
+      for(int i = 0; i < numOfBranches; i++){
+         int angleForTheNewBranch = getRandomInt(10, 35);
+         int angleForTheNewBranchInZ = getRandomInt(1, 360);
+
+         double sizeOfBranch = Math.sqrt(Math.pow((firstP.x-secondP.x), 2) + Math.pow((firstP.y-secondP.y), 2) + Math.pow((firstP.z-secondP.z), 2));
+         double lenghtForTheNewBranch = sizeOfBranch/3;
+         Point3D newPoint = getPointOfStart(firstP, sizeOfBranch, angle, zAngle);
+         
+         //i create this second one, because when i use goForwardDrawing the values of this points will be updated to the end of the line
+         Point3D startOfPoint = new Point3D(newPoint.x, newPoint.y, newPoint.z);
+         vertices.add(startOfPoint);
+         int indexOfStart = vertices.indexOf(startOfPoint);
+         
+         if(i%2 == 0){
+            //to the random right x, random z
+            goFoward(lenghtForTheNewBranch, newPoint, angle-angleForTheNewBranch, angle-angleForTheNewBranchInZ);
+            vertices.add(newPoint);
+            int indexOfEnd = vertices.indexOf(newPoint);
+            edges.add(new Edge(indexOfStart, indexOfEnd, new Color(10, 100, 5)));
+            addBranchesToEdges(startOfPoint, newPoint, iterations-1, angle-angleForTheNewBranch, (zAngle-angleForTheNewBranchInZ));
+         }else{
+            //to the left y, random z
+            goFoward(lenghtForTheNewBranch, newPoint, angle+angleForTheNewBranch, angle+angleForTheNewBranchInZ);
+            vertices.add(newPoint);
+            int indexOfEnd = vertices.indexOf(newPoint);
+            edges.add(new Edge(indexOfStart, indexOfEnd, new Color(10, 100, 5)));
+            addBranchesToEdges(startOfPoint, newPoint, iterations-1, angle+angleForTheNewBranch, (zAngle+angleForTheNewBranchInZ));
+         }
+      }
+   }
+   
+   public Point3D getPointOfStart(Point3D firstP, double length, int angle, int anglez){
+      double min = 0.3, max = 1;
+      double lengthToNewPoint = ThreadLocalRandom.current().nextDouble(min, max);
+      lengthToNewPoint *= length;
+      Point3D myNewPoint = new Point3D(firstP.x,firstP.y,firstP.z);
+      goFoward(lengthToNewPoint, myNewPoint, angle, anglez);
+      return myNewPoint;
+   }
+   
+   public void goFoward(double pixels, Point3D myActuaPoint, int degree, int degreez){
+      myActuaPoint.x = (myActuaPoint.x)+(pixels*(Math.cos(Math.toRadians(degree))));
+      myActuaPoint.y = (myActuaPoint.y)+(pixels*(Math.sin(Math.toRadians(degree))));
+      myActuaPoint.z = (myActuaPoint.z)+(pixels*(Math.cos(Math.toRadians(degreez))));
+   }
    
    
    class DisplayPanel extends JPanel {
