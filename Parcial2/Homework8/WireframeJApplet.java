@@ -264,7 +264,7 @@ implements KeyListener, FocusListener, MouseListener {
          int angleForTheNewBranchInZ = getRandomInt(1, 360);
 
          double sizeOfBranch = Math.sqrt(Math.pow((firstP.x-secondP.x), 2) + Math.pow((firstP.y-secondP.y), 2) + Math.pow((firstP.z-secondP.z), 2));
-         double lenghtForTheNewBranch = sizeOfBranch/3;
+         double lenghtForTheNewBranch = sizeOfBranch/2.6;
          Point3D newPoint = getPointOfStart(firstP, sizeOfBranch, angle, zAngle);
          
          //i create this second one, because when i use goForwardDrawing the values of this points will be updated to the end of the line
@@ -291,7 +291,7 @@ implements KeyListener, FocusListener, MouseListener {
    }
    
    public Point3D getPointOfStart(Point3D firstP, double length, int angle, int anglez){
-      double min = 0.3, max = 1;
+      double min = 0.3, max = 0.9;
       double lengthToNewPoint = ThreadLocalRandom.current().nextDouble(min, max);
       lengthToNewPoint *= length;
       Point3D myNewPoint = new Point3D(firstP.x,firstP.y,firstP.z);
