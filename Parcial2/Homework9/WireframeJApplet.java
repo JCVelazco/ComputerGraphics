@@ -37,7 +37,7 @@ class Face implements Comparable<Face>{
    public void setAvg(double avg){
       this.avg = avg;
    }
-   public void setColor(double red, double green, double blue){
+   public void setColor(int red, int green, int blue){
       this.color = new Color(red,green,blue);
    }
 
