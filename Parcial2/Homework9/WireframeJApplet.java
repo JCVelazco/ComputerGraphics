@@ -37,7 +37,7 @@ class Face implements Comparable<Face>{
    public void setAvg(double avg){
       this.avg = avg;
    }
-   public setColor(double red, double green, double blue){
+   public void setColor(double red, double green, double blue){
       this.color = new Color(red,green,blue);
    }
 
@@ -310,11 +310,13 @@ implements KeyListener, FocusListener, MouseListener {
             g.fillRect( 0, 0, width, height );
             g.setColor( Color.white );
             
-            for ( j = 0; j < edges.size(); ++j ) {
-               g.drawLine(
-               points[ (edges.get(j).a) ].x, points[ (edges.get(j).a) ].y,
-               points[ (edges.get(j).b) ].x, points[ (edges.get(j).b) ].y
-               );
+            for ( j = 0; j < faces.size(); ++j ) {
+               int[] xPoints = {points[ (faces.get(j).a) ].x,points[ (faces.get(j).b) ].x,points[ (faces.get(j).c) ].x, points[ (faces.get(j).d) ].x};
+               int[] yPoints = {points[ (faces.get(j).a) ].y,points[ (faces.get(j).b) ].y,points[ (faces.get(j).c) ].y, points[ (faces.get(j).d) ].y};
+
+   
+
+               g.drawPolygon(xPoints, yPoints, 4);
             }
             
          } 
