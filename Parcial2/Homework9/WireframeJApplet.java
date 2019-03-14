@@ -22,12 +22,6 @@ class Point3D {
    }
 }
 
-class Edge {
-   public int a, b;
-   public Edge( int A, int B ) {
-      a = A;  b = B;
-   }
-}
 
 class Face implements Comparable<Face>{
    public double avg;
@@ -62,7 +56,6 @@ implements KeyListener, FocusListener, MouseListener {
    //rotation y, and x
    
    ArrayList<Point3D> vertices;
-   ArrayList<Edge> edges;
    ArrayList<Face> faces;
    
    
@@ -75,7 +68,6 @@ implements KeyListener, FocusListener, MouseListener {
    public void init() {
       
       vertices = new ArrayList<Point3D>();
-      edges = new ArrayList<Edge>();
       faces = new ArrayList<Face>();
       
       //all the base
@@ -105,135 +97,62 @@ implements KeyListener, FocusListener, MouseListener {
       vertices.add(new Point3D( 1.5, 1,0.5 ));//20
       
       
-      //makes the main edges of the box, according to the vertices
-      edges = new ArrayList<Edge>();
+      //makes the main faces of the box, according to the vertices
       //firstFace
-      edges.add(new Edge( 0, 1 ));
-      edges.add(new Edge( 1, 2 ));
-      edges.add(new Edge( 2, 3 ));
-      edges.add(new Edge( 3, 0 ));
       faces.add(new Face(0, 1, 2, 3));
-      faces.get(0).setColor(255, 0, 0);
+      faces.get(0).setColor(0, 0, 255);
       //secondFace
-      edges.add(new Edge( 2, 3 ));
-      edges.add(new Edge( 3, 4 ));
-      edges.add(new Edge( 4, 5 ));
-      edges.add(new Edge( 5, 2 ));
       faces.add(new Face(2, 3, 4, 5));
       faces.get(1).setColor(0, 255, 0);
       //thirdFace
-      edges.add(new Edge( 4, 5 ));
-      edges.add(new Edge( 5, 6 ));
-      edges.add(new Edge( 6, 7 ));
-      edges.add(new Edge( 7, 4 ));
       faces.add(new Face(4, 5, 6, 7));
-      faces.get(2).setColor(0, 0, 255);
+      faces.get(2).setColor(255, 0, 0);
       
       //fourFace (left side)
-      edges.add(new Edge( 0, 1 ));
-      edges.add(new Edge( 1, 9 ));
-      edges.add(new Edge( 9, 8 ));
-      edges.add(new Edge( 8, 0 ));
       faces.add(new Face(0, 1, 9, 8 ));
       faces.get(3).setColor(0, 255, 255);
       //fiveFace (rs)
-      edges.add(new Edge( 7, 6 ));
-      edges.add(new Edge( 6, 14 ));
-      edges.add(new Edge( 14, 15 ));
-      edges.add(new Edge( 15, 7 ));
       faces.add(new Face(7, 6, 14, 15));
-      faces.get(4).setColor(255, 0, 255);
+      faces.get(4).setColor(255, 255, 0);
       //sixFace
-      edges.add(new Edge( 0, 8 ));
-      edges.add(new Edge( 8, 11 ));
-      edges.add(new Edge( 11, 3 ));
-      edges.add(new Edge( 3, 0 ));
       faces.add(new Face(0, 8, 11, 3));
-      faces.get(5).setColor(100, 100, 255);
+      faces.get(5).setColor(0, 255, 0);
       //sevenFace
-      edges.add(new Edge( 3, 11 ));
-      edges.add(new Edge( 11, 12 ));
-      edges.add(new Edge( 12, 4 ));
-      edges.add(new Edge( 4, 3 ));
       faces.add(new Face(3, 11, 12, 4));
-      faces.get(6).setColor(255, 50, 255);
+      faces.get(6).setColor(255, 255, 0);
       //8Face
-      edges.add(new Edge( 4, 12 ));
-      edges.add(new Edge( 12, 15 ));
-      edges.add(new Edge( 15, 7 ));
-      edges.add(new Edge( 7, 4 ));
       faces.add(new Face(4, 12, 15, 7));
-      faces.get(7).setColor(100, 0, 255);
+      faces.get(7).setColor(255, 0, 255);
       //9Face
-      edges.add(new Edge( 1, 9 ));
-      edges.add(new Edge( 9, 10 ));
-      edges.add(new Edge( 10, 2 ));
-      edges.add(new Edge( 2, 1));
       faces.add(new Face(1, 9, 10, 2));
-      faces.get(8).setColor(20, 200, 255);
+      faces.get(8).setColor(255, 0, 0);
       //10Face
-      edges.add(new Edge( 2, 10 ));
-      edges.add(new Edge( 10, 13 ));
-      edges.add(new Edge( 13, 5 ));
-      edges.add(new Edge( 5, 2 ));
       faces.add(new Face(2, 10, 13, 5));
-      faces.get(9).setColor(255, 0, 100);
+      faces.get(9).setColor(255, 0, 255);
       //11Face
-      edges.add(new Edge( 5, 13 ));
-      edges.add(new Edge( 13, 14 ));
-      edges.add(new Edge( 14, 6 ));
-      edges.add(new Edge( 6, 5 ));
       faces.add(new Face(5, 13, 14, 6));
-      faces.get(10).setColor(255, 60, 100);
+      faces.get(10).setColor(0, 255, 255);
       //12Face
-      edges.add(new Edge( 8, 9 ));
-      edges.add(new Edge( 9, 10 ));
-      edges.add(new Edge( 10, 11 ));
-      edges.add(new Edge( 11, 8 ));
       faces.add(new Face(8, 9, 10, 11));
-      faces.get(11).setColor(255, 100, 0);
+      faces.get(11).setColor(0, 0, 255);
       //13Face
-      edges.add(new Edge( 11, 10 ));
-      edges.add(new Edge( 10, 13 ));
-      edges.add(new Edge( 13, 12 ));
-      edges.add(new Edge( 12, 11 ));
       faces.add(new Face(11, 10, 13, 12));
-      faces.get(12).setColor(255, 0, 0);
+      faces.get(12).setColor(0, 255, 255);
       //14Face
-      edges.add(new Edge( 12, 13 ));
-      edges.add(new Edge( 13, 17 ));
-      edges.add(new Edge( 17, 16 ));
-      edges.add(new Edge( 16, 12 ));
       faces.add(new Face(12, 13, 17, 16));
-      faces.get(13).setColor(0, 0, 200);
+      faces.get(13).setColor(0, 0, 255);
       //15Face
-      edges.add(new Edge( 15, 19 ));
-      edges.add(new Edge( 19, 18 ));
-      edges.add(new Edge( 18, 14 ));
-      edges.add(new Edge( 14, 15 ));
       faces.add(new Face(15, 19, 18, 14));
-      faces.get(14).setColor(0, 200, 100);
+      faces.get(14).setColor(0, 255, 0);
       //16Face
-      edges.add(new Edge( 12, 16 ));
-      edges.add(new Edge( 16, 19 ));
-      edges.add(new Edge( 19, 15 ));
-      edges.add(new Edge( 15, 12 ));
       faces.add(new Face(12, 16, 19, 15));
-      faces.get(15).setColor(2, 40, 200);
+      faces.get(15).setColor(255, 0, 0);
       //17Face
-      edges.add(new Edge( 13, 17 ));
-      edges.add(new Edge( 17, 18 ));
-      edges.add(new Edge( 18, 14 ));
-      edges.add(new Edge( 14, 13 ));
       faces.add(new Face(13, 17, 18, 14));
-      faces.get(16).setColor(0, 255, 100);
+      faces.get(16).setColor(255, 255, 0);
       //17Face
-      edges.add(new Edge( 16, 17 ));
-      edges.add(new Edge( 17, 18 ));
-      edges.add(new Edge( 18, 19 ));
-      edges.add(new Edge( 19, 16 ));
       faces.add(new Face(16, 17, 18, 19));
-      faces.get(17).setColor(255, 255, 255);
+      faces.get(17).setColor(255, 0, 255);
       
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
@@ -258,10 +177,6 @@ implements KeyListener, FocusListener, MouseListener {
          }
      });
 
-	   for(Face face: faces){
-			System.out.println(face.avg);
-	   }
-      
    }
    
    class DisplayPanel extends JPanel {
