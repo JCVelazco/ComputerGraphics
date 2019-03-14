@@ -8,10 +8,10 @@ class Cone{
       public static void main(String[] args) {
             //default values
             double radioCone = 1;
-            double heightCone = 1;
+            double heightCone = 3;
 
-            int baseSections = 10;
-            int heightSections = 4;
+            int baseSections = 20;
+            int heightSections = 20;
 
             try{
                   radioCone = Double.parseDouble(args[0]);
