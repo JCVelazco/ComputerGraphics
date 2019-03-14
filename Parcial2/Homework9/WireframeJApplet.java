@@ -9,11 +9,16 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 class Point3D {
-   public double x, y, z;
+   public double x, y, z, newz;
    public Point3D( double x, double y, double z) {
       this.x = x;  
       this.y = y;  
       this.z = z;
+      this.newz = z;
+   }
+
+   public void setNewZ(double newz){
+      this.newz = newz;
    }
 }
 
@@ -37,7 +42,7 @@ class Face implements Comparable<Face>{
    public void setAvg(double avg){
       this.avg = avg;
    }
-   public void setColor(double red, double green, double blue){
+   public void setColor(int red, int green, int blue){
       this.color = new Color(red,green,blue);
    }
 
@@ -108,18 +113,21 @@ implements KeyListener, FocusListener, MouseListener {
       edges.add(new Edge( 2, 3 ));
       edges.add(new Edge( 3, 0 ));
       faces.add(new Face(0, 1, 2, 3));
+      faces.get(0).setColor(255, 0, 0);
       //secondFace
       edges.add(new Edge( 2, 3 ));
       edges.add(new Edge( 3, 4 ));
       edges.add(new Edge( 4, 5 ));
       edges.add(new Edge( 5, 2 ));
       faces.add(new Face(2, 3, 4, 5));
+      faces.get(1).setColor(0, 255, 0);
       //thirdFace
       edges.add(new Edge( 4, 5 ));
       edges.add(new Edge( 5, 6 ));
       edges.add(new Edge( 6, 7 ));
       edges.add(new Edge( 7, 4 ));
       faces.add(new Face(4, 5, 6, 7));
+      faces.get(2).setColor(0, 0, 255);
       
       //fourFace (left side)
       edges.add(new Edge( 0, 1 ));
@@ -127,97 +135,105 @@ implements KeyListener, FocusListener, MouseListener {
       edges.add(new Edge( 9, 8 ));
       edges.add(new Edge( 8, 0 ));
       faces.add(new Face(0, 1, 9, 8 ));
+      faces.get(3).setColor(0, 255, 255);
       //fiveFace (rs)
       edges.add(new Edge( 7, 6 ));
       edges.add(new Edge( 6, 14 ));
       edges.add(new Edge( 14, 15 ));
       edges.add(new Edge( 15, 7 ));
       faces.add(new Face(7, 6, 14, 15));
-      
+      faces.get(4).setColor(255, 0, 255);
       //sixFace
       edges.add(new Edge( 0, 8 ));
       edges.add(new Edge( 8, 11 ));
       edges.add(new Edge( 11, 3 ));
       edges.add(new Edge( 3, 0 ));
       faces.add(new Face(0, 8, 11, 3));
+      faces.get(5).setColor(100, 100, 255);
       //sevenFace
       edges.add(new Edge( 3, 11 ));
       edges.add(new Edge( 11, 12 ));
       edges.add(new Edge( 12, 4 ));
       edges.add(new Edge( 4, 3 ));
       faces.add(new Face(3, 11, 12, 4));
+      faces.get(6).setColor(255, 50, 255);
       //8Face
       edges.add(new Edge( 4, 12 ));
       edges.add(new Edge( 12, 15 ));
       edges.add(new Edge( 15, 7 ));
       edges.add(new Edge( 7, 4 ));
       faces.add(new Face(4, 12, 15, 7));
-      
+      faces.get(7).setColor(100, 0, 255);
       //9Face
       edges.add(new Edge( 1, 9 ));
       edges.add(new Edge( 9, 10 ));
       edges.add(new Edge( 10, 2 ));
       edges.add(new Edge( 2, 1));
       faces.add(new Face(1, 9, 10, 2));
+      faces.get(8).setColor(20, 200, 255);
       //10Face
       edges.add(new Edge( 2, 10 ));
       edges.add(new Edge( 10, 13 ));
       edges.add(new Edge( 13, 5 ));
       edges.add(new Edge( 5, 2 ));
       faces.add(new Face(2, 10, 13, 5));
+      faces.get(9).setColor(255, 0, 100);
       //11Face
       edges.add(new Edge( 5, 13 ));
       edges.add(new Edge( 13, 14 ));
       edges.add(new Edge( 14, 6 ));
       edges.add(new Edge( 6, 5 ));
       faces.add(new Face(5, 13, 14, 6));
-      
+      faces.get(10).setColor(255, 60, 100);
       //12Face
       edges.add(new Edge( 8, 9 ));
       edges.add(new Edge( 9, 10 ));
       edges.add(new Edge( 10, 11 ));
       edges.add(new Edge( 11, 8 ));
       faces.add(new Face(8, 9, 10, 11));
+      faces.get(11).setColor(255, 100, 0);
       //13Face
       edges.add(new Edge( 11, 10 ));
       edges.add(new Edge( 10, 13 ));
       edges.add(new Edge( 13, 12 ));
       edges.add(new Edge( 12, 11 ));
       faces.add(new Face(11, 10, 13, 12));
-      
+      faces.get(12).setColor(255, 0, 0);
       //14Face
       edges.add(new Edge( 12, 13 ));
       edges.add(new Edge( 13, 17 ));
       edges.add(new Edge( 17, 16 ));
       edges.add(new Edge( 16, 12 ));
       faces.add(new Face(12, 13, 17, 16));
+      faces.get(13).setColor(0, 0, 200);
       //15Face
       edges.add(new Edge( 15, 19 ));
       edges.add(new Edge( 19, 18 ));
       edges.add(new Edge( 18, 14 ));
       edges.add(new Edge( 14, 15 ));
       faces.add(new Face(15, 19, 18, 14));
-      
+      faces.get(14).setColor(0, 200, 100);
       //16Face
       edges.add(new Edge( 12, 16 ));
       edges.add(new Edge( 16, 19 ));
       edges.add(new Edge( 19, 15 ));
       edges.add(new Edge( 15, 12 ));
       faces.add(new Face(12, 16, 19, 15));
+      faces.get(15).setColor(2, 40, 200);
       //17Face
       edges.add(new Edge( 13, 17 ));
       edges.add(new Edge( 17, 18 ));
       edges.add(new Edge( 18, 14 ));
       edges.add(new Edge( 14, 13 ));
       faces.add(new Face(13, 17, 18, 14));
-      
+      faces.get(16).setColor(0, 255, 100);
       //17Face
       edges.add(new Edge( 16, 17 ));
       edges.add(new Edge( 17, 18 ));
       edges.add(new Edge( 18, 19 ));
       edges.add(new Edge( 19, 16 ));
       faces.add(new Face(16, 17, 18, 19));
-      getAvg();
+      faces.get(17).setColor(255, 255, 255);
       
       canvas = new DisplayPanel();  // Create drawing surface and 
       setContentPane(canvas);       //    install it as the applet's content pane.
@@ -231,11 +247,16 @@ implements KeyListener, FocusListener, MouseListener {
    public void getAvg(){
       double avg;
       for(Face face: faces){
-         avg = ((vertices.get(face.a).z)+(vertices.get(face.b).z)+(vertices.get(face.c).z)+(vertices.get(face.d).z))/4;
+         avg = ((vertices.get(face.a).newz)+(vertices.get(face.b).newz)+(vertices.get(face.c).newz)+(vertices.get(face.d).newz))/4;
          face.setAvg(avg);
       }
 
-      Collections.sort(faces);
+      Collections.sort(faces, new Comparator<Face>() {
+         @Override
+         public int compare(Face f1, Face f2) {
+             return Double.compare(f1.avg, f2.avg);
+         }
+     });
 
 	   for(Face face: faces){
 			System.out.println(face.avg);
@@ -265,7 +286,6 @@ implements KeyListener, FocusListener, MouseListener {
             g.drawString("Use arrow keys to change azimuth and elevation",100,150);
          }
          else {
-            getAvg();
             double theta = Math.toRadians(azimuth);
             double phi = Math.toRadians(elevation);
             
@@ -293,6 +313,8 @@ implements KeyListener, FocusListener, MouseListener {
                double x1 = cosT*x0 + sinT*z0;
                double y1 = -sinTsinP*x0 + cosP*y0 + cosTsinP*z0;
                double z1 = cosTcosP*z0 - sinTcosP*x0 - sinP*y0;
+               vertices.get(j).setNewZ(z1);
+               getAvg();
                
                // now adjust things to get a perspective projection
                x1 = x1*near/(z1+near+nearToObj);
@@ -310,13 +332,11 @@ implements KeyListener, FocusListener, MouseListener {
             g.fillRect( 0, 0, width, height );
             g.setColor( Color.white );
             
-            for ( j = 0; j < faces.size(); ++j ) {
+            for ( j = faces.size()-1; j > -1; --j ) {
+               g.setColor(faces.get(j).color);
                int[] xPoints = {points[ (faces.get(j).a) ].x,points[ (faces.get(j).b) ].x,points[ (faces.get(j).c) ].x, points[ (faces.get(j).d) ].x};
                int[] yPoints = {points[ (faces.get(j).a) ].y,points[ (faces.get(j).b) ].y,points[ (faces.get(j).c) ].y, points[ (faces.get(j).d) ].y};
-
-   
-
-               g.drawPolygon(xPoints, yPoints, 4);
+               g.fillPolygon(xPoints, yPoints, 4);
             }
             
          } 
