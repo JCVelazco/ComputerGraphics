@@ -12,7 +12,7 @@ class Main{
             frame.setContentPane(applet.getContentPane());
             frame.setJMenuBar(applet.getJMenuBar());
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1000, 600);
+            frame.setSize(1200, 600);
             frame.setLocation(100, 100);
             frame.setVisible(true);
             applet.start();

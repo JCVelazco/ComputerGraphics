@@ -1,0 +1,246 @@
+<!-- Carlos Parrodi Martínez A01421454  -->
+<!-- Juan Carlos Velazco A01326707  -->
+<html> 
+<head> 
+    <title> Homework 2.3: 3D Scene </title> 
+    <style> 
+        canvas { width: 100%; height: 100% }
+        p {
+        position: absolute;
+        display: block;
+        z-index: 99;
+        left: 2%;
+        top: 2%;
+        color: white
+        }
+    </style> 
+</head>
+<body> 
+    <p>Instructions: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = go backwards
+        <br>Left = rotate left<br>Right = rotate right</p>
+    <script src="three.min.js"> </script> 
+    <script> 
+        //move of the camera:
+        window.addEventListener('keydown',doKeyDown,true);
+        var zpos = 2.0;
+        var xpos = 0;
+        var aug = 0;
+        var augx = 0;
+        var theta = 0;
+        function doKeyDown(evt){
+            console.log("Tecla presionada: "+evt.keyCode);
+            switch (evt.keyCode) {
+                case 38:  /* Up arrow was pressed */                        
+                aug -= 0.5;
+                break;
+                case 40:  /* Down arrow was pressed */                        
+                aug += 0.5;
+                break;
+                case 37:  /* Left arrow was pressed */    
+                theta += 5/90;                      
+                break;
+                case 39:  /* Right arrow was pressed */    
+                theta -= 5/90; 
+                break;
+                case 65:  /* a was pressed */    
+                augx -= 0.5;                      
+                break;
+                case 68:  /* d was pressed */    
+                augx += 0.5; 
+                break;
+                case 87:  /* w was pressed */    
+                 camera.position.y += 0.5;                      
+                break;
+                case 83:  /* s was pressed */    
+                camera.position.y -= 0.5; 
+                break;
+            }
+        }
+        // three basic components of a scene : scene, camera, and render 
+        var scene = new THREE.Scene(); 
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); 
+        var renderer = new THREE.WebGLRenderer(); 
+        
+        renderer.setSize(window.innerWidth, window.innerHeight); 
+        document.body.appendChild(renderer.domElement); 
+
+        //Colors
+        var greenWire  = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true});
+        var floorWire  = new THREE.MeshBasicMaterial({color: 0x228B22, wireframe: true});  
+        var redWire = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+        var brownWire = new THREE.MeshBasicMaterial({color: 0x663333, wireframe: true});
+        var beigeWire = new THREE.MeshBasicMaterial({color: 0xF9E4B7, wireframe: true});
+        var blueWire = new THREE.MeshBasicMaterial( {color: 0x00FFFF, wireframe: true} );
+        var greyWire = new THREE.MeshBasicMaterial( {color: 0xA9A9A9, wireframe: true} );
+        var yellowWire = new THREE.MeshBasicMaterial( {color: 0xFFFF00, wireframe: true} );
+        
+        var floor = new THREE.PlaneGeometry(200,200,50,50);
+        var myfloor = new THREE.Mesh(floor,floorWire);
+        myfloor.position.set(0,-2.5,0)
+        myfloor.rotation.x = THREE.Math.degToRad(90);
+        scene.add(myfloor);
+
+
+        //Tree
+        var trunk = new THREE.CylinderGeometry(0.5,0.5,5,40,40,false);
+        var treetop = new THREE.SphereGeometry(2,32,32);
+
+        var treetrunk = new THREE.Mesh(trunk, brownWire);
+        var topoftree = new THREE.Mesh(treetop,greenWire);
+        
+        treetrunk.position.set(0,0,-20);
+        topoftree.position.set(0,4.5,-20);
+        myTree = new THREE.Object3D();
+        myTree.add(treetrunk);
+        myTree.add(topoftree);
+        myTree.position.set(-20,0,0);
+        scene.add(myTree);
+
+
+        //House
+        var housebody  = new THREE.BoxBufferGeometry(7,7,7,10,10); 
+        var roof = new THREE.CylinderGeometry(0,7,5,4,40,false);
+        var thiswindow = new THREE.PlaneGeometry(2,2,20,20);
+        var door = new THREE.PlaneGeometry(2,3,50,50);
+
+        var house = new THREE.Mesh(housebody, beigeWire);
+        var houseroof = new THREE.Mesh(roof, redWire);
+        var housewindow1 = new THREE.Mesh(thiswindow, blueWire);
+        var housewindow2 = new THREE.Mesh(thiswindow, blueWire);
+        var housedoor = new THREE.Mesh(door, brownWire);
+
+        house.position.set(0,1,-20);
+        houseroof.position.set(0,6.5,-20);
+        houseroof.rotation.y = 0.8;
+        housewindow1.position.set(-2,2,-16.5);
+        housewindow2.position.set(2,2,-16.5);
+        housedoor.position.set(0,-1,-16.5);
+
+        myhouse = new THREE.Object3D();
+        myhouse.add(house);
+        myhouse.add(houseroof);
+        myhouse.add(housewindow1);
+        myhouse.add(housewindow2);
+        myhouse.add(housedoor);
+        myhouse.position.set(-5,0,0);
+        scene.add(myhouse);
+
+
+        //Dog
+        var body  = new THREE.BoxBufferGeometry(2,0.8,1,10,10); 
+        var leg  = new THREE.BoxBufferGeometry(0.25,0.5,0.25,10,10);
+        var head  = new THREE.BoxBufferGeometry(0.6,0.8,0.8,10,10);
+        var mouth  = new THREE.BoxBufferGeometry(0.45,0.35,0.35,10,10);
+        var ear = new THREE.CylinderGeometry(0,0.1,0.3,3,16,false);
+        var tail  = new THREE.BoxBufferGeometry(0.5,0.15,0.15,10,10);     
+
+        var dogbody = new THREE.Mesh(body, beigeWire);
+        var leg1 = new THREE.Mesh(leg, brownWire);
+        var leg2 = new THREE.Mesh(leg, brownWire);
+        var leg3 = new THREE.Mesh(leg, brownWire);
+        var leg4 = new THREE.Mesh(leg, brownWire);
+        var doghead = new THREE.Mesh(head, beigeWire);
+        var dogmouth = new THREE.Mesh(mouth, brownWire);
+        var dogear1 = new THREE.Mesh(ear, brownWire);
+        var dogear2 = new THREE.Mesh(ear, brownWire);
+        var dogtail = new THREE.Mesh(tail, brownWire);
+
+        dogbody.position.set(0,0,-20)
+        leg1.position.set(-0.7,-0.65,-20.33)
+        leg2.position.set(-0.7,-0.65,-19.67)
+        leg3.position.set(0.7,-0.65,-20.33)
+        leg4.position.set(0.7,-0.65,-19.67)
+        doghead.position.set(1,0.4,-20)
+        dogmouth.position.set(1.52,0.3,-20)
+        dogear1.position.set(0.8,0.95,-20.25)
+        dogear2.position.set(0.8,0.95,-19.75)
+        dogtail.position.set(-1.25,0.2,-20)
+        myDog = new THREE.Object3D();
+        myDog.add(dogbody)
+        myDog.add(leg1)
+        myDog.add(leg2)
+        myDog.add(leg3)
+        myDog.add(leg4)
+        myDog.add(doghead)
+        myDog.add(dogmouth)
+        myDog.add(dogear1)
+        myDog.add(dogear2)
+        myDog.add(dogtail)
+        myDog.position.set(6,-1.6,0)
+        scene.add(myDog);
+
+        //Car
+        var hud  = new THREE.BoxBufferGeometry(6,1,3,10,10);
+        var cabin = new THREE.BoxBufferGeometry(3,1.2,3,10,10);  
+        var wheel = new THREE.CylinderGeometry(0.5,0.5,0.5,80,16,false);
+        var thiscarwindow1 = new THREE.PlaneGeometry(1.5,0.8,20,20);
+        var thiscarwindow2 = new THREE.PlaneGeometry(2,0.8,20,20);
+        var carlight = new THREE.CircleGeometry(0.3,120);
+        
+
+        var carhud = new THREE.Mesh(hud, redWire);
+        var carcabin = new THREE.Mesh(cabin, redWire);
+        var wheel1 = new THREE.Mesh(wheel, greyWire);
+        var wheel2 = new THREE.Mesh(wheel, greyWire);
+        var wheel3 = new THREE.Mesh(wheel, greyWire);
+        var wheel4 = new THREE.Mesh(wheel, greyWire);
+        var carwindow1 = new THREE.Mesh(thiscarwindow1, blueWire);
+        var carwindow2 = new THREE.Mesh(thiscarwindow1, blueWire);
+        var carwindow3 = new THREE.Mesh(thiscarwindow2, blueWire);
+        var carwindow4 = new THREE.Mesh(thiscarwindow2, blueWire);
+        var carlight1 = new THREE.Mesh(carlight, yellowWire);
+        var carlight2 = new THREE.Mesh(carlight, yellowWire);
+        carhud.position.set(0,0,-20)
+        carcabin.position.set(0,1,-20)
+        wheel1.position.set(-2,-0.5,-18.5)
+        wheel1.rotation.x = THREE.Math.degToRad(90);
+        wheel2.position.set(-2,-0.5,-21.5)
+        wheel2.rotation.x = THREE.Math.degToRad(90);
+        wheel3.position.set(2,-0.5,-18.5)
+        wheel3.rotation.x = THREE.Math.degToRad(90);
+        wheel4.position.set(2,-0.5,-21.5)
+        wheel4.rotation.x = THREE.Math.degToRad(90);
+        carwindow1.position.set(-0.5,1,-21.5)
+        carwindow2.position.set(-0.5,1,-18.5)
+        carwindow3.position.set(-1.5,1,-20)
+        carwindow3.rotation.y = THREE.Math.degToRad(90);
+        carwindow4.position.set(1.5,1,-20)
+        carwindow4.rotation.y = THREE.Math.degToRad(90);
+        carlight1.position.set(-3,0,-19)
+        carlight1.rotation.y = THREE.Math.degToRad(90);
+        carlight2.position.set(-3,0,-21)
+        carlight2.rotation.y = THREE.Math.degToRad(90);
+        myCar = new THREE.Object3D();
+        myCar.add(carhud);
+        myCar.add(carcabin);
+        myCar.add(wheel1);
+        myCar.add(wheel2);
+        myCar.add(wheel3);
+        myCar.add(wheel4);
+        myCar.add(carwindow1);
+        myCar.add(carwindow2);
+        myCar.add(carwindow3);
+        myCar.add(carwindow4);
+        myCar.add(carlight1);
+        myCar.add(carlight2);
+        myCar.position.set(20,-1.5,0);
+        scene.add(myCar);
+
+
+
+        var render = function () { 
+            requestAnimationFrame( render );
+            zpos = (aug * Math.cos( THREE.Math.degToRad( theta ) ));
+            xpos = (augx * Math.cos( THREE.Math.degToRad( theta ) ));
+            camera.translateZ(zpos);
+            camera.translateX(xpos);
+            camera.rotation.y = theta;
+            aug = 0;
+            augx = 0;
+            renderer.render( scene, camera );
+        }; 
+        render(); 
+        
+    </script> 
+</body> 
+</html>
