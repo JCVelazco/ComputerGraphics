@@ -22,7 +22,9 @@
         <script> 
             window.addEventListener('keydown',doKeyDown,true);
             // agregamos el "listener" para "escuchar" los eventos del teclado
-            var cam_zpos = 50.0;
+            var cam_zpos = 40.0;
+            var cam_xpos = -20.0;
+            var cam_ypos = -5.0;
             var zpos = 2.0;
             var xpos = 0;
             var aug = 0;
@@ -36,10 +38,10 @@
                 //console.log("Tecla presionada: "+evt.keyCode);
                 switch (evt.keyCode) {
                     case 38:  /* Up arrow was pressed */                        
-                    aug -= 0.5;
+                    aug -= 0.9;
                     break;
                     case 40:  /* Down arrow was pressed */                        
-                    aug += 0.5;
+                    aug += 0.9;
                     break;
                     case 37:  /* Left arrow was pressed */    
                     theta += 5/90;                      
@@ -48,16 +50,16 @@
                     theta -= 5/90; 
                     break;
                     case 65:  /* a was pressed */    
-                    augx -= 0.5;                      
+                    augx -= 0.9;                      
                     break;
                     case 68:  /* d was pressed */    
-                    augx += 0.5; 
+                    augx += 0.9; 
                     break;
                     case 87:  /* w was pressed */    
-                    camera.position.y += 0.5;                      
+                    camera.position.y += 0.9;                      
                     break;
                     case 83:  /* s was pressed */    
-                    camera.position.y -= 0.5; 
+                    camera.position.y -= 0.9; 
                     break;
                 }
             }
@@ -70,32 +72,81 @@
             
             // create a new geometry
             var geom = new THREE.Geometry(); 
+            var geom2 = new THREE.Geometry();
+            var geom3 = new THREE.Geometry();
+            var geom4 = new THREE.Geometry();
             
             // push the box 3D points for the gear
-            createGear(0,0,2,10,20);         
+            createGear(5,10,2,geom);   
+            createGear(4,10,2,geom2); 
+            createGear(0,4,12,geom3); 
+            createGear(4,8,1.2,geom4); 
+                    
             
             geom.computeFaceNormals();
+            geom2.computeFaceNormals();
+            geom3.computeFaceNormals();
+            geom4.computeFaceNormals();
             
             
-            // create a Lambert material
-            var LambertMaterial = new THREE.MeshLambertMaterial(
+            // create a Lambert material green
+            var LambertMaterial1 = new THREE.MeshLambertMaterial(
             {
-                color: 0xFFAA00
+                color: 0x00DD00
+            });
+            // create a Lambert material white
+            var LambertMaterial2 = new THREE.MeshLambertMaterial(
+            {
+                color: 0xAA00AA
+            });
+            // create a Lambert material grey
+            var LambertMaterial3 = new THREE.MeshLambertMaterial(
+            {
+                color: 0x888888
+            });
+            // create a Lambert material blue
+            var LambertMaterial4 = new THREE.MeshLambertMaterial(
+            {
+                color: 0x0055FF
             });
             
             // create a wireframe material
             var meshMaterial = new THREE.MeshBasicMaterial({color: 0x00FFFF, wireframe: true});
             
-            var object = new THREE.Mesh( geom, LambertMaterial);
+            var object1 = new THREE.Mesh( geom, LambertMaterial1);
+            var object2 = new THREE.Mesh( geom2, LambertMaterial2);
+            var object3 = new THREE.Mesh( geom3, LambertMaterial3);
+            var object4 = new THREE.Mesh( geom4, LambertMaterial4);
+
+            //move objects
+            object1.position.x -= 10;
+            object1.position.y += 10;
+            object2.position.x -= 10;
+            object2.position.y -= 11.7;
+            object3.position.x -= 10;
+            object3.position.y -= 11.7;
+            object3.position.z += 5;
+            object4.position.x -= 10;
+            object4.position.y -= 11.7;
+            object4.position.z += 12;
+            
             
             group = new THREE.Object3D();           // create an empty container
-            group.add( object );                    // add a mesh with geometry to it               // add a mesh with geometry to it
+            group.add( object1 ); 
+            group.add( object2 );  
+            group.add( object3 );  
+            group.add( object4 );                    // add a mesh with geometry to it               // add a mesh with geometry to it
             scene.add( group );                     // add the group to the scene                  
             
             renderer.setSize(window.innerWidth, window.innerHeight); 
             document.body.appendChild(renderer.domElement); 
             
             camera.position.z = cam_zpos; 
+            camera.position.x = cam_xpos; 
+            camera.position.y = cam_ypos; 
+
+   
+    
             
             // create some point lights
             var pointLight = new THREE.PointLight( 0xFFFFFF );
@@ -113,9 +164,12 @@
                 pointLight.position.z = camera.position.x; 
                 pointLight2.position.x = camera.position.x;
                 pointLight2.position.y = camera.position.y;
-                pointLight2.position.z = camera.position.z;            
-                //group.rotation.x += .009;
-                //group.rotation.z += .005;
+                pointLight2.position.z = camera.position.z;   
+                   
+                object1.rotation.z -= .009;
+                object2.rotation.z += .009;
+                object3.rotation.z += .009;
+                object4.rotation.z += .009;
                 zpos = (aug * Math.cos( THREE.Math.degToRad( theta ) ));
                 xpos = (augx * Math.cos( THREE.Math.degToRad( theta ) ));
                 camera.translateZ(zpos);
@@ -125,14 +179,14 @@
                 augx = 0;
                 renderer.render(scene, camera); 
             }; 
-
+            
             //initialCounterOfVertices -> index inciial de zona de vertices de la dona de enfrente(pares para inner circle e impares para circulo exterior)
             //initialCounterOfVertices2 -> index inciial de zona de vertices de la dona de atras(pares para inner circle e impares para circulo exterior)
             //counterOfVerticesFrontTeeth -> index inicial de la zona de vertices de las puntas de los dientes exteriores de enfrente(tods corridos)
             //counterOfVerticesBackTeeth -> index inicial de la zona de vertices de las puntas de los dientes exteriores de atras(tods corridos)
             //counterOfVerticesInnerFrontTeeth -> index inicial de la zona de vertices de las puntas de los dientes interiores de enfrente (tods corridos)
             //counterOfVerticesInnerBackTeeth -> index inicial de la zona de vertices de las puntas de los dientes interiores de atras (tods corridos)
-            function createGear(centerX, centerY, centerZ, innerRadio, externalRadio){
+            function createGear(innerRadio, externalRadio, deep, geometry){
                 //create the circular body:
                 //each iteration creates the vertices of a "line" of the circle
                 //the vertices of each line are: inner circle, bigger circle
@@ -140,18 +194,19 @@
                 //front circle
                 var currentAngle = 0;
                 var incrementAngle = 360/(numberOfTeeth*2);
-                var initialCounterOfVertices = geom.vertices.length;
+                var initialCounterOfVertices = geometry.vertices.length;
+                console.log(initialCounterOfVertices);
                 for(var i = 1; i <= numberOfTeeth*4; i++){
                     var innerVertice1x = innerRadio*Math.cos(THREE.Math.degToRad(currentAngle));
                     var innerVertice1y = innerRadio*Math.sin(THREE.Math.degToRad(currentAngle));
                     var externalVertice1x = externalRadio*Math.cos(THREE.Math.degToRad(currentAngle));
                     var externalVertice1y = externalRadio*Math.sin(THREE.Math.degToRad(currentAngle));
-                    geom.vertices.push(new THREE.Vector3( innerVertice1x+centerX, innerVertice1y+centerY, centerZ));
-                    geom.vertices.push(new THREE.Vector3( externalVertice1x+centerX, externalVertice1y+centerY, centerZ));
+                    geometry.vertices.push(new THREE.Vector3( innerVertice1x, innerVertice1y, deep));
+                    geometry.vertices.push(new THREE.Vector3( externalVertice1x, externalVertice1y, deep));
                     //join with the two before points
                     if(i > 1){
-                        geom.faces.push( new THREE.Face3(initialCounterOfVertices+i, initialCounterOfVertices+i-2, initialCounterOfVertices+i-1));   
-                        geom.faces.push( new THREE.Face3(initialCounterOfVertices+i, initialCounterOfVertices+i-1, initialCounterOfVertices+i+1)); 
+                        geometry.faces.push( new THREE.Face3(initialCounterOfVertices+i, initialCounterOfVertices+i-2, initialCounterOfVertices+i-1));   
+                        geometry.faces.push( new THREE.Face3(initialCounterOfVertices+i, initialCounterOfVertices+i-1, initialCounterOfVertices+i+1)); 
                     }
                     currentAngle += incrementAngle;
                 }
@@ -159,18 +214,18 @@
                 //back circle
                 var currentAngle = 0;
                 var incrementAngle = 360/(numberOfTeeth*2);
-                var initialCounterOfVertices2 = geom.vertices.length;
+                var initialCounterOfVertices2 = geometry.vertices.length;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
                     var innerVertice1x = innerRadio*Math.cos(THREE.Math.degToRad(currentAngle));
                     var innerVertice1y = innerRadio*Math.sin(THREE.Math.degToRad(currentAngle));
                     var externalVertice1x = externalRadio*Math.cos(THREE.Math.degToRad(currentAngle));
                     var externalVertice1y = externalRadio*Math.sin(THREE.Math.degToRad(currentAngle));
-                    geom.vertices.push(new THREE.Vector3( innerVertice1x+centerX, innerVertice1y+centerY, -centerZ));
-                    geom.vertices.push(new THREE.Vector3( externalVertice1x+centerX, externalVertice1y+centerY, -centerZ));
+                    geometry.vertices.push(new THREE.Vector3( innerVertice1x, innerVertice1y, -deep));
+                    geometry.vertices.push(new THREE.Vector3( externalVertice1x, externalVertice1y, -deep));
                     //join with the two before points
                     if(i > 1){
-                        geom.faces.push( new THREE.Face3(initialCounterOfVertices2+i, initialCounterOfVertices2+i-1, initialCounterOfVertices2+i-2));   
-                        geom.faces.push( new THREE.Face3(initialCounterOfVertices2+i, initialCounterOfVertices2+i+1, initialCounterOfVertices2+i-1)); 
+                        geometry.faces.push( new THREE.Face3(initialCounterOfVertices2+i, initialCounterOfVertices2+i-1, initialCounterOfVertices2+i-2));   
+                        geometry.faces.push( new THREE.Face3(initialCounterOfVertices2+i, initialCounterOfVertices2+i+1, initialCounterOfVertices2+i-1)); 
                     }
                     currentAngle += incrementAngle;
                 }
@@ -180,14 +235,14 @@
                 var flagPutTeeth = false;
                 var externalHeightTeeth = externalRadio/6;
                 //remember of when my new vertices that i will add will be:
-                var counterOfVerticesFrontTeeth = geom.vertices.length - 1;
+                var counterOfVerticesFrontTeeth = geometry.vertices.length - 1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
                     var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
                     var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
-                    geom.vertices.push(new THREE.Vector3(externalTeethX1+centerX, externalTeethY1+centerY, centerZ));
+                    geometry.vertices.push(new THREE.Vector3(externalTeethX1, externalTeethY1, deep));
                     if(i!= 1 && flagPutTeeth){
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices+(i+(i-1)), initialCounterOfVertices+(i+(i-1))-2, i+counterOfVerticesFrontTeeth));   
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices+(i+(i-1))-2, (i+counterOfVerticesFrontTeeth)-1, i+counterOfVerticesFrontTeeth)); 
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices+(i+(i-1)), initialCounterOfVertices+(i+(i-1))-2, i+counterOfVerticesFrontTeeth));   
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices+(i+(i-1))-2, (i+counterOfVerticesFrontTeeth)-1, i+counterOfVerticesFrontTeeth)); 
                     }
                     flagPutTeeth = !flagPutTeeth;
                     currentAngle += incrementAngle;
@@ -198,14 +253,14 @@
                 var flagPutTeeth = false;
                 var externalHeightTeeth = externalRadio/6;
                 //remember of when my new vertices that i will add will be:
-                var counterOfVerticesBackTeeth = geom.vertices.length - 1;
+                var counterOfVerticesBackTeeth = geometry.vertices.length - 1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
                     var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
                     var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
-                    geom.vertices.push(new THREE.Vector3(externalTeethX1+centerX, externalTeethY1+centerY, -centerZ));
+                    geometry.vertices.push(new THREE.Vector3(externalTeethX1, externalTeethY1, -deep));
                     if(i!= 1 && flagPutTeeth){
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1)), i+counterOfVerticesBackTeeth, initialCounterOfVertices2+(i+(i-1))-2));   
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1))-2, i+counterOfVerticesBackTeeth, (i+counterOfVerticesBackTeeth)-1)); 
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1)), i+counterOfVerticesBackTeeth, initialCounterOfVertices2+(i+(i-1))-2));   
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1))-2, i+counterOfVerticesBackTeeth, (i+counterOfVerticesBackTeeth)-1)); 
                     }
                     flagPutTeeth = !flagPutTeeth;
                     currentAngle += incrementAngle;
@@ -217,20 +272,20 @@
                 for(var i = 1; i <= numberOfTeeth*2 + 1; i++){
                     if(flag){
                         //tapa del diente
-                        geom.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, counterOfVerticesBackTeeth+i+1, counterOfVerticesFrontTeeth+i+1));  
-                        geom.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, counterOfVerticesBackTeeth+i+1, counterOfVerticesFrontTeeth+i)); 
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, counterOfVerticesBackTeeth+i+1, counterOfVerticesFrontTeeth+i+1));  
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, counterOfVerticesBackTeeth+i+1, counterOfVerticesFrontTeeth+i)); 
                         if(i!=1){
-                        //tapa del hoyo
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices+(i*2)-1, initialCounterOfVertices+(i*2)-3, initialCounterOfVertices2+(i*2)-1));  
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i*2)-1, initialCounterOfVertices+(i*2)-3, initialCounterOfVertices2+(i*2)-3));  
+                            //tapa del hoyo
+                            geometry.faces.push(new THREE.Face3(initialCounterOfVertices+(i*2)-1, initialCounterOfVertices+(i*2)-3, initialCounterOfVertices2+(i*2)-1));  
+                            geometry.faces.push(new THREE.Face3(initialCounterOfVertices2+(i*2)-1, initialCounterOfVertices+(i*2)-3, initialCounterOfVertices2+(i*2)-3));  
                         }
                     }
                     //cara izq del diente visto desde el frente (abajo)
-                    geom.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1, initialCounterOfVertices+(i*2)-1));  
-                    geom.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, initialCounterOfVertices2+(i*2)-1, counterOfVerticesFrontTeeth+i));
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1, initialCounterOfVertices+(i*2)-1));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, initialCounterOfVertices2+(i*2)-1, counterOfVerticesFrontTeeth+i));
                     //cara derecha del diente vusto desde enfrente (arriba)
-                    geom.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, initialCounterOfVertices+(i*2)-1, initialCounterOfVertices2+(i*2)-1));  
-                    geom.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, initialCounterOfVertices+(i*2)-1, initialCounterOfVertices2+(i*2)-1));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1));  
                     
                     flag = !flag; 
                 }
@@ -240,14 +295,14 @@
                 var flagPutTeeth = true;
                 var innerHeightTeeth = innerRadio/6;
                 //remember of when my new vertices that i will add will be:
-                var counterOfVerticesInnerFrontTeeth = geom.vertices.length - 1;
+                var counterOfVerticesInnerFrontTeeth = geometry.vertices.length - 1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
                     var innerTeethX1 = (innerRadio-innerHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
                     var innerTeethY1 = (innerRadio-innerHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
-                    geom.vertices.push(new THREE.Vector3(innerTeethX1+centerX, innerTeethY1+centerY, centerZ));
+                    geometry.vertices.push(new THREE.Vector3(innerTeethX1, innerTeethY1, deep));
                     if(i!= 1 && flagPutTeeth){
-                        geom.faces.push(new THREE.Face3(i+counterOfVerticesInnerFrontTeeth, (i+counterOfVerticesInnerFrontTeeth)-1, initialCounterOfVertices+(i*2)-4));   
-                        geom.faces.push(new THREE.Face3(i+counterOfVerticesInnerFrontTeeth, initialCounterOfVertices+(i*2)-4, initialCounterOfVertices+(i*2)-2)); 
+                        geometry.faces.push(new THREE.Face3(i+counterOfVerticesInnerFrontTeeth, (i+counterOfVerticesInnerFrontTeeth)-1, initialCounterOfVertices+(i*2)-4));   
+                        geometry.faces.push(new THREE.Face3(i+counterOfVerticesInnerFrontTeeth, initialCounterOfVertices+(i*2)-4, initialCounterOfVertices+(i*2)-2)); 
                     }
                     flagPutTeeth = !flagPutTeeth;
                     currentAngle += incrementAngle;
@@ -260,39 +315,39 @@
                 var flagPutTeeth = true;
                 var innerHeightTeeth = innerRadio/6;
                 //remember of when my new vertices that i will add will be:
-                var counterOfVerticesInnerBackTeeth = geom.vertices.length - 1;
+                var counterOfVerticesInnerBackTeeth = geometry.vertices.length - 1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
                     var innerTeethX1 = (innerRadio-innerHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
                     var innerTeethY1 = (innerRadio-innerHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
-                    geom.vertices.push(new THREE.Vector3(innerTeethX1+centerX, innerTeethY1+centerY, -centerZ));
+                    geometry.vertices.push(new THREE.Vector3(innerTeethX1, innerTeethY1, -deep));
                     if(i!= 1 && flagPutTeeth){
-                        geom.faces.push(new THREE.Face3(i+counterOfVerticesInnerBackTeeth, initialCounterOfVertices2+(i*2)-4, (i+counterOfVerticesInnerBackTeeth)-1));   
-                        geom.faces.push(new THREE.Face3(i+counterOfVerticesInnerBackTeeth, initialCounterOfVertices2+(i*2)-2, initialCounterOfVertices2+(i*2)-4)); 
+                        geometry.faces.push(new THREE.Face3(i+counterOfVerticesInnerBackTeeth, initialCounterOfVertices2+(i*2)-4, (i+counterOfVerticesInnerBackTeeth)-1));   
+                        geometry.faces.push(new THREE.Face3(i+counterOfVerticesInnerBackTeeth, initialCounterOfVertices2+(i*2)-2, initialCounterOfVertices2+(i*2)-4)); 
                     }
                     flagPutTeeth = !flagPutTeeth;
                     currentAngle += incrementAngle;
                 }
-
-                 //add unions between the external teeth (back and front):
+                
+                //add unions between the external teeth (back and front):
                 //on each iteration i will cover a teeth and a hole
-               var flag = false;
+                var flag = false;
                 for(var i = 1; i <= numberOfTeeth*2 + 1; i++){
                     if(flag){
                         //tapa del diente
-                        geom.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i, counterOfVerticesInnerFrontTeeth+i+1, counterOfVerticesInnerBackTeeth+i+1));  
-                        geom.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, counterOfVerticesInnerFrontTeeth+i, counterOfVerticesInnerBackTeeth+i+1)); 
-                 
-
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i, counterOfVerticesInnerFrontTeeth+i+1, counterOfVerticesInnerBackTeeth+i+1));  
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, counterOfVerticesInnerFrontTeeth+i, counterOfVerticesInnerBackTeeth+i+1)); 
+                        
+                        
                     }else{
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices+(i*2), initialCounterOfVertices2+(i*2), initialCounterOfVertices+(i*2)-2));  
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i*2), initialCounterOfVertices2+(i*2)-2,  initialCounterOfVertices+(i*2)-2));  
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices+(i*2), initialCounterOfVertices2+(i*2), initialCounterOfVertices+(i*2)-2));  
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2+(i*2), initialCounterOfVertices2+(i*2)-2,  initialCounterOfVertices+(i*2)-2));  
                     }
                     //cara izq del diente visto desde el frente (abajo)
-                   geom.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i+1, initialCounterOfVertices2+(i*2), initialCounterOfVertices+(i*2)));  
-                   geom.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, initialCounterOfVertices2+(i*2)-2, counterOfVerticesInnerFrontTeeth+i));
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i+1, initialCounterOfVertices2+(i*2), initialCounterOfVertices+(i*2)));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, initialCounterOfVertices2+(i*2)-2, counterOfVerticesInnerFrontTeeth+i));
                     //cara derecha del diente vusto desde enfrente (arriba)
-                    geom.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i, initialCounterOfVertices+(i*2)-2, initialCounterOfVertices2+(i*2)-2));  
-                    geom.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, counterOfVerticesInnerFrontTeeth+i, initialCounterOfVertices2+(i*2)-2));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i, initialCounterOfVertices+(i*2)-2, initialCounterOfVertices2+(i*2)-2));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, counterOfVerticesInnerFrontTeeth+i, initialCounterOfVertices2+(i*2)-2));  
                     
                     flag = !flag; 
                 }
