@@ -59,7 +59,7 @@
                     case 70:  /* d was pressed */    
                     velocity += 0.002; 
                     break;
-                    case 70:  /* d was pressed */    
+                    case 71:  /* d was pressed */    
                     velocity -= 0.002; 
                     break;
                     case 87:  /* w was pressed */    
@@ -138,7 +138,8 @@
             object4.position.z += 12;
             
             
-            group = new THREE.Object3D();           // create an empty container
+            group = new THREE.Object3D();  
+            object1.position.y -= 0.02;         // create an empty container
             group.add( object1 ); 
             group.add( object2 );  
             group.add( object3 );  
