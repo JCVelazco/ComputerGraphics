@@ -125,7 +125,13 @@
                 augx = 0;
                 renderer.render(scene, camera); 
             }; 
-            
+
+            //initialCounterOfVertices -> index inciial de zona de vertices de la dona de enfrente(pares para inner circle e impares para circulo exterior)
+            //initialCounterOfVertices2 -> index inciial de zona de vertices de la dona de atras(pares para inner circle e impares para circulo exterior)
+            //counterOfVerticesFrontTeeth -> index inicial de la zona de vertices de las puntas de los dientes exteriores de enfrente(tods corridos)
+            //counterOfVerticesBackTeeth -> index inicial de la zona de vertices de las puntas de los dientes exteriores de atras(tods corridos)
+            //counterOfVerticesInnerFrontTeeth -> index inicial de la zona de vertices de las puntas de los dientes interiores de enfrente (tods corridos)
+            //counterOfVerticesInnerBackTeeth -> index inicial de la zona de vertices de las puntas de los dientes interiores de atras (tods corridos)
             function createGear(centerX, centerY, centerZ, innerRadio, externalRadio){
                 //create the circular body:
                 //each iteration creates the vertices of a "line" of the circle
@@ -192,14 +198,14 @@
                 var flagPutTeeth = false;
                 var externalHeightTeeth = externalRadio/6;
                 //remember of when my new vertices that i will add will be:
-                var counterOfVerticesBackteeth = geom.vertices.length - 1;
+                var counterOfVerticesBackTeeth = geom.vertices.length - 1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
                     var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
                     var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
                     geom.vertices.push(new THREE.Vector3(externalTeethX1+centerX, externalTeethY1+centerY, -centerZ));
                     if(i!= 1 && flagPutTeeth){
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1)), i+counterOfVerticesBackteeth, initialCounterOfVertices2+(i+(i-1))-2));   
-                        geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1))-2, i+counterOfVerticesBackteeth, (i+counterOfVerticesBackteeth)-1)); 
+                        geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1)), i+counterOfVerticesBackTeeth, initialCounterOfVertices2+(i+(i-1))-2));   
+                        geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1))-2, i+counterOfVerticesBackTeeth, (i+counterOfVerticesBackTeeth)-1)); 
                     }
                     flagPutTeeth = !flagPutTeeth;
                     currentAngle += incrementAngle;
@@ -211,8 +217,8 @@
                 for(var i = 1; i <= numberOfTeeth*2 + 1; i++){
                     if(flag){
                         //tapa del diente
-                        geom.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, counterOfVerticesBackteeth+i+1, counterOfVerticesFrontTeeth+i+1));  
-                        geom.faces.push(new THREE.Face3(counterOfVerticesBackteeth+i, counterOfVerticesBackteeth+i+1, counterOfVerticesFrontTeeth+i)); 
+                        geom.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, counterOfVerticesBackTeeth+i+1, counterOfVerticesFrontTeeth+i+1));  
+                        geom.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, counterOfVerticesBackTeeth+i+1, counterOfVerticesFrontTeeth+i)); 
                         if(i!=1){
                         //tapa del hoyo
                         geom.faces.push(new THREE.Face3(initialCounterOfVertices+(i*2)-1, initialCounterOfVertices+(i*2)-3, initialCounterOfVertices2+(i*2)-1));  
@@ -221,10 +227,10 @@
                     }
                     //cara izq del diente visto desde el frente (abajo)
                     geom.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1, initialCounterOfVertices+(i*2)-1));  
-                    geom.faces.push(new THREE.Face3(counterOfVerticesBackteeth+i, initialCounterOfVertices2+(i*2)-1, counterOfVerticesFrontTeeth+i));
+                    geom.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, initialCounterOfVertices2+(i*2)-1, counterOfVerticesFrontTeeth+i));
                     //cara derecha del diente vusto desde enfrente (arriba)
                     geom.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, initialCounterOfVertices+(i*2)-1, initialCounterOfVertices2+(i*2)-1));  
-                    geom.faces.push(new THREE.Face3(counterOfVerticesBackteeth+i, counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1));  
+                    geom.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1));  
                     
                     flag = !flag; 
                 }
