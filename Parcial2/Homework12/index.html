@@ -141,11 +141,16 @@
                 var currentAngle = 0;
                 var incrementAngle = 360/(numberOfTeeth*2);
                 var initialCounterOfVertices = geom.vertices.length;
+                var adjustmentangle = -incrementAngle*0.2;
+                var inneradjustmentangle = -incrementAngle*0.1;
+                adjustmentangle = adjustmentangle*-1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
-                    var innerVertice1x = innerRadio*Math.cos(THREE.Math.degToRad(currentAngle));
-                    var innerVertice1y = innerRadio*Math.sin(THREE.Math.degToRad(currentAngle));
-                    var externalVertice1x = externalRadio*Math.cos(THREE.Math.degToRad(currentAngle));
-                    var externalVertice1y = externalRadio*Math.sin(THREE.Math.degToRad(currentAngle));
+                    adjustmentangle = adjustmentangle*-1;
+                    inneradjustmentangle = inneradjustmentangle*-1;
+                    var innerVertice1x = innerRadio*Math.cos(THREE.Math.degToRad(currentAngle+inneradjustmentangle));
+                    var innerVertice1y = innerRadio*Math.sin(THREE.Math.degToRad(currentAngle+inneradjustmentangle));
+                    var externalVertice1x = externalRadio*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var externalVertice1y = externalRadio*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
                     geom.vertices.push(new THREE.Vector3( innerVertice1x+centerX, innerVertice1y+centerY, centerZ));
                     geom.vertices.push(new THREE.Vector3( externalVertice1x+centerX, externalVertice1y+centerY, centerZ));
                     //join with the two before points
@@ -160,11 +165,14 @@
                 var currentAngle = 0;
                 var incrementAngle = 360/(numberOfTeeth*2);
                 var initialCounterOfVertices2 = geom.vertices.length;
+                
                 for(var i = 1; i <= numberOfTeeth*4; i++){
-                    var innerVertice1x = innerRadio*Math.cos(THREE.Math.degToRad(currentAngle));
-                    var innerVertice1y = innerRadio*Math.sin(THREE.Math.degToRad(currentAngle));
-                    var externalVertice1x = externalRadio*Math.cos(THREE.Math.degToRad(currentAngle));
-                    var externalVertice1y = externalRadio*Math.sin(THREE.Math.degToRad(currentAngle));
+                    adjustmentangle = adjustmentangle*-1;
+                    inneradjustmentangle = inneradjustmentangle*-1;
+                    var innerVertice1x = innerRadio*Math.cos(THREE.Math.degToRad(currentAngle+inneradjustmentangle));
+                    var innerVertice1y = innerRadio*Math.sin(THREE.Math.degToRad(currentAngle+inneradjustmentangle));
+                    var externalVertice1x = externalRadio*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var externalVertice1y = externalRadio*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
                     geom.vertices.push(new THREE.Vector3( innerVertice1x+centerX, innerVertice1y+centerY, -centerZ));
                     geom.vertices.push(new THREE.Vector3( externalVertice1x+centerX, externalVertice1y+centerY, -centerZ));
                     //join with the two before points
@@ -179,11 +187,13 @@
                 currentAngle = 0;
                 var flagPutTeeth = false;
                 var externalHeightTeeth = externalRadio/6;
+                var adjustmentangle = -incrementAngle*0.2;
                 //remember of when my new vertices that i will add will be:
                 var counterOfVerticesFrontTeeth = geom.vertices.length - 1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
-                    var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
-                    var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
+                    adjustmentangle = adjustmentangle*-1;
+                    var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
                     geom.vertices.push(new THREE.Vector3(externalTeethX1+centerX, externalTeethY1+centerY, centerZ));
                     if(i!= 1 && flagPutTeeth){
                         geom.faces.push(new THREE.Face3(initialCounterOfVertices+(i+(i-1)), initialCounterOfVertices+(i+(i-1))-2, i+counterOfVerticesFrontTeeth));   
@@ -200,8 +210,9 @@
                 //remember of when my new vertices that i will add will be:
                 var counterOfVerticesBackTeeth = geom.vertices.length - 1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
-                    var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
-                    var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
+                    adjustmentangle = adjustmentangle*-1;
+                    var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
                     geom.vertices.push(new THREE.Vector3(externalTeethX1+centerX, externalTeethY1+centerY, -centerZ));
                     if(i!= 1 && flagPutTeeth){
                         geom.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1)), i+counterOfVerticesBackTeeth, initialCounterOfVertices2+(i+(i-1))-2));   
@@ -241,9 +252,11 @@
                 var innerHeightTeeth = innerRadio/6;
                 //remember of when my new vertices that i will add will be:
                 var counterOfVerticesInnerFrontTeeth = geom.vertices.length - 1;
+                adjustmentangle = adjustmentangle*-1;
                 for(var i = 1; i <= numberOfTeeth*4; i++){
-                    var innerTeethX1 = (innerRadio-innerHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
-                    var innerTeethY1 = (innerRadio-innerHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
+                    adjustmentangle = adjustmentangle*-1;
+                    var innerTeethX1 = (innerRadio-innerHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var innerTeethY1 = (innerRadio-innerHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
                     geom.vertices.push(new THREE.Vector3(innerTeethX1+centerX, innerTeethY1+centerY, centerZ));
                     if(i!= 1 && flagPutTeeth){
                         geom.faces.push(new THREE.Face3(i+counterOfVerticesInnerFrontTeeth, (i+counterOfVerticesInnerFrontTeeth)-1, initialCounterOfVertices+(i*2)-4));   
@@ -261,9 +274,11 @@
                 var innerHeightTeeth = innerRadio/6;
                 //remember of when my new vertices that i will add will be:
                 var counterOfVerticesInnerBackTeeth = geom.vertices.length - 1;
+                
                 for(var i = 1; i <= numberOfTeeth*4; i++){
-                    var innerTeethX1 = (innerRadio-innerHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle));
-                    var innerTeethY1 = (innerRadio-innerHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle));
+                    adjustmentangle = adjustmentangle*-1;
+                    var innerTeethX1 = (innerRadio-innerHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var innerTeethY1 = (innerRadio-innerHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
                     geom.vertices.push(new THREE.Vector3(innerTeethX1+centerX, innerTeethY1+centerY, -centerZ));
                     if(i!= 1 && flagPutTeeth){
                         geom.faces.push(new THREE.Face3(i+counterOfVerticesInnerBackTeeth, initialCounterOfVertices2+(i*2)-4, (i+counterOfVerticesInnerBackTeeth)-1));   
