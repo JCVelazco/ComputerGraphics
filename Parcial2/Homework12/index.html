@@ -143,7 +143,10 @@
             group.add( object1 ); 
             group.add( object2 );  
             group.add( object3 );  
-            group.add( object4 );                    // add a mesh with geometry to it               // add a mesh with geometry to it
+            group.add( object4 );
+            group.rotation.y += 0.8;
+            group.position.x -= 12;
+            group.position.z -= 6;                     // add a mesh with geometry to it               // add a mesh with geometry to it
             scene.add( group );                     // add the group to the scene                  
             
             renderer.setSize(window.innerWidth, window.innerHeight); 
