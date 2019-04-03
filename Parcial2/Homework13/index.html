@@ -98,9 +98,9 @@
 
              //Base                                                    
             var basegeometry = new THREE.CylinderGeometry(10,10,3,50,50,false)
-            var robotmaterialorange = new THREE.MeshLambertMaterial ({color: 0xFF4500})
-            var robotmaterialdarkorange = new THREE.MeshLambertMaterial ({color: 0x800000})
-            var robotmaterialgrey = new THREE.MeshLambertMaterial ({color: 0x696969})
+            var robotmaterialorange = new THREE.MeshPhongMaterial ({color: 0xFF4500})
+            var robotmaterialdarkorange = new THREE.MeshPhongMaterial ({color: 0x800000})
+            var robotmaterialgrey = new THREE.MeshPhongMaterial ({color: 0x696969})
             var base = new THREE.Mesh(basegeometry,robotmaterialgrey)
             base.position.y += 1.5
 
