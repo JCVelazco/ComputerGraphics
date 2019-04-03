@@ -98,9 +98,22 @@
 
              //Base                                                    
             var basegeometry = new THREE.CylinderGeometry(10,10,3,50,50,false)
-            var robotmaterialorange = new THREE.MeshPhongMaterial ({color: 0xFF4500})
-            var robotmaterialdarkorange = new THREE.MeshPhongMaterial ({color: 0x800000})
-            var robotmaterialgrey = new THREE.MeshPhongMaterial ({color: 0x696969})
+            var robotmaterialorange = new THREE.MeshStandardMaterial( {
+                color: 0xFF4500,
+                roughness: 0.5,
+                metalness: 0.5,
+            } )
+            var robotmaterialdarkorange = new THREE.MeshStandardMaterial( {
+                color: 0x800000,
+                roughness: 0.6,
+                metalness: 0.5,
+            } )
+            var robotmaterialgrey = new THREE.MeshStandardMaterial( {
+                color: 0x696969,
+                emissive: 0x505050,
+                roughness: 0.6,
+                metalness: 1,
+            } )
             var base = new THREE.Mesh(basegeometry,robotmaterialgrey)
             base.position.y += 1.5
 
@@ -249,6 +262,8 @@
             camera.position.x = 2;
             var pointLight = new THREE.PointLight( 0xFFFFFF );
             var pointLight2 = new THREE.PointLight( 0xFFFFFF );
+            pointLight.position.z += 10
+            pointLight2.position.z += 10
             scene.add(pointLight);
             scene.add(pointLight2);   
             renderer.setClearColor(0x000022, 1);
