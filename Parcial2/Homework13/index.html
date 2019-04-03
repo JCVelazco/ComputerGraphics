@@ -206,35 +206,39 @@
 
             //Fingers
             var fingers = new THREE.Object3D()
+            var finger1 = new THREE.Object3D()
+            var finger2 = new THREE.Object3D()
             var fingergeometry1 = new THREE.CylinderGeometry(3,3,1,50,50,false)
             var fingergeometry2 = new THREE.BoxGeometry(4,2,2,50,50)
             var fingergeometry3 = new THREE.BoxGeometry(1,5,1,50,50)
             var fingergeometry4 = new THREE.ConeGeometry( 1.5, 3, 4);
             var fingerbase1 = new THREE.Mesh(fingergeometry1,robotmaterialgrey)
             var fingerbase2 = new THREE.Mesh(fingergeometry2,robotmaterialgrey)
-            var finger1 = new THREE.Mesh(fingergeometry3,robotmaterialgrey)
+            var fingerbody1 = new THREE.Mesh(fingergeometry3,robotmaterialgrey)
             var fingertip1 = new THREE.Mesh(fingergeometry4,robotmaterialgrey)
-            var finger2 = new THREE.Mesh(fingergeometry3,robotmaterialgrey)
+            var fingerbody2 = new THREE.Mesh(fingergeometry3,robotmaterialgrey)
             var fingertip2 = new THREE.Mesh(fingergeometry4,robotmaterialgrey)    
-            finger1.rotation.z = THREE.Math.degToRad(-45)
-            finger1.position.y += 3
-            finger1.position.x += 3
+            fingerbody1.rotation.z = THREE.Math.degToRad(-45)
+            fingerbody1.position.y += 3
+            fingerbody1.position.x += 3
             fingertip1.rotation.y = THREE.Math.degToRad(-45)
             fingertip1.position.y += 6
             fingertip1.position.x += 4
-            finger2.rotation.z = THREE.Math.degToRad(45)
-            finger2.position.y += 3
-            finger2.position.x -= 3
+            fingerbody2.rotation.z = THREE.Math.degToRad(45)
+            fingerbody2.position.y += 3
+            fingerbody2.position.x -= 3
             fingertip2.rotation.y = THREE.Math.degToRad(45)
             fingertip2.position.y += 6
             fingertip2.position.x -= 4
             fingerbase2.position.y += 1
             fingers.add(fingerbase1)
             fingers.add(fingerbase2)
+            finger1.add(fingerbody1)
+            finger1.add(fingertip1)
+            finger2.add(fingerbody2)
+            finger2.add(fingertip2)
             fingers.add(finger1)
-            fingers.add(fingertip1)
             fingers.add(finger2)
-            fingers.add(fingertip2)
             fingers.position.x +=23.5
             fingers.position.y +=29.5 
             fingers.position.z -=3
