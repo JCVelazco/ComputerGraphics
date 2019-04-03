@@ -1,0 +1,279 @@
+<!-- Carlos Parrodi Martínez A01421454  -->
+<!-- Juan Carlos Velazco A01326707  -->
+<html> 
+    <head> 
+        <title> Defining a 3D Shape </title> 
+        <style> 
+            canvas { width: 100%; height: 100% }
+            p {
+            position: absolute;
+            display: block;
+            z-index: 99;
+            left: 2%;
+            top: 2%;
+            color: white
+        }
+        </style> 
+    </head> 
+    <body> 
+        <p>Instructions: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = go backwards
+            <br>Left = rotate left<br>Right = rotate right</p>
+        <script src="three.min.js"> </script> 
+        
+        <script> 
+
+            window.addEventListener('keydown',doKeyDown,true);
+            // agregamos el "listener" para "escuchar" los eventos del teclado
+            
+            var cam_zpos = 60;
+            var zpos = 2.0;
+            var xpos = 0;
+            var aug = 0;
+            var augx = 0;
+            var theta = 0;
+            function doKeyDown(evt){
+                //console.log("Tecla presionada: "+evt.keyCode);
+                switch (evt.keyCode) {
+                    case 38:  /* Up arrow was pressed */                        
+                    aug -= 1;
+                    break;
+                    case 40:  /* Down arrow was pressed */                        
+                    aug += 1;
+                    break;
+                    case 37:  /* Left arrow was pressed */    
+                    theta += 10/90;                      
+                    break;
+                    case 39:  /* Right arrow was pressed */    
+                    theta -= 10/90; 
+                    break;
+                    case 65:  /* a was pressed */    
+                    augx -= 1;                      
+                    break;
+                    case 68:  /* d was pressed */    
+                    augx += 1; 
+                    break;
+                    case 87:  /* w was pressed */    
+                    camera.position.y += 1;                      
+                    break;
+                    case 83:  /* s was pressed */    
+                    camera.position.y -= 1; 
+                    break;
+                }
+            }
+
+            // three basic components of a scene
+            var scene = new THREE.Scene(); 
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
+            var renderer = new THREE.WebGLRenderer(); 
+
+
+           
+            var floor = new THREE.BoxGeometry(50,6,50,50,50);
+            var leg = new THREE.BoxGeometry(6,20,6,50,50);
+            var loader = new THREE.TextureLoader();
+            var textureMaterial1 = new THREE.MeshLambertMaterial ({
+                            map: loader.load("wood.jpg")
+                                                                });
+            var textureMaterial2 = new THREE.MeshLambertMaterial ({
+                            map: loader.load("wood.jpg")
+                                                                });
+            var table = new THREE.Mesh(floor,textureMaterial1)
+            var leg1 = new THREE.Mesh(leg,textureMaterial2)
+            var leg2 = new THREE.Mesh(leg,textureMaterial2)
+            var leg3 = new THREE.Mesh(leg,textureMaterial2)
+            var leg4 = new THREE.Mesh(leg,textureMaterial2)
+            table.position.set(0,-3,0)
+            leg1.position.set(19,-13,19)
+            leg2.position.set(-19,-13,-19)
+            leg3.position.set(-19,-13,19)
+            leg4.position.set(19,-13,-19)
+            scene.add(table)
+            scene.add(leg1)
+            scene.add(leg2)
+            scene.add(leg3)
+            scene.add(leg4)
+
+
+             //Here starts the definition of the model
+
+             //Base                                                    
+            var basegeometry = new THREE.CylinderGeometry(10,10,3,50,50,false)
+            var robotmaterialorange = new THREE.MeshLambertMaterial ({color: 0xFF4500})
+            var robotmaterialdarkorange = new THREE.MeshLambertMaterial ({color: 0x800000})
+            var robotmaterialgrey = new THREE.MeshLambertMaterial ({color: 0x696969})
+            var base = new THREE.Mesh(basegeometry,robotmaterialgrey)
+            base.position.y += 1.5
+
+            //Base of arm
+            var basearm = new THREE.Object3D()
+            var basearmgeometry1 = new THREE.BoxGeometry(10,5,3,10,10)
+            var basearmgeometry2 = new THREE.CylinderGeometry(5,5,3,50,50,false)
+            var basearmgeometry3 = new THREE.CylinderGeometry(3.5,3.5,1,50,50,false)
+            var basearm1 = new THREE.Mesh(basearmgeometry1,robotmaterialorange)
+            var basearm2 = new THREE.Mesh(basearmgeometry2,robotmaterialorange)
+            var basearm3 = new THREE.Mesh(basearmgeometry3,robotmaterialgrey)
+            basearm2.rotation.x = THREE.Math.degToRad(-90);
+            basearm2.position.x += 3;
+            basearm2.position.y += 3;
+            basearm3.position.x += 3;
+            basearm3.position.y += 3;
+            basearm3.position.z +=2
+            basearm3.rotation.x = THREE.Math.degToRad(-90)
+            basearm.add(basearm1)
+            basearm.add(basearm2)
+            basearm.add(basearm3)
+            basearm.position.y += 5
+            basearm.position.z -= 4
+
+            //Arm
+            var arm = new THREE.Object3D()
+            var armgeometry1 = new THREE.CylinderGeometry(1,2,20,50,50,false)
+            var armgeometry2 = new THREE.CylinderGeometry(3,3,4,50,50,false)
+            var armgeometry3 = new THREE.CylinderGeometry(2,2,3,50,50,false)
+            var arm1 = new THREE.Mesh(armgeometry1,robotmaterialorange)
+            var arm2 = new THREE.Mesh(armgeometry2,robotmaterialdarkorange)
+            var arm3 = new THREE.Mesh(armgeometry3,robotmaterialdarkorange)
+            arm2.rotation.x = THREE.Math.degToRad(-90)
+            arm2.position.y -=10
+            arm3.rotation.x = THREE.Math.degToRad(-90)
+            arm3.position.y +=10
+            arm.add(arm1)
+            arm.add(arm2)
+            arm.add(arm3)
+            arm.position.x -= 0.5
+            arm.position.y += 17.5
+            arm.position.z += 0.5;
+            arm.rotation.z = THREE.Math.degToRad(20)
+            
+            //Forearm
+            var forearm = new THREE.Object3D()
+            var forearmgeometry = new THREE.CylinderGeometry(2,2,1,50,50,false)
+            var forearm1 = new THREE.Mesh(armgeometry1,robotmaterialorange)
+            var forearm2 = new THREE.Mesh(armgeometry2,robotmaterialdarkorange)
+            var forearm3 = new THREE.Mesh(forearmgeometry,robotmaterialdarkorange)
+            var forearm4 = new THREE.Mesh(forearmgeometry,robotmaterialdarkorange)
+            forearm2.rotation.x = THREE.Math.degToRad(-90)
+            forearm2.position.y -=10
+            forearm3.rotation.x = THREE.Math.degToRad(-90)
+            forearm3.position.y +=11
+            forearm3.position.z +=1.5
+            forearm4.rotation.x = THREE.Math.degToRad(-90)
+            forearm4.position.y +=11
+            forearm4.position.z -=1.5
+            forearm.add(forearm1)
+            forearm.add(forearm2)
+            forearm.add(forearm3)
+            forearm.add(forearm4)
+            forearm.position.x += 6
+            forearm.position.y += 29
+            forearm.position.z -= 3
+            forearm.rotation.z = THREE.Math.degToRad(-80)
+
+            //Actuator
+            var actuator = new THREE.Object3D()
+            var actuatorgeometry = new THREE.CylinderGeometry(2,2,2,50,50,false)
+            var actuator1 = new THREE.Mesh(actuatorgeometry, robotmaterialorange)
+            var actuator2 = new THREE.Object3D()
+            var spherebodygeom = new THREE.SphereBufferGeometry(3.5, 40, 40, 0, 2*Math.PI, 0, 0.5 * Math.PI);
+            var spheretopgeom = new THREE.CircleGeometry( 3.5,40 );
+            var spherebody = new THREE.Mesh(spherebodygeom,robotmaterialorange)
+            var spheretop = new THREE.Mesh(spheretopgeom,robotmaterialorange)
+            spheretop.rotation.x = THREE.Math.degToRad(90)
+            actuator2.add(spherebody)
+            actuator2.add(spheretop)
+            actuator1.rotation.x = THREE.Math.degToRad(-90)
+            actuator2.rotation.z = THREE.Math.degToRad(90)
+            actuator2.position.x += 4.5
+            actuator.add(actuator1)
+            actuator.add(actuator2)
+            actuator.position.x +=19
+            actuator.position.y +=31 
+            actuator.position.z -=3
+            actuator.rotation.z = THREE.Math.degToRad(-20)
+
+            //Fingers
+            var fingers = new THREE.Object3D()
+            var fingergeometry1 = new THREE.CylinderGeometry(3,3,1,50,50,false)
+            var fingergeometry2 = new THREE.BoxGeometry(4,2,2,50,50)
+            var fingergeometry3 = new THREE.BoxGeometry(1,5,1,50,50)
+            var fingergeometry4 = new THREE.ConeGeometry( 1.5, 3, 4);
+            var fingerbase1 = new THREE.Mesh(fingergeometry1,robotmaterialgrey)
+            var fingerbase2 = new THREE.Mesh(fingergeometry2,robotmaterialgrey)
+            var finger1 = new THREE.Mesh(fingergeometry3,robotmaterialgrey)
+            var fingertip1 = new THREE.Mesh(fingergeometry4,robotmaterialgrey)
+            var finger2 = new THREE.Mesh(fingergeometry3,robotmaterialgrey)
+            var fingertip2 = new THREE.Mesh(fingergeometry4,robotmaterialgrey)    
+            finger1.rotation.z = THREE.Math.degToRad(-45)
+            finger1.position.y += 3
+            finger1.position.x += 3
+            fingertip1.rotation.y = THREE.Math.degToRad(-45)
+            fingertip1.position.y += 6
+            fingertip1.position.x += 4
+            finger2.rotation.z = THREE.Math.degToRad(45)
+            finger2.position.y += 3
+            finger2.position.x -= 3
+            fingertip2.rotation.y = THREE.Math.degToRad(45)
+            fingertip2.position.y += 6
+            fingertip2.position.x -= 4
+            fingerbase2.position.y += 1
+            fingers.add(fingerbase1)
+            fingers.add(fingerbase2)
+            fingers.add(finger1)
+            fingers.add(fingertip1)
+            fingers.add(finger2)
+            fingers.add(fingertip2)
+            fingers.position.x +=23.5
+            fingers.position.y +=29.5 
+            fingers.position.z -=3
+            fingers.rotation.z = THREE.Math.degToRad(-110)
+
+            //Add dependencies
+
+            //Add to scene and to one object
+
+            var robotarm = new THREE.Object3D()                                                   
+            robotarm.add(basearm)
+            robotarm.add(base)
+            robotarm.add(arm)
+            robotarm.add(forearm)
+            robotarm.add(actuator)
+            robotarm.add(fingers)
+            scene.add(robotarm)
+
+           //Here ends the definition of the model
+
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+            document.body.appendChild(renderer.domElement); 
+            camera.position.z = cam_zpos;
+            camera.position.y = 10; 
+            camera.position.x = 2;
+            var pointLight = new THREE.PointLight( 0xFFFFFF );
+            var pointLight2 = new THREE.PointLight( 0xFFFFFF );
+            scene.add(pointLight);
+            scene.add(pointLight2);   
+            renderer.setClearColor(0x000022, 1);
+
+            var render = function () { 
+                //Do not touch
+                requestAnimationFrame(render);  
+                pointLight.position.x = camera.position.x;
+                pointLight.position.y = camera.position.y;
+                pointLight.position.z = camera.position.x; 
+                pointLight2.position.x = camera.position.x;
+                pointLight2.position.y = camera.position.y;
+                pointLight2.position.z = camera.position.z;            
+                zpos = (aug * Math.cos( THREE.Math.degToRad( theta ) ));
+                xpos = (augx * Math.cos( THREE.Math.degToRad( theta ) ));
+                camera.translateZ(zpos);
+                camera.translateX(xpos);
+                camera.rotation.y = theta;
+                aug = 0;
+                augx = 0;
+                renderer.render(scene, camera); 
+                //Ends Here
+            }; 
+
+            render();             
+        </script> 
+    </body> 
+</html>
