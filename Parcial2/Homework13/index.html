@@ -1,11 +1,11 @@
 <!-- Carlos Parrodi Martínez A01421454  -->
 <!-- Juan Carlos Velazco A01326707  -->
 <html> 
-    <head> 
-        <title> Defining a 3D Shape </title> 
-        <style> 
-            canvas { width: 100%; height: 100% }
-            p {
+<head> 
+    <title> Defining a 3D Shape </title> 
+    <style> 
+        canvas { width: 100%; height: 100% }
+        p {
             position: absolute;
             display: block;
             z-index: 99;
@@ -13,15 +13,15 @@
             top: 2%;
             color: white
         }
-        </style> 
-    </head> 
-    <body> 
-        <p>Instructions: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = go backwards
-            <br>Left = rotate left<br>Right = rotate right</p>
+    </style> 
+</head> 
+<body> 
+    <p>Instructions: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = go backwards
+        <br>Left = rotate left<br>Right = rotate right</p>
         <script src="three.min.js"> </script> 
         
         <script> 
-
+            
             window.addEventListener('keydown',doKeyDown,true);
             // agregamos el "listener" para "escuchar" los eventos del teclado
             
@@ -32,7 +32,7 @@
             var augx = 0;
             var theta = 0;
             function doKeyDown(evt){
-                //console.log("Tecla presionada: "+evt.keyCode);
+                console.log("Tecla presionada: "+evt.keyCode);
                 switch (evt.keyCode) {
                     case 38:  /* Up arrow was pressed */                        
                     aug -= 1;
@@ -58,25 +58,53 @@
                     case 83:  /* s was pressed */    
                     camera.position.y -= 1; 
                     break;
+                    //360 all robot:
+                    case 84:  /* t was pressed */    
+                    robotarm.rotation.y+= 0.05;
+                    break;
+                    case 71:  /* g was pressed */    
+                    robotarm.rotation.y-= 0.05;
+                    break;
+                    //arm:
+                    case 82:  /* r was pressed */   
+                    rot2.rotation.z += 0.05;
+                    break;
+                    case 70:  /* f was pressed */  
+                    rot2.rotation.z -= 0.05;
+                    break;
+                    //forearm:
+                    case 89:  /* y was pressed */   
+                    rot1.rotation.z += 0.05;
+                    break;
+                    case 72:  /* h was pressed */  
+                    rot1.rotation.z -= 0.05;
+                    break;
+                    //actuator :
+                    case 85:  /* u was pressed */   
+                    rot1.rotation.z += 0.05;
+                    break;
+                    case 74:  /* j was pressed */  
+                    rot1.rotation.z -= 0.05;
+                    break;
                 }
             }
-
+            
             // three basic components of a scene
             var scene = new THREE.Scene(); 
             var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
             var renderer = new THREE.WebGLRenderer(); 
-
-
-           
+            
+            
+            
             var floor = new THREE.BoxGeometry(50,6,50,50,50);
             var leg = new THREE.BoxGeometry(6,20,6,50,50);
             var loader = new THREE.TextureLoader();
             var textureMaterial1 = new THREE.MeshLambertMaterial ({
-                            map: loader.load("wood.jpg")
-                                                                });
+                map: loader.load("wood.jpg")
+            });
             var textureMaterial2 = new THREE.MeshLambertMaterial ({
-                            map: loader.load("wood.jpg")
-                                                                });
+                map: loader.load("wood.jpg")
+            });
             var table = new THREE.Mesh(floor,textureMaterial1)
             var leg1 = new THREE.Mesh(leg,textureMaterial2)
             var leg2 = new THREE.Mesh(leg,textureMaterial2)
@@ -92,12 +120,9 @@
             scene.add(leg2)
             scene.add(leg3)
             scene.add(leg4)
-
-
-             //Here starts the definition of the model
-
-             //Base                                                    
-            var basegeometry = new THREE.CylinderGeometry(10,10,3,50,50,false)
+            
+            
+            //Here starts the definition of the model
             var robotmaterialorange = new THREE.MeshStandardMaterial( {
                 color: 0xFF4500,
                 roughness: 0.5,
@@ -114,11 +139,19 @@
                 roughness: 0.6,
                 metalness: 1,
             } )
+            
+            //Base                                                    
+            var basegeometry = new THREE.CylinderGeometry(10,10,3,50,50,false);
+            var secondbasegeometry = new THREE.CylinderGeometry(8,8,3,50,50,false);
+            
             var base = new THREE.Mesh(basegeometry,robotmaterialgrey)
             base.position.y += 1.5
-
+            
+            var secondbase = new THREE.Mesh(secondbasegeometry,robotmaterialgrey)
+            secondbase.position.y += 2.3
+            
             //Base of arm
-            var basearm = new THREE.Object3D()
+            var basearm = new THREE.Object3D();
             var basearmgeometry1 = new THREE.BoxGeometry(10,5,3,10,10)
             var basearmgeometry2 = new THREE.CylinderGeometry(5,5,3,50,50,false)
             var basearmgeometry3 = new THREE.CylinderGeometry(3.5,3.5,1,50,50,false)
@@ -136,8 +169,7 @@
             basearm.add(basearm2)
             basearm.add(basearm3)
             basearm.position.y += 5
-            basearm.position.z -= 4
-
+            
             //Arm
             var arm = new THREE.Object3D()
             var armgeometry1 = new THREE.CylinderGeometry(1,2,20,50,50,false)
@@ -147,15 +179,16 @@
             var arm2 = new THREE.Mesh(armgeometry2,robotmaterialdarkorange)
             var arm3 = new THREE.Mesh(armgeometry3,robotmaterialdarkorange)
             arm2.rotation.x = THREE.Math.degToRad(-90)
-            arm2.position.y -=10
             arm3.rotation.x = THREE.Math.degToRad(-90)
-            arm3.position.y +=10
             arm.add(arm1)
             arm.add(arm2)
             arm.add(arm3)
-            arm.position.x -= 0.5
-            arm.position.y += 17.5
-            arm.position.z += 0.5;
+            arm.position.x += 3
+            arm1.position.y += 10;
+            arm3.position.y += 20;
+            //move rotation point
+            arm.position.y += 8
+            arm.position.z += 4;
             arm.rotation.z = THREE.Math.degToRad(20)
             
             //Forearm
@@ -179,9 +212,11 @@
             forearm.add(forearm4)
             forearm.position.x += 6
             forearm.position.y += 29
-            forearm.position.z -= 3
+            // forearm.position.z -= 3
             forearm.rotation.z = THREE.Math.degToRad(-80)
-
+            
+            
+            
             //Actuator
             var actuator = new THREE.Object3D()
             var actuatorgeometry = new THREE.CylinderGeometry(2,2,2,50,50,false)
@@ -201,9 +236,9 @@
             actuator.add(actuator2)
             actuator.position.x +=19
             actuator.position.y +=31 
-            actuator.position.z -=3
+            //actuator.position.z -=3
             actuator.rotation.z = THREE.Math.degToRad(-20)
-
+            
             //Fingers
             var fingers = new THREE.Object3D()
             var finger1 = new THREE.Object3D()
@@ -241,24 +276,51 @@
             fingers.add(finger2)
             fingers.position.x +=23.5
             fingers.position.y +=29.5 
-            fingers.position.z -=3
+            //fingers.position.z -=3
             fingers.rotation.z = THREE.Math.degToRad(-110)
-
+            
             //Add dependencies
-
+            
             //Add to scene and to one object
-
+            
+            //second section of rotation:
+            forearm.position.y = 1.9;
+            forearm.position.x = 10;
+            actuator.position.y = 3;
+            actuator.position.x = 23;
+            fingers.position.y = 1.2;
+            fingers.position.x = 28;
+            var rot1 = new THREE.Object3D();
+            rot1.add(forearm)
+            rot1.add(actuator)
+            rot1.add(fingers)
+            rot1.position.y = 19;
+            rot1.position.x = -7;
+            
+            //first section of rotation:
+            arm.position.y = 0;
+            arm.position.x = 0;
+            var rot2 = new THREE.Object3D();
+            rot2.add(rot1)
+            rot2.add(arm)
+            rot2.position.y = 8;
+            rot2.position.x = 3;
+            
+            
+            
+            //all robot that will rotate in y
             var robotarm = new THREE.Object3D()                                                   
+            robotarm.add(secondbase)
             robotarm.add(basearm)
-            robotarm.add(base)
-            robotarm.add(arm)
-            robotarm.add(forearm)
-            robotarm.add(actuator)
-            robotarm.add(fingers)
-            scene.add(robotarm)
-
-           //Here ends the definition of the model
-
+            robotarm.add(rot2)
+            
+            
+            scene.add(robotarm);
+            scene.add(base);
+            
+            
+            //Here ends the definition of the model
+            
             renderer.setSize(window.innerWidth, window.innerHeight); 
             document.body.appendChild(renderer.domElement); 
             camera.position.z = cam_zpos;
@@ -271,7 +333,7 @@
             scene.add(pointLight);
             scene.add(pointLight2);   
             renderer.setClearColor(0x000022, 1);
-
+            
             var render = function () { 
                 //Do not touch
                 requestAnimationFrame(render);  
@@ -291,8 +353,8 @@
                 renderer.render(scene, camera); 
                 //Ends Here
             }; 
-
+            
             render();             
         </script> 
     </body> 
-</html>
+    </html>
