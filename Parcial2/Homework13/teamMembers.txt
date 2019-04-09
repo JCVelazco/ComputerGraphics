@@ -1,2 +1,4 @@
 Juan Carlos Velazco A01326707
 Carlos Parrodi Martínez A01421454
+
+recomendation: open the hw in Firefox to see all the textures

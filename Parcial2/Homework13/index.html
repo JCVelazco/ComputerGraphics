@@ -118,10 +118,10 @@
             var leg = new THREE.BoxGeometry(1.5,15,1.5,30,30);
             var loader = new THREE.TextureLoader();
             var textureMaterial1 = new THREE.MeshLambertMaterial ({
-                map: loader.load("wood.jpg")
+                map: loader.load("texture/wood.jpg")
             });
             var textureMaterial2 = new THREE.MeshLambertMaterial ({
-                map: loader.load("wood.jpg")
+                map: loader.load("texture/wood.jpg")
             });
             var table = new THREE.Mesh(floor,textureMaterial1)
             var leg1 = new THREE.Mesh(leg,textureMaterial2)

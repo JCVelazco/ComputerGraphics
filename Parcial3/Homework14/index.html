@@ -1,0 +1,515 @@
+<!-- Carlos Parrodi Martínez A01421454  -->
+<!-- Juan Carlos Velazco A01326707  -->
+<html> 
+<head> 
+    <title> Parque de D </title> 
+    <style> 
+        canvas { width: 100%; height: 100% }
+        p {
+            position: absolute;
+            display: block;
+            z-index: 99;
+            left: 2%;
+            top: 2%;
+            color: white
+        }
+    </style> 
+</head> 
+<body> 
+    <p>Instructions: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = go backwards
+        <br>Left = rotate left<br>Right = rotate right<br>F = more speed<br>G = less speed</p>
+        <script src="three.min.js"> </script> 
+        
+        <script> 
+            
+            window.addEventListener('keydown',doKeyDown,true);
+            var cam_zpos = 150.0;
+            var cam_xpos = -20.0;
+            var cam_ypos = -5.0;
+            var zpos = 2.0;
+            var xpos = 0;
+            var aug = 0;
+            var augx = 0;
+            var theta = 0;
+            var velocity = 0.009;
+            
+            //amount of teeth
+            var numberOfTeeth = 8;
+            
+            function doKeyDown(evt){
+                console.log("Tecla presionada: "+evt.keyCode);
+                switch (evt.keyCode) {
+                    case 38:  /* Up arrow was pressed */                        
+                    aug -= 2;
+                    break;
+                    case 40:  /* Down arrow was pressed */                        
+                    aug += 2;
+                    break;
+                    case 37:  /* Left arrow was pressed */    
+                    theta += 10/90;                      
+                    break;
+                    case 39:  /* Right arrow was pressed */    
+                    theta -= 10/90; 
+                    break;
+                    case 65:  /* a was pressed */    
+                    augx -= 1;                      
+                    break;
+                    case 68:  /* d was pressed */    
+                    augx += 1; 
+                    break;
+                    case 87:  /* w was pressed */    
+                    camera.position.y += 1;                      
+                    break;
+                    case 83:  /* s was pressed */    
+                    camera.position.y -= 1; 
+                    break;
+                    case 70:  /* f was pressed */    
+                    velocity += 0.002; 
+                    break;
+                    case 71:  /* g was pressed */    
+                    velocity -= 0.002; 
+                    break;
+                }
+            }           
+            // three basic components of a scene
+            var scene = new THREE.Scene(); 
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
+            var renderer = new THREE.WebGLRenderer(); 
+            
+            //define the grass
+            var grass = new THREE.BoxGeometry(400,1,200);
+            var loader = new THREE.TextureLoader();
+            var textureMaterialGrass = new THREE.MeshStandardMaterial ({
+                color: 0x00FF00,
+                emissive: 0x505050,
+                roughness: 0.6,
+                metalness: 0,
+            });
+            var floor = new THREE.Mesh(grass, textureMaterialGrass);
+            scene.add(floor);
+            
+            //create the rueda:
+            var geometryForWheel = new THREE.Geometry();
+            var geometryForWheelCabins = new THREE.Geometry();
+            var gondolasGroup =  new THREE.Object3D();
+            createRuedaDeLaFortuna(geometryForWheel, geometryForWheelCabins, gondolasGroup);
+            
+            
+            
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+            document.body.appendChild(renderer.domElement); 
+            camera.position.z = cam_zpos;
+            camera.position.y = 40; 
+            camera.position.x = 0;
+            
+            var pointLight = new THREE.PointLight( 0xFFFFFF );
+            var pointLight2 = new THREE.PointLight( 0xFFFFFF );
+            var thesun = new THREE.PointLight( 0xFFFFFF );
+            pointLight.position.z += 10
+            pointLight2.position.z += 10
+            scene.add(thesun);
+            thesun.position.y += 1000
+            scene.add(pointLight);
+            scene.add(pointLight2);   
+            renderer.setClearColor(0x00AAAA, 1);
+            
+            //THE JOKER
+            function createRuedaDeLaFortuna(geometryForWheel, geometryForWheelCabins, gondolasGroup){
+                var ferry = new THREE.Object3D();
+                //floor of ferry
+                var robotmaterialbase = new THREE.MeshStandardMaterial( {
+                    color: 0xFF4500,
+                    roughness: 0.5,
+                    metalness: 0.5,
+                } );
+                var ferryFloor = new THREE.Object3D();
+                var floorOfFerryGeo = new THREE.BoxGeometry( 90, 10, 40);
+                var floorFerry = new THREE.Mesh( floorOfFerryGeo, robotmaterialbase );
+                ferryFloor.add(floorFerry);
+                var stairs1Geo = new THREE.BoxGeometry( 20, 1, 40);
+                var stairs1 = new THREE.Mesh( stairs1Geo, robotmaterialbase );
+                stairs1.position.z += 20;
+                stairs1.position.y += 1;
+                ferryFloor.add(stairs1);
+                var stairs2Geo = new THREE.BoxGeometry( 20, 1, 40);
+                var stairs2 = new THREE.Mesh( stairs2Geo, robotmaterialbase );
+                stairs2.position.z += 15;
+                stairs2.position.y += 2;
+                ferryFloor.add(stairs2);
+                var stairs3Geo = new THREE.BoxGeometry( 20, 1, 40);
+                var stairs3 = new THREE.Mesh( stairs3Geo, robotmaterialbase );
+                stairs3.position.z += 10;
+                stairs3.position.y += 3;
+                ferryFloor.add(stairs3);
+                ferry.add(ferryFloor);
+                //base
+                var robotmaterialtubes = new THREE.MeshStandardMaterial( {
+                    color: 0x8000BB,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                } );
+                var baseTubes = new THREE.Object3D();
+                var geometryTubesBase1 = new THREE.CylinderGeometry( 3, 3, 80, 32 );
+                var cylinderBase1 = new THREE.Mesh( geometryTubesBase1, robotmaterialtubes );
+                cylinderBase1.position.x = -25;
+                cylinderBase1.position.z = 15;
+                cylinderBase1.position.y = 30;
+                cylinderBase1.rotation.z -= .5;
+                baseTubes.add(cylinderBase1);
+                var geometryTubesBase2 = new THREE.CylinderGeometry( 3, 3, 80, 32 );
+                var cylinderBase2 = new THREE.Mesh( geometryTubesBase2, robotmaterialtubes );
+                cylinderBase2.position.x = -25;
+                cylinderBase2.position.z = -15;
+                cylinderBase2.position.y = 30;
+                cylinderBase2.rotation.z -= .5;
+                baseTubes.add(cylinderBase2);
+                var geometryTubesBase3 = new THREE.CylinderGeometry( 3, 3, 80, 32 );
+                var cylinderBase3 = new THREE.Mesh( geometryTubesBase3, robotmaterialtubes );
+                cylinderBase3.position.x = 25;
+                cylinderBase3.position.z = 15;
+                cylinderBase3.position.y = 30;
+                cylinderBase3.rotation.z += .5;
+                baseTubes.add(cylinderBase3);
+                var geometryTubesBase4 = new THREE.CylinderGeometry( 3, 3, 80, 32 );
+                var cylinderBase4 = new THREE.Mesh( geometryTubesBase4, robotmaterialtubes );
+                cylinderBase4.position.x = 25;
+                cylinderBase4.position.z = -15;
+                cylinderBase4.position.y = 30;
+                cylinderBase4.rotation.z += .5;
+                baseTubes.add(cylinderBase4);
+                ferry.add(baseTubes);
+                //add center of the whell
+                var ferryCenter = new THREE.Object3D();
+                var robotmaterialcenter = new THREE.MeshStandardMaterial( {
+                    color: 0x55BB00,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                } );
+                var textureMaterial1 = new THREE.MeshLambertMaterial ({
+                    map: loader.load("textures/joker1.jpg")
+                });
+                var geometryCenterFerry1 = new THREE.CylinderGeometry( 10, 15, 5, 32 );
+                var cylinderCenter1 = new THREE.Mesh( geometryCenterFerry1, robotmaterialcenter );
+                cylinderCenter1.position.y = 73;
+                cylinderCenter1.position.z = 15;
+                cylinderCenter1.rotation.x += 1.6;
+                ferryCenter.add(cylinderCenter1);
+                var geometryCenterFerry2 = new THREE.CylinderGeometry( 15, 10, 5, 32 );
+                var cylinderCenter2 = new THREE.Mesh( geometryCenterFerry2, robotmaterialcenter );
+                cylinderCenter2.position.y = 73;
+                cylinderCenter2.position.z = -15;
+                cylinderCenter2.rotation.x += 1.6;
+                ferryCenter.add(cylinderCenter2);
+                ferry.add(ferryCenter);
+                var geometryCenterFerryMain = new THREE.CylinderGeometry( 10, 10, 2, 32 );
+                var cylinderCenterMain = new THREE.Mesh( geometryCenterFerryMain, textureMaterial1 );
+                cylinderCenterMain.position.y = 73;
+                cylinderCenterMain.position.z = 17;
+                cylinderCenterMain.rotation.x += 1.6;
+                cylinderCenterMain.rotation.y -= 1.6;
+                ferryCenter.add(cylinderCenterMain);
+                //CENTER GEAR
+                var centerColorMetalOrange = new THREE.MeshLambertMaterial(
+                {
+                    color: 0xFF4500,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                var centerColorMetalPurple = new THREE.MeshStandardMaterial( {
+                    color: 0x8000BB,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                } );
+                
+                var geomGearCenterGeomIntern = new THREE.Geometry(); 
+                createGear(0, 4, 12, geomGearCenterGeomIntern, 4/6, 0, gondolasGroup);
+                geomGearCenterGeomIntern.computeFaceNormals();
+                centerInternGear = new THREE.Mesh( geomGearCenterGeomIntern, centerColorMetalPurple);
+                centerInternGear.position.y = 73;
+                ferry.add(centerInternGear);
+                var geomGearCenterGeom = new THREE.Geometry(); 
+                createGear(4, 8, 2, geomGearCenterGeom, 50, 1, gondolasGroup);
+                geomGearCenterGeom.computeFaceNormals();
+                centerGear = new THREE.Mesh( geomGearCenterGeom, centerColorMetalOrange);
+                centerGear.position.y = 73;
+                centerGear.position.z = 9;
+                ferry.add(centerGear);
+                var geomGearCenterGeom2 = new THREE.Geometry(); 
+                createGear(4, 8, 2, geomGearCenterGeom2, 50, 0, gondolasGroup);
+                geomGearCenterGeom2.computeFaceNormals();
+                centerGear2 = new THREE.Mesh( geomGearCenterGeom2, centerColorMetalOrange);
+                centerGear2.position.y = 73;
+                centerGear2.position.z = -9;
+                ferry.add(centerGear2);
+                //Gondolas:
+                gondolasGroup.position.y = 73;
+                ferry.add(gondolasGroup);
+                
+                scene.add(ferry);
+                
+                
+            }
+            
+            
+            //initialCounterOfVertices -> index inciial de zona de vertices de la dona de enfrente(pares para inner circle e impares para circulo exterior)
+            //initialCounterOfVertices2 -> index inciial de zona de vertices de la dona de atras(pares para inner circle e impares para circulo exterior)
+            //counterOfVerticesFrontTeeth -> index inicial de la zona de vertices de las puntas de los dientes exteriores de enfrente(tods corridos)
+            //counterOfVerticesBackTeeth -> index inicial de la zona de vertices de las puntas de los dientes exteriores de atras(tods corridos)
+            //counterOfVerticesInnerFrontTeeth -> index inicial de la zona de vertices de las puntas de los dientes interiores de enfrente (tods corridos)
+            //counterOfVerticesInnerBackTeeth -> index inicial de la zona de vertices de las puntas de los dientes interiores de atras (tods corridos)
+            function createGear(innerRadio, externalRadio, centerZ, geometry, lengthExternalTeeth, yesOrNo, gondolasGroup){
+                //create the circular body:
+                //each iteration creates the vertices of a "line" of the circle
+                //the vertices of each line are: inner circle, bigger circle
+                //after the second iteration the program start to join the 2 vertices that is creating with the ones of the before iteration
+                //front circle
+                var currentAngle = 0;
+                var incrementAngle = 360/(numberOfTeeth*2);
+                var initialCounterOfVertices = geometry.vertices.length;
+                var adjustmentangle = -incrementAngle*0.2;
+                var inneradjustmentangle = -incrementAngle*0.1;
+                adjustmentangle = adjustmentangle*-1;
+                for(var i = 1; i <= numberOfTeeth*4; i++){
+                    adjustmentangle = adjustmentangle*-1;
+                    inneradjustmentangle = inneradjustmentangle*-1;
+                    var innerVertice1x = innerRadio*Math.cos(THREE.Math.degToRad(currentAngle+inneradjustmentangle));
+                    var innerVertice1y = innerRadio*Math.sin(THREE.Math.degToRad(currentAngle+inneradjustmentangle));
+                    var externalVertice1x = externalRadio*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var externalVertice1y = externalRadio*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3( innerVertice1x, innerVertice1y, centerZ));
+                    geometry.vertices.push(new THREE.Vector3( externalVertice1x, externalVertice1y, centerZ));
+                    //join with the two before points
+                    if(i > 1){
+                        geometry.faces.push( new THREE.Face3(initialCounterOfVertices+i, initialCounterOfVertices+i-2, initialCounterOfVertices+i-1));   
+                        geometry.faces.push( new THREE.Face3(initialCounterOfVertices+i, initialCounterOfVertices+i-1, initialCounterOfVertices+i+1)); 
+                    }
+                    currentAngle += incrementAngle;
+                }
+                
+                //back circle
+                var currentAngle = 0;
+                var incrementAngle = 360/(numberOfTeeth*2);
+                var initialCounterOfVertices2 = geometry.vertices.length;
+                
+                for(var i = 1; i <= numberOfTeeth*4; i++){
+                    adjustmentangle = adjustmentangle*-1;
+                    inneradjustmentangle = inneradjustmentangle*-1;
+                    var innerVertice1x = innerRadio*Math.cos(THREE.Math.degToRad(currentAngle+inneradjustmentangle));
+                    var innerVertice1y = innerRadio*Math.sin(THREE.Math.degToRad(currentAngle+inneradjustmentangle));
+                    var externalVertice1x = externalRadio*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var externalVertice1y = externalRadio*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3( innerVertice1x, innerVertice1y, -centerZ));
+                    geometry.vertices.push(new THREE.Vector3( externalVertice1x, externalVertice1y, -centerZ));
+                    
+                    //join with the two before points
+                    if(i > 1){
+                        geometry.faces.push( new THREE.Face3(initialCounterOfVertices2+i, initialCounterOfVertices2+i-1, initialCounterOfVertices2+i-2));   
+                        geometry.faces.push( new THREE.Face3(initialCounterOfVertices2+i, initialCounterOfVertices2+i+1, initialCounterOfVertices2+i-1)); 
+                    }
+                    currentAngle += incrementAngle;
+                }
+                
+                //add external teeth to the vertices array and faces:
+                currentAngle = 0;
+                var flagPutTeeth = false;
+                var externalHeightTeeth = lengthExternalTeeth;
+                var adjustmentangle = -lengthExternalTeeth*0.2;
+                //remember of when my new vertices that i will add will be:
+                var counterOfVerticesFrontTeeth = geometry.vertices.length - 1;
+                for(var i = 1; i <= numberOfTeeth*4; i++){
+                    
+                    adjustmentangle = adjustmentangle*-1;
+                    var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(externalTeethX1, externalTeethY1, centerZ));
+                    
+                    if(i!= 1 && flagPutTeeth){
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices+(i+(i-1)), initialCounterOfVertices+(i+(i-1))-2, i+counterOfVerticesFrontTeeth));   
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices+(i+(i-1))-2, (i+counterOfVerticesFrontTeeth)-1, i+counterOfVerticesFrontTeeth)); 
+                    }
+                    flagPutTeeth = !flagPutTeeth;
+                    currentAngle += incrementAngle;
+                }
+                
+                //add external for the back circle
+                currentAngle = 0;
+                var flagPutTeeth = false;
+                var externalHeightTeeth = lengthExternalTeeth;
+                //remember of when my new vertices that i will add will be:
+                var counterOfVerticesBackTeeth = geometry.vertices.length - 1;
+                for(var i = 1; i <= numberOfTeeth*4; i++){
+                    
+                    adjustmentangle = adjustmentangle*-1;
+                    var externalTeethX1 = (externalRadio+externalHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var externalTeethY1 = (externalRadio+externalHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(externalTeethX1, externalTeethY1, -centerZ));
+                    
+                    if(i!= 1 && flagPutTeeth){
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1)), i+counterOfVerticesBackTeeth, initialCounterOfVertices2+(i+(i-1))-2));   
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2+(i+(i-1))-2, i+counterOfVerticesBackTeeth, (i+counterOfVerticesBackTeeth)-1)); 
+                        if(yesOrNo){
+                            var centerColorMetalPurple = new THREE.MeshStandardMaterial( {
+                                color: 0x8000BB,
+                                roughness: 0.6,
+                                metalness: 0.5,
+                            } );
+                            var holeColor = new THREE.MeshStandardMaterial( {
+                                color: 0x000000,
+                                roughness: 0.6,
+                                metalness: 0.5,
+                            } );
+                            var gondola = new THREE.Object3D();
+                            var gondolaGeometry = new THREE.CylinderGeometry( 10, 8, 10);
+                            var gondolaTop = new THREE.Mesh( gondolaGeometry, centerColorMetalPurple );
+                            gondolaTop.position.x = externalTeethX1;
+                            gondolaTop.position.y = externalTeethY1;
+                            gondolaTop.position.z = -centerZ +2;
+                            gondola.add(gondolaTop);
+                            /*
+                            var gondolaGeometryHole = new THREE.CylinderGeometry( 8, 7, 1);
+                            var gondolaTopHole = new THREE.Mesh( gondolaGeometryHole, holeColor );
+                            gondolaTopHole.position.x = externalTeethX1;
+                            gondolaTopHole.position.y = externalTeethY1;
+                            gondolaTopHole.position.z = -centerZ +2;
+                            gondola.add(gondolaTopHole);
+                            gondola.position.y += 4.8;
+                            */
+                            gondolasGroup.add(gondola);
+                        }
+                    }
+                    flagPutTeeth = !flagPutTeeth;
+                    currentAngle += incrementAngle;
+                }
+                
+                //add unions between the external teeth (back and front):
+                //on each iteration i will cover a teeth and a hole
+                var flag = true;
+                for(var i = 1; i <= numberOfTeeth*2 + 1; i++){
+                    if(flag){
+                        //tapa del diente
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, counterOfVerticesBackTeeth+i+1, counterOfVerticesFrontTeeth+i+1));  
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, counterOfVerticesBackTeeth+i+1, counterOfVerticesFrontTeeth+i)); 
+                        if(i!=1){
+                            //tapa del hoyo
+                            geometry.faces.push(new THREE.Face3(initialCounterOfVertices+(i*2)-1, initialCounterOfVertices+(i*2)-3, initialCounterOfVertices2+(i*2)-1));  
+                            geometry.faces.push(new THREE.Face3(initialCounterOfVertices2+(i*2)-1, initialCounterOfVertices+(i*2)-3, initialCounterOfVertices2+(i*2)-3));  
+                        }
+                    }
+                    //cara izq del diente visto desde el frente (abajo)
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1, initialCounterOfVertices+(i*2)-1));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, initialCounterOfVertices2+(i*2)-1, counterOfVerticesFrontTeeth+i));
+                    //cara derecha del diente vusto desde enfrente (arriba)
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth+i, initialCounterOfVertices+(i*2)-1, initialCounterOfVertices2+(i*2)-1));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth+i, counterOfVerticesFrontTeeth+i, initialCounterOfVertices2+(i*2)-1));  
+                    
+                    flag = !flag; 
+                }
+                
+                //add internal teeth to the vertices array and faces:
+                currentAngle = 0;
+                var flagPutTeeth = true;
+                var innerHeightTeeth = innerRadio/6;
+                //remember of when my new vertices that i will add will be:
+                
+                var counterOfVerticesInnerFrontTeeth = geometry.vertices.length - 1;
+                adjustmentangle = adjustmentangle*-1;
+                for(var i = 1; i <= numberOfTeeth*4; i++){
+                    adjustmentangle = adjustmentangle*-1;
+                    var innerTeethX1 = (innerRadio-innerHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var innerTeethY1 = (innerRadio-innerHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(innerTeethX1, innerTeethY1, centerZ));
+                    if(i!= 1 && flagPutTeeth){
+                        geometry.faces.push(new THREE.Face3(i+counterOfVerticesInnerFrontTeeth, (i+counterOfVerticesInnerFrontTeeth)-1, initialCounterOfVertices+(i*2)-4));   
+                        geometry.faces.push(new THREE.Face3(i+counterOfVerticesInnerFrontTeeth, initialCounterOfVertices+(i*2)-4, initialCounterOfVertices+(i*2)-2)); 
+                    }
+                    flagPutTeeth = !flagPutTeeth;
+                    currentAngle += incrementAngle;
+                }
+                
+                //internal teeth for the back
+                
+                //add internal teeth to the vertices array and faces:
+                currentAngle = 0;
+                var flagPutTeeth = true;
+                var innerHeightTeeth = innerRadio/6;
+                //remember of when my new vertices that i will add will be:
+                
+                var counterOfVerticesInnerBackTeeth = geometry.vertices.length - 1;
+                
+                for(var i = 1; i <= numberOfTeeth*4; i++){
+                    adjustmentangle = adjustmentangle*-1;
+                    var innerTeethX1 = (innerRadio-innerHeightTeeth)*Math.cos(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    var innerTeethY1 = (innerRadio-innerHeightTeeth)*Math.sin(THREE.Math.degToRad(currentAngle+adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(innerTeethX1, innerTeethY1, -centerZ));
+                    if(i!= 1 && flagPutTeeth){
+                        geometry.faces.push(new THREE.Face3(i+counterOfVerticesInnerBackTeeth, initialCounterOfVertices2+(i*2)-4, (i+counterOfVerticesInnerBackTeeth)-1));   
+                        geometry.faces.push(new THREE.Face3(i+counterOfVerticesInnerBackTeeth, initialCounterOfVertices2+(i*2)-2, initialCounterOfVertices2+(i*2)-4)); 
+                    }
+                    flagPutTeeth = !flagPutTeeth;
+                    currentAngle += incrementAngle;
+                }
+                
+                //add unions between the external teeth (back and front):
+                //on each iteration i will cover a teeth and a hole
+                var flag = false;
+                for(var i = 1; i <= numberOfTeeth*2 + 1; i++){
+                    if(flag){
+                        //tapa del diente
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i, counterOfVerticesInnerFrontTeeth+i+1, counterOfVerticesInnerBackTeeth+i+1));  
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, counterOfVerticesInnerFrontTeeth+i, counterOfVerticesInnerBackTeeth+i+1)); 
+                        
+                        
+                    }else{
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices+(i*2), initialCounterOfVertices2+(i*2), initialCounterOfVertices+(i*2)-2));  
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2+(i*2), initialCounterOfVertices2+(i*2)-2,  initialCounterOfVertices+(i*2)-2));  
+                    }
+                    //cara izq del diente visto desde el frente (abajo)
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i+1, initialCounterOfVertices2+(i*2), initialCounterOfVertices+(i*2)));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, initialCounterOfVertices2+(i*2)-2, counterOfVerticesInnerFrontTeeth+i));
+                    //cara derecha del diente vusto desde enfrente (arriba)
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth+i, initialCounterOfVertices+(i*2)-2, initialCounterOfVertices2+(i*2)-2));  
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth+i, counterOfVerticesInnerFrontTeeth+i, initialCounterOfVertices2+(i*2)-2));  
+                    
+                    flag = !flag; 
+                }
+                
+                
+            }
+            
+            
+            var render = function () { 
+                //Do not touch
+                requestAnimationFrame(render);  
+                centerInternGear.rotation.z += velocity;
+                centerGear.rotation.z += velocity;
+                centerGear2.rotation.z += velocity;
+                
+                var arrayGondolas = gondolasGroup.children;
+
+                arrayGondolas.forEach(gondola => {
+                    gondola.children[0].rotation.z -= velocity;
+                    //gondola.children[1].rotation.z -= velocity;
+                });
+                
+                
+                gondolasGroup.rotation.z += velocity;
+                pointLight.position.x = camera.position.x;
+                pointLight.position.y = camera.position.y;
+                pointLight.position.z = camera.position.x; 
+                pointLight2.position.x = camera.position.x;
+                pointLight2.position.y = camera.position.y;
+                pointLight2.position.z = camera.position.z;            
+                zpos = (aug * Math.cos( THREE.Math.degToRad( theta ) ));
+                xpos = (augx * Math.cos( THREE.Math.degToRad( theta ) ));
+                camera.translateZ(zpos);
+                camera.translateX(xpos);
+                camera.rotation.y = theta;
+                aug = 0;
+                augx = 0;
+                renderer.render(scene, camera); 
+                //Ends Here
+            }; 
+            render();             
+        </script> 
+    </body> 
+    </html>
