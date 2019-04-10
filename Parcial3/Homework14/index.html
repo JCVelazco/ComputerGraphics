@@ -130,7 +130,7 @@
                     metalness: 0.5,
                 } );
                 var robotSilver = new THREE.MeshStandardMaterial( {
-                    color: 0xFF0000,
+                    color: 0xFF000,
                     roughness: 0.6,
                     metalness: 0.5,
                 } );
@@ -147,18 +147,9 @@
                 var geomOfBase = new THREE.CylinderGeometry( 10, 11, 5, 32 );
                 var floorGame = new THREE.Mesh(geomOfBase, robotRed);
                 baseOfGame.add(floorGame);
-                var geomOfBase2 = new THREE.CylinderGeometry( 20, 20, 0, 32 );
-                var floorGame2 = new THREE.Mesh(geomOfBase2, robotYellow);
-                floorGame2.position.y = 1.2;
-                baseOfGame.add(floorGame2);
-                var geomOfBase3 = new THREE.CylinderGeometry( 50, 50, 0, 32 );
-                var floorGame3 = new THREE.Mesh(geomOfBase3, robotRed);
-                floorGame3.position.y = 0.8;
-                baseOfGame.add(floorGame3);
-                var loader = new THREE.OBJLoader();
                 var geomOfBase4 = new THREE.CylinderGeometry( 65, 65, 0, 32 );
                 var floorGame4 = new THREE.Mesh(geomOfBase4, textureFlash);
-                floorGame4.position.y = 1.5;
+                floorGame4.position.y = 1;
                 baseOfGame.add(floorGame4);
                 gForceGame.add(baseOfGame);
                 var geomGearCenterGeom = new THREE.Geometry(); 
