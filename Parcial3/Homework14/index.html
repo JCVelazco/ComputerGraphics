@@ -17,9 +17,9 @@
 </head> 
 <body> 
     <p>Instructions: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = go backwards
-        <br>Left = rotate left<br>Right = rotate right<br>F = more speed<br>G = less speed</p>
+        <br>Left = rotate left<br>Right = rotate right<br>F/G = more/less speed por wheel</p>
         <script src="three.min.js"> </script> 
-        
+        <script src='https://mamboleoo.be/learnThree/demos/OBJLoader.js'></script>
         <script> 
             
             window.addEventListener('keydown',doKeyDown,true);
@@ -31,8 +31,11 @@
             var aug = 0;
             var augx = 0;
             var theta = 0;
-            var velocity = 0.009;
-            
+            var velocity = 0.04;
+            var velocity2 = 0;
+            var increase = true;
+            var heightOfSpinner = 0;
+            var goUp = true;
             //amount of teeth
             var numberOfTeeth = 8;
             
@@ -76,7 +79,7 @@
             var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
             var renderer = new THREE.WebGLRenderer(); 
             
-            //define the grass
+            //define the 'grass'
             var grass = new THREE.BoxGeometry(400,1,200);
             var loader = new THREE.TextureLoader();
             var textureMaterialGrass = new THREE.MeshStandardMaterial ({
@@ -90,11 +93,15 @@
             
             //create the rueda:
             var geometryForWheel = new THREE.Geometry();
-            var geometryForWheelCabins = new THREE.Geometry();
             var gondolasGroup =  new THREE.Object3D();
-            createRuedaDeLaFortuna(geometryForWheel, geometryForWheelCabins, gondolasGroup);
-            
-            
+            createRuedaDeLaFortuna(gondolasGroup);
+            ferry.position.x = -80;
+            scene.add(ferry);
+            //create the nasa game:
+            var geometryForBallGame = new THREE.Geometry();
+            createBallGame();
+            gForceGame.position.x = 80;
+            scene.add(gForceGame);
             
             renderer.setSize(window.innerWidth, window.innerHeight); 
             document.body.appendChild(renderer.domElement); 
@@ -113,9 +120,114 @@
             scene.add(pointLight2);   
             renderer.setClearColor(0x00AAAA, 1);
             
+            //THE FLASH
+            function createBallGame(){
+                gForceGame = new THREE.Object3D();
+                //floor of the game:
+                var robotRed = new THREE.MeshStandardMaterial( {
+                    color: 0xC0C0C0,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                } );
+                var robotSilver = new THREE.MeshStandardMaterial( {
+                    color: 0xC0C0C0,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                } );
+                var robotYellow = new THREE.MeshStandardMaterial( {
+                    color: 0xBBBB00,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                } );
+                var baseOfGame = new THREE.Object3D();
+                var geomOfBase = new THREE.CylinderGeometry( 10, 11, 5, 32 );
+                var floorGame = new THREE.Mesh(geomOfBase, robotRed);
+                baseOfGame.add(floorGame);
+                var geomOfBase2 = new THREE.CylinderGeometry( 20, 20, 0, 32 );
+                var floorGame2 = new THREE.Mesh(geomOfBase2, robotYellow);
+                floorGame2.position.y = 1.2;
+                baseOfGame.add(floorGame2);
+                var geomOfBase3 = new THREE.CylinderGeometry( 50, 50, 0, 32 );
+                var floorGame3 = new THREE.Mesh(geomOfBase3, robotRed);
+                floorGame3.position.y = 0.8;
+                baseOfGame.add(floorGame3);
+                var geomOfBase4 = new THREE.CylinderGeometry( 65, 65, 0, 32 );
+                var floorGame4 = new THREE.Mesh(geomOfBase4, robotYellow);
+                floorGame4.position.y = 0.5;
+                baseOfGame.add(floorGame4);
+                gForceGame.add(baseOfGame);
+                var geomGearCenterGeom = new THREE.Geometry(); 
+                createGear(0, 3, 80, geomGearCenterGeom, 3/4, 0, baseOfGame);
+                geomGearCenterGeom.computeFaceNormals();
+                centerGearForBall = new THREE.Mesh( geomGearCenterGeom, robotYellow);
+                centerGearForBall.position.y = 40;
+                centerGearForBall.rotation.x = 1.55;
+                baseOfGame.add(centerGearForBall);
+                var geometryBall = new THREE.SphereGeometry( 8, 32, 32 );
+                var redBall = new THREE.Mesh( geometryBall, robotRed );
+                redBall.position.y = 120;
+                gForceGame.add(redBall);
+                gForceGame.add(baseOfGame);
+                //spinner
+                spinner = new THREE.Object3D();
+                var geomSpinner1 = new THREE.CylinderGeometry(3.5,5,45,32);
+                var spinner1 = new THREE.Mesh(geomSpinner1, robotRed);
+                spinner1.position.y = 13;
+                spinner1.rotation.z -= 1.55;
+                spinner1.position.x = 22;
+                spinner.add(spinner1);
+                var geomSpinner2 = new THREE.CylinderGeometry(3.5,5,45,32);
+                var spinner2 = new THREE.Mesh(geomSpinner2, robotRed);
+                spinner2.position.y = 13;
+                spinner2.rotation.z += 1.55;
+                spinner2.position.x = -22;
+                spinner.add(spinner2);
+                //spinner section of cabin:
+                var loader = new THREE.OBJLoader();
+                var cabin1 = new THREE.Object3D();
+                var cabin2 = new THREE.Object3D();
+                var textureLoader = new THREE.TextureLoader();
+                var map = textureLoader.load('models/texturePlane.png');
+                var material = new THREE.MeshPhongMaterial({map: map});
+                loader.load(               
+                'models/SpaceShuttle.obj ',                
+                function ( object ) {
+                    object.traverse( function ( node ) {
+                        if ( node.isMesh ) node.material = material; 
+                    } );
+                    //cabin1.add(object)
+                    cabin2.add(object)
+                }
+                );
+
+                loader.load(               
+                'models/SpaceShuttle.obj ',                
+                function ( object ) {
+                    object.traverse( function ( node ) {
+                        if ( node.isMesh ) node.material = material; 
+                    } );
+                    //cabin1.add(object)
+                    cabin1.add(object)
+                }
+                );                
+                cabin1.scale.set(0.15,0.15,0.15)
+                cabin2.scale.set(0.15,0.15,0.15)
+                cabin1.rotation.x = THREE.Math.degToRad(90)
+                cabin1.rotation.y = THREE.Math.degToRad(180)
+                cabin2.rotation.x = THREE.Math.degToRad(-90)
+                cabin1.position.y = 7;
+                cabin1.position.x = 50;
+                spinner.add( cabin1 );
+                cabin2.position.y = 7;
+                cabin2.position.x = -50;
+                spinner.add( cabin2 );
+                gForceGame.add(spinner);
+                
+            }
+            
             //THE JOKER
-            function createRuedaDeLaFortuna(geometryForWheel, geometryForWheelCabins, gondolasGroup){
-                var ferry = new THREE.Object3D();
+            function createRuedaDeLaFortuna(gondolasGroup){
+                ferry = new THREE.Object3D();
                 //floor of ferry
                 var robotmaterialbase = new THREE.MeshStandardMaterial( {
                     color: 0xFF4500,
@@ -245,9 +357,6 @@
                 gondolasGroup.position.y = 73;
                 ferry.add(gondolasGroup);
                 
-                scene.add(ferry);
-                
-                
             }
             
             
@@ -359,7 +468,7 @@
                                 metalness: 0.5,
                             } );
                             var gondola = new THREE.Object3D();
-                            var gondolaGeometry = new THREE.CylinderGeometry( 10, 8, 10);
+                            var gondolaGeometry = new THREE.CylinderGeometry( 9, 7, 10);
                             var gondolaTop = new THREE.Mesh( gondolaGeometry, centerColorMetalPurple );
                             gondolaTop.position.x = externalTeethX1;
                             gondolaTop.position.y = externalTeethY1;
@@ -485,13 +594,38 @@
                 centerGear2.rotation.z += velocity;
                 
                 var arrayGondolas = gondolasGroup.children;
-
+                
                 arrayGondolas.forEach(gondola => {
                     gondola.children[0].rotation.z -= velocity;
                     //gondola.children[1].rotation.z -= velocity;
                 });
                 
+                //velocity of the flash game:
+                if(increase){
+                    velocity2 += 0.0003;
+                    if(velocity2 > 0.20){
+                        increase =  false;
+                    }
+                }else{
+                    velocity2 -= 0.0003;
+                    if(velocity2 < 0){
+                        increase = true;
+                    }
+                }
                 
+                if(goUp){
+                    if(heightOfSpinner > 90) goUp = false;
+                    heightOfSpinner += 0.8;
+                    spinner.position.y = heightOfSpinner;
+                }else{
+                    if(heightOfSpinner < 0) goUp = true;
+                    heightOfSpinner -= 2;
+                    spinner.position.y = heightOfSpinner;
+                }
+                
+                
+                //centerGearForBall.rotation.z += velocity2;
+                spinner.rotation.y +=  velocity2;
                 gondolasGroup.rotation.z += velocity;
                 pointLight.position.x = camera.position.x;
                 pointLight.position.y = camera.position.y;
