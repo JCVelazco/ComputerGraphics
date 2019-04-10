@@ -130,7 +130,7 @@
                     metalness: 0.5,
                 } );
                 var robotSilver = new THREE.MeshStandardMaterial( {
-                    color: 0xC0C0C0,
+                    color: 0xFF0000,
                     roughness: 0.6,
                     metalness: 0.5,
                 } );
@@ -139,6 +139,10 @@
                     roughness: 0.6,
                     metalness: 0.5,
                 } );
+                var loader2 = new THREE.TextureLoader();
+                var textureFlash = new THREE.MeshLambertMaterial ({
+                    map: loader2.load("textures/flash.jpg")
+                });
                 var baseOfGame = new THREE.Object3D();
                 var geomOfBase = new THREE.CylinderGeometry( 10, 11, 5, 32 );
                 var floorGame = new THREE.Mesh(geomOfBase, robotRed);
@@ -151,9 +155,10 @@
                 var floorGame3 = new THREE.Mesh(geomOfBase3, robotRed);
                 floorGame3.position.y = 0.8;
                 baseOfGame.add(floorGame3);
+                var loader = new THREE.OBJLoader();
                 var geomOfBase4 = new THREE.CylinderGeometry( 65, 65, 0, 32 );
-                var floorGame4 = new THREE.Mesh(geomOfBase4, robotYellow);
-                floorGame4.position.y = 0.5;
+                var floorGame4 = new THREE.Mesh(geomOfBase4, textureFlash);
+                floorGame4.position.y = 1.5;
                 baseOfGame.add(floorGame4);
                 gForceGame.add(baseOfGame);
                 var geomGearCenterGeom = new THREE.Geometry(); 
@@ -164,7 +169,7 @@
                 centerGearForBall.rotation.x = 1.55;
                 baseOfGame.add(centerGearForBall);
                 var geometryBall = new THREE.SphereGeometry( 8, 32, 32 );
-                var redBall = new THREE.Mesh( geometryBall, robotRed );
+                var redBall = new THREE.Mesh( geometryBall, robotSilver );
                 redBall.position.y = 120;
                 gForceGame.add(redBall);
                 gForceGame.add(baseOfGame);
