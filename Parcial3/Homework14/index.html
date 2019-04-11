@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title> Parque de D </title>
+    <title>DC Carnival</title>
     <style>
         canvas {
             width: 100%;
@@ -22,9 +22,8 @@
 </head>
 
 <body>
-    <p>Instructions: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = go
-        backwards
-        <br>Left = rotate left<br>Right = rotate right<br>F/G = more/less speed por wheel</p>
+    <p>Instructions for the DC Carnival: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = gobackwards<br>
+        Left = rotate left<br>Right = rotate right<br>F/G = more/less speed por wheel</p>
     <script src="three.min.js"> </script>
     <script src='https://mamboleoo.be/learnThree/demos/OBJLoader.js'></script>
     <script>
@@ -120,11 +119,11 @@
         ferry.position.x = -140;
         ferry.position.z = 40;
         scene.add(ferry);
-        //create the nasa game:
-        var geometryForBallGame = new THREE.Geometry();
-        createBallGame();
+        //create the flash game:
+        var geometryForFlashGame = new THREE.Geometry();
+        createFlashGame();
         gForceGame.position.x = -20;
-        gForceGame.position.z = -80;
+        gForceGame.position.z = -100;
         scene.add(gForceGame);
 
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -343,7 +342,7 @@
 
         scene.add(carousel)
         //THE FLASH
-        function createBallGame() {
+        function createFlashGame() {
             gForceGame = new THREE.Object3D();
             //floor of the game:
             var robotRed = new THREE.MeshStandardMaterial({
@@ -369,21 +368,21 @@
             var geomOfBase = new THREE.CylinderGeometry(10, 11, 5, 32);
             var floorGame = new THREE.Mesh(geomOfBase, robotRed);
             baseOfGame.add(floorGame);
-            var geomOfBase4 = new THREE.CylinderGeometry(65, 65, 0, 32);
+            var geomOfBase4 = new THREE.CylinderGeometry(85, 85, 0, 32);
             var floorGame4 = new THREE.Mesh(geomOfBase4, textureFlash);
             floorGame4.position.y = 1;
             baseOfGame.add(floorGame4);
             gForceGame.add(baseOfGame);
             var geomGearCenterGeom = new THREE.Geometry();
-            createGear(0, 3, 80, geomGearCenterGeom, 3 / 4, 0, baseOfGame);
+            createGear(0, 3, 100, geomGearCenterGeom, 3 / 4, 0, baseOfGame);
             geomGearCenterGeom.computeFaceNormals();
             centerGearForBall = new THREE.Mesh(geomGearCenterGeom, robotYellow);
-            centerGearForBall.position.y = 40;
+            centerGearForBall.position.y = 60;
             centerGearForBall.rotation.x = 1.55;
             baseOfGame.add(centerGearForBall);
             var geometryBall = new THREE.SphereGeometry(8, 32, 32);
             var redBall = new THREE.Mesh(geometryBall, robotSilver);
-            redBall.position.y = 120;
+            redBall.position.y = 160;
             gForceGame.add(redBall);
             gForceGame.add(baseOfGame);
             //spinner
@@ -857,22 +856,21 @@
                 gondola.children[0].rotation.z -= velocity;
                 //gondola.children[1].rotation.z -= velocity;
             });
-
             //velocity of the flash game:
             if (increase) {
                 goDown = true
-                velocity2 += 0.0001;
+                velocity2 += 0.00007;
                 if (velocity2 > 0.1) {
                     increase = false;
                 }
                 if (goUp) {
-                    if (heightOfSpinner > 95) goUp = false;
+                    if (heightOfSpinner > 130)goUp = false;
                     heightOfSpinner += 0.1;
                     spinner.position.y = heightOfSpinner;
                 }
             } else {
                 goUp = true
-                velocity2 -= 0.0001;
+                velocity2 -= 0.00007;
                 if (velocity2 < 0.01) {
                     increase = true;
                 }
