@@ -1,0 +1,1045 @@
+<!-- Carlos Parrodi Martínez A01421454  -->
+<!-- Juan Carlos Velazco A01326707  -->
+<html>
+<head>
+    <title>DC Carnival</title>
+    <style>
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+        p {
+            position: absolute;
+            display: block;
+            z-index: 99;
+            left: 2%;
+            top: 2%;
+            color: white
+        }
+    </style>
+</head>
+
+<body>
+    <p>Instructions for the DC Carnival: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go forward<br>Down = gobackwards<br>
+        Left = rotate left<br>Right = rotate right<br>F/G = more/less speed for wheel</p>
+        <script src="three.min.js"> </script>
+        <script src='https://mamboleoo.be/learnThree/demos/OBJLoader.js'></script>
+        <script>
+            window.addEventListener('keydown', doKeyDown, true);
+            var cam_zpos = 700;
+            var cam_xpos = -20.0;
+            var cam_ypos = -5.0;
+            var zpos = 2.0;
+            var xpos = 0;
+            var aug = 0;
+            var augx = 0;
+            var theta = 0;
+            var velocity = 0.005;
+            var velocity2 = 0;
+            var increase = true;
+            var heightOfSpinner = 0;
+            var goUp = true;
+            var goDown = true;
+            var carouselrot = 0.005
+            var carouselincrease = 0.05
+            var hammerheadup = false
+            var dolphinup = false
+            var whaleup = false
+            var sharkup = false
+            var anglerup = true
+            var numberOfTeeth = 10;
+            
+            function doKeyDown(evt) {
+                console.log("Tecla presionada: " + evt.keyCode);
+                switch (evt.keyCode) {
+                    case 38:
+                    /* Up arrow was pressed */
+                    aug -= 4;
+                    break;
+                    case 40:
+                    /* Down arrow was pressed */
+                    aug += 4;
+                    break;
+                    case 37:
+                    /* Left arrow was pressed */
+                    theta += 10 / 90;
+                    break;
+                    case 39:
+                    /* Right arrow was pressed */
+                    theta -= 10 / 90;
+                    break;
+                    case 65:
+                    /* a was pressed */
+                    augx -= 4;
+                    break;
+                    case 68:
+                    /* d was pressed */
+                    augx += 4;
+                    break;
+                    case 87:
+                    /* w was pressed */
+                    camera.position.y += 4;
+                    break;
+                    case 83:
+                    /* s was pressed */
+                    camera.position.y -= 4;
+                    break;
+                    case 70:
+                    /* f was pressed */
+                    velocity += 0.002;
+                    break;
+                    case 71:
+                    /* g was pressed */
+                    velocity -= 0.002;
+                    break;
+                }
+            }
+            // three basic components of a scene
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
+            var renderer = new THREE.WebGLRenderer();
+            
+            //define the 'grass'
+            var grass = new THREE.BoxGeometry(2300, 1, 1500);
+            var loader = new THREE.TextureLoader();
+            var textureMaterialGrass = new THREE.MeshLambertMaterial({
+                map: loader.load("textures/grass.jpg")
+            });
+            var floor = new THREE.Mesh(grass, textureMaterialGrass);
+            scene.add(floor);
+            
+            //create the carnival:
+            var carnival = new THREE.Object3D();
+
+            //create the ferry:
+            var geometryForWheel = new THREE.Geometry();
+            var gondolasGroup = new THREE.Object3D();
+            
+            createRuedaDeLaFortuna(gondolasGroup);
+            carnival.add(ferry);
+            
+            //create the flash game:
+            var geometryForFlashGame = new THREE.Geometry();
+            createFlashGame();
+            carnival.add(gForceGame);
+            
+            
+            createCarousel()
+            carnival.add(carousel)
+
+
+            carnival.position.x -= 150
+            carnival.position.z = 0
+            scene.add(carnival)
+            
+            var groupOfPyramids = new THREE.Object3D();
+            generatorOfPyramids(1, 400);
+            groupOfPyramids.position.z = 0;
+            scene.add(groupOfPyramids)
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            camera.position.z = cam_zpos;
+            camera.position.y = 180;
+            camera.position.x = 200;
+            
+            var pointLight = new THREE.PointLight(0xFFFFFF);
+            var pointLight2 = new THREE.PointLight(0xFFFFFF);
+            var thesun = new THREE.PointLight(0xFFFFFF);
+            pointLight.position.z += 10
+            pointLight2.position.z += 10
+            scene.add(thesun);
+            thesun.position.y += 1000
+            scene.add(pointLight);
+            scene.add(pointLight2);
+            renderer.setClearColor(0x00AAAA, 1);
+
+            function generatorOfPyramids(numOfPyramids, startX){
+                //create pyramid
+                var positionOnX = startX;
+                for( var index = 0; index < numOfPyramids; index++){
+                    //var numberOfLevel = 3 + Math.floor(Math.random() * 7)
+                    //var numberOfLength = 350 + Math.floor(Math.random() * 200)
+                    var numberOfLevel = 9
+                    var numberOfLength = 500
+                    console.log(numberOfLength)
+                    createPyramid(numberOfLevel, numberOfLength);
+                    pyramid.position.x += positionOnX
+                    groupOfPyramids.add(pyramid)
+                    positionOnX = positionOnX + numberOfLength*2;
+                }
+
+            }
+                        
+            //Create the Pyramid
+            function createPyramid(levels, length, positionX){
+                //colors:
+                var textureBrick = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/brick3.jpg")
+                });
+                //pyramid geom and groups:
+                pyramid = new THREE.Object3D();
+                //the pyramid will be divided in 2 main sections: 
+                var pyramidBase = new THREE.Object3D();
+                var pyramidTop = new THREE.Object3D();
+                var pyramidStairs = new THREE.Object3D();
+                var heightOfEachLevel = length*0.08
+                var increaseY = 0
+
+                //start of the 9 levels of the pyramid
+                for(var i = 0; i < levels; i++){
+                    //angle
+                    var topOfBase = length*.95;
+                    var geometryBase = new THREE.CylinderBufferGeometry(topOfBase,length,heightOfEachLevel,4);
+                    var base1 = new THREE.Mesh( geometryBase, textureBrick );
+                    base1.position.y += increaseY;
+                    increaseY += heightOfEachLevel
+                    pyramidBase.add(base1)
+                    length = topOfBase*.9
+                }
+                //stairs
+                
+                pyramid.position.y = 10
+                pyramid.position.x += 140
+                pyramid.rotation.y += 0.8
+                pyramid.add(pyramidBase)
+            }
+            
+            function createCarousel(){
+                //Create Carousel Game
+                var materialcarouseltop = new THREE.MeshStandardMaterial({
+                    color: 0x006400,
+                    emissive: 0x505050,
+                    roughness: 0.6,
+                    metalness: 1,
+                });
+                var materialcarouselbaseorange = new THREE.MeshStandardMaterial({
+                    color: 0x9E4801,
+                    emissive: 0x505050,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                var materialcarouselbaseblue = new THREE.MeshStandardMaterial({
+                    color: 0x3E47CB,
+                    emissive: 0x505050,
+                    roughness: 0.6,
+                    metalness: 0,
+                });
+                var textureMaterialGold = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/gold.jpg")
+                });
+                var carouselloader = new THREE.OBJLoader();
+                var textureLoaderCarousel = new THREE.TextureLoader();
+                var fishgroup = new THREE.Object3D()
+                carousel = new THREE.Object3D()
+                var carouselmidpolegeom = new THREE.CylinderGeometry(5,5,60,32)
+                var carouseltopgeom = new THREE.ConeGeometry(60,40,60)
+                var carouselbase1geom = new THREE.CylinderGeometry(60,60,5,32)
+                var carouselbase2geom = new THREE.CylinderGeometry(55,55,3,32)
+                var carouselpolegeom = new THREE.CylinderGeometry(1,1,60,32)
+                var carouseltop = new THREE.Mesh(carouseltopgeom, materialcarouseltop)
+                var carouseltopbase = new THREE.Mesh(carouselbase2geom, materialcarouselbaseblue)
+                var carouselbase1 = new THREE.Mesh(carouselbase1geom, materialcarouselbaseorange)
+                var carouselbase2 = new THREE.Mesh(carouselbase2geom, materialcarouselbaseblue)
+                var carouselmidpole = new THREE.Mesh(carouselmidpolegeom, materialcarouselbaseorange)
+                var carouselpole1 = new THREE.Mesh(carouselpolegeom, textureMaterialGold)
+                var carouselpole2 = new THREE.Mesh(carouselpolegeom, textureMaterialGold)
+                var carouselpole3 = new THREE.Mesh(carouselpolegeom, textureMaterialGold)
+                var carouselpole4 = new THREE.Mesh(carouselpolegeom, textureMaterialGold)
+                var carouselpole5 = new THREE.Mesh(carouselpolegeom, textureMaterialGold)
+                carouseltop.position.y += 45
+                carouseltopbase.position.y += 23.5
+                
+                carouselbase1.position.y -= 30
+                carouselbase2.position.y -= 28
+                
+                carouselpole1.position.x += 50
+                carouselpole2.position.x += 15.45
+                carouselpole2.position.z += 47.55
+                carouselpole3.position.x -= 40.45
+                carouselpole3.position.z += 29.38
+                carouselpole4.position.x -= 40.45
+                carouselpole4.position.z -= 29.38
+                carouselpole5.position.x += 15.45
+                carouselpole5.position.z -= 47.55
+                
+                carousel.add(carouseltop)
+                carousel.add(carouseltopbase)
+                carousel.add(carouselbase1)
+                carousel.add(carouselbase2)
+                carousel.add(carouselmidpole)
+                carousel.add(carouselpole1)
+                carousel.add(carouselpole2)
+                carousel.add(carouselpole3)
+                carousel.add(carouselpole4)
+                carousel.add(carouselpole5)
+                
+                trident = new THREE.Object3D();
+                carouselloader.load(
+                'models/Trident.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = textureMaterialGold;
+                    });
+                    trident.add(object)
+                    trident.scale.set(0.25, 0.1, 0.25)
+                    trident.rotation.z = THREE.Math.degToRad(-90)
+                    trident.rotation.y = THREE.Math.degToRad(-90)
+                    trident.position.x = 40.4
+                    trident.position.z += 1
+                    carousel.add(trident)
+                    
+                }
+                );
+                shark = new THREE.Object3D();
+                var textureShark = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/shark.png")
+                });
+                carouselloader.load(
+                'models/Shark.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = textureShark;
+                    });
+                    shark.add(object)
+                    shark.scale.set(0.004, 0.004, 0.004)
+                    shark.rotation.x = THREE.Math.degToRad(-90)
+                    shark.rotation.z = THREE.Math.degToRad(30)
+                    shark.position.x -= 41.45
+                    shark.position.y = -20
+                    shark.position.z += 25
+                    fishgroup.add(shark)
+                    
+                }
+                );
+                angler = new THREE.Object3D();
+                var textureAngler = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/anglerfishpng.png")
+                });
+                carouselloader.load(
+                'models/Angler fish.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = textureAngler;
+                    });
+                    angler.add(object)
+                    angler.scale.set(0.12, 0.12, 0.12)
+                    angler.rotation.x = THREE.Math.degToRad(-90)
+                    angler.rotation.z = THREE.Math.degToRad(110)
+                    angler.position.x += 15.45
+                    angler.position.y = -25
+                    angler.position.z += 47.55
+                    fishgroup.add(angler)
+                    
+                }
+                );
+                hammerhead = new THREE.Object3D();
+                var textureHammerhead = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/hammerhead.png")
+                });
+                carouselloader.load(
+                'models/Hammerhead.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = textureHammerhead;
+                    });
+                    hammerhead.add(object)
+                    hammerhead.scale.set(0.015, 0.015, 0.015)
+                    hammerhead.rotation.x = THREE.Math.degToRad(-90)
+                    hammerhead.rotation.z = THREE.Math.degToRad(180)
+                    hammerhead.position.x += 50
+                    hammerhead.position.y = -7
+                    hammerhead.position.z += 15
+                    fishgroup.add(hammerhead)
+                    
+                }
+                );
+                dolphin = new THREE.Object3D();
+                var textureDolphin = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/dolphin.png")
+                });
+                carouselloader.load(
+                'models/Dolphin.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = textureDolphin;
+                    });
+                    dolphin.add(object)
+                    dolphin.scale.set(0.6, 0.6, 0.6)
+                    dolphin.rotation.x = THREE.Math.degToRad(-94)
+                    dolphin.rotation.y = THREE.Math.degToRad(-20)
+                    dolphin.rotation.z = THREE.Math.degToRad(250)
+                    dolphin.position.x += 27   
+                    dolphin.position.y = -20
+                    dolphin.position.z -= 45
+                    fishgroup.add(dolphin)
+                    
+                }
+                );
+                whale = new THREE.Object3D();
+                var textureWhale = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/whale.png")
+                });
+                carouselloader.load(
+                'models/Whale.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = textureWhale;
+                    });
+                    whale.add(object)
+                    whale.scale.set(0.02, 0.02, 0.02)
+                    whale.rotation.x = THREE.Math.degToRad(-90)
+                    whale.rotation.z = THREE.Math.degToRad(320)
+                    whale.position.x -= 38  
+                    whale.position.y = -18
+                    whale.position.z -= 32
+                    fishgroup.add(whale)
+                    
+                }
+                );
+                carousel.add(fishgroup)
+                carousel.position.x = 150
+                carousel.position.y = 30
+                
+            }
+            
+            
+            //THE FLASH
+            function createFlashGame() {
+                gForceGame = new THREE.Object3D();
+                //floor of the game:
+                var robotRed = new THREE.MeshStandardMaterial({
+                    color: 0xC0C0C0,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                var robotSilver = new THREE.MeshStandardMaterial({
+                    color: 0xFF0000,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                var robotYellow = new THREE.MeshStandardMaterial({
+                    color: 0xBBBB00,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                var loader2 = new THREE.TextureLoader();
+                var textureFlash = new THREE.MeshLambertMaterial({
+                    map: loader2.load("textures/flash.jpg")
+                });
+                var baseOfGame = new THREE.Object3D();
+                var geomOfBase = new THREE.CylinderGeometry(10, 11, 5, 32);
+                var floorGame = new THREE.Mesh(geomOfBase, robotRed);
+                baseOfGame.add(floorGame);
+                var geomOfBase4 = new THREE.CylinderGeometry(85, 85, 0, 32);
+                var floorGame4 = new THREE.Mesh(geomOfBase4, textureFlash);
+                floorGame4.position.y = 1;
+                baseOfGame.add(floorGame4);
+                gForceGame.add(baseOfGame);
+                var geomGearCenterGeom = new THREE.Geometry();
+                createGear(0, 3, 100, geomGearCenterGeom, 3 / 4, 0, baseOfGame);
+                geomGearCenterGeom.computeFaceNormals();
+                centerGearForBall = new THREE.Mesh(geomGearCenterGeom, robotYellow);
+                centerGearForBall.position.y = 60;
+                centerGearForBall.rotation.x = 1.55;
+                baseOfGame.add(centerGearForBall);
+                var geometryBall = new THREE.SphereGeometry(8, 32, 32);
+                var redBall = new THREE.Mesh(geometryBall, robotSilver);
+                redBall.position.y = 160;
+                gForceGame.add(redBall);
+                gForceGame.add(baseOfGame);
+                //spinner
+                spinner = new THREE.Object3D();
+                var geomSpinner1 = new THREE.CylinderGeometry(3.5, 5, 45, 32);
+                var spinner1 = new THREE.Mesh(geomSpinner1, robotRed);
+                spinner1.position.y = 13;
+                spinner1.rotation.z -= 1.55;
+                spinner1.position.x = 22;
+                spinner.add(spinner1);
+                var geomSpinner2 = new THREE.CylinderGeometry(3.5, 5, 45, 32);
+                var spinner2 = new THREE.Mesh(geomSpinner2, robotRed);
+                spinner2.position.y = 13;
+                spinner2.rotation.z += 1.55;
+                spinner2.position.x = -22;
+                spinner.add(spinner2);
+                var geomOfCenter = new THREE.CylinderGeometry(5, 5, 10, 32);
+                var centerOfSpinner = new THREE.Mesh(geomOfCenter, robotRed)
+                centerOfSpinner.position.y = 13;
+                spinner.add(centerOfSpinner)
+                //spinner section of cabin:
+                var loader = new THREE.OBJLoader();
+                var cabin1 = new THREE.Object3D();
+                var cabin2 = new THREE.Object3D();
+                var textureLoader = new THREE.TextureLoader();
+                var map = textureLoader.load('textures/texturePlane.png');
+                var material = new THREE.MeshPhongMaterial({
+                    map: map
+                });
+                loader.load(
+                'models/SpaceShuttle.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = material;
+                    });
+                    //cabin1.add(object)
+                    cabin2.add(object)
+                }
+                );
+                
+                loader.load(
+                'models/SpaceShuttle.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = material;
+                    });
+                    //cabin1.add(object)
+                    cabin1.add(object)
+                }
+                );
+                cabin1.scale.set(0.15, 0.15, 0.15)
+                cabin2.scale.set(0.15, 0.15, 0.15)
+                cabin1.rotation.x = THREE.Math.degToRad(90)
+                cabin1.rotation.y = THREE.Math.degToRad(180)
+                cabin2.rotation.x = THREE.Math.degToRad(-90)
+                cabin1.position.y = 7;
+                cabin1.position.x = 50;
+                spinner.add(cabin1);
+                cabin2.position.y = 7;
+                cabin2.position.x = -50;
+                spinner.add(cabin2);
+                gForceGame.add(spinner);
+                gForceGame.position.x = -20;
+                
+            }
+            
+            //THE JOKER
+            function createRuedaDeLaFortuna(gondolasGroup) {
+                ferry = new THREE.Object3D();
+                //floor of ferry
+                var robotmaterialbase = new THREE.MeshStandardMaterial({
+                    color: 0xFF4500,
+                    roughness: 0.5,
+                    metalness: 0.5,
+                });
+                var ferryFloor = new THREE.Object3D();
+                var floorOfFerryGeo = new THREE.BoxGeometry(90, 10, 40);
+                var floorFerry = new THREE.Mesh(floorOfFerryGeo, robotmaterialbase);
+                ferryFloor.add(floorFerry);
+                var stairs1Geo = new THREE.BoxGeometry(20, 1, 40);
+                var stairs1 = new THREE.Mesh(stairs1Geo, robotmaterialbase);
+                stairs1.position.z += 20;
+                stairs1.position.y += 1;
+                ferryFloor.add(stairs1);
+                var stairs2Geo = new THREE.BoxGeometry(20, 1, 40);
+                var stairs2 = new THREE.Mesh(stairs2Geo, robotmaterialbase);
+                stairs2.position.z += 15;
+                stairs2.position.y += 2;
+                ferryFloor.add(stairs2);
+                var stairs3Geo = new THREE.BoxGeometry(20, 1, 40);
+                var stairs3 = new THREE.Mesh(stairs3Geo, robotmaterialbase);
+                stairs3.position.z += 10;
+                stairs3.position.y += 3;
+                ferryFloor.add(stairs3);
+                ferry.add(ferryFloor);
+                //base
+                var robotmaterialtubes = new THREE.MeshStandardMaterial({
+                    color: 0x8000BB,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                var baseTubes = new THREE.Object3D();
+                var geometryTubesBase1 = new THREE.CylinderGeometry(3, 3, 80, 32);
+                var cylinderBase1 = new THREE.Mesh(geometryTubesBase1, robotmaterialtubes);
+                cylinderBase1.position.x = -25;
+                cylinderBase1.position.z = 15;
+                cylinderBase1.position.y = 30;
+                cylinderBase1.rotation.z -= .5;
+                baseTubes.add(cylinderBase1);
+                var geometryTubesBase2 = new THREE.CylinderGeometry(3, 3, 80, 32);
+                var cylinderBase2 = new THREE.Mesh(geometryTubesBase2, robotmaterialtubes);
+                cylinderBase2.position.x = -25;
+                cylinderBase2.position.z = -15;
+                cylinderBase2.position.y = 30;
+                cylinderBase2.rotation.z -= .5;
+                baseTubes.add(cylinderBase2);
+                var geometryTubesBase3 = new THREE.CylinderGeometry(3, 3, 80, 32);
+                var cylinderBase3 = new THREE.Mesh(geometryTubesBase3, robotmaterialtubes);
+                cylinderBase3.position.x = 25;
+                cylinderBase3.position.z = 15;
+                cylinderBase3.position.y = 30;
+                cylinderBase3.rotation.z += .5;
+                baseTubes.add(cylinderBase3);
+                var geometryTubesBase4 = new THREE.CylinderGeometry(3, 3, 80, 32);
+                var cylinderBase4 = new THREE.Mesh(geometryTubesBase4, robotmaterialtubes);
+                cylinderBase4.position.x = 25;
+                cylinderBase4.position.z = -15;
+                cylinderBase4.position.y = 30;
+                cylinderBase4.rotation.z += .5;
+                baseTubes.add(cylinderBase4);
+                ferry.add(baseTubes);
+                //add center of the whell
+                var ferryCenter = new THREE.Object3D();
+                var robotmaterialcenter = new THREE.MeshStandardMaterial({
+                    color: 0x55BB00,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                var textureMaterial1 = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/joker1.jpg")
+                });
+                var geometryCenterFerry1 = new THREE.CylinderGeometry(10, 15, 5, 32);
+                var cylinderCenter1 = new THREE.Mesh(geometryCenterFerry1, robotmaterialcenter);
+                cylinderCenter1.position.y = 73;
+                cylinderCenter1.position.z = 15;
+                cylinderCenter1.rotation.x += 1.6;
+                ferryCenter.add(cylinderCenter1);
+                var geometryCenterFerry2 = new THREE.CylinderGeometry(15, 10, 5, 32);
+                var cylinderCenter2 = new THREE.Mesh(geometryCenterFerry2, robotmaterialcenter);
+                cylinderCenter2.position.y = 73;
+                cylinderCenter2.position.z = -15;
+                cylinderCenter2.rotation.x += 1.6;
+                ferryCenter.add(cylinderCenter2);
+                ferry.add(ferryCenter);
+                var geometryCenterFerryMain = new THREE.CylinderGeometry(10, 10, 2, 32);
+                var cylinderCenterMain = new THREE.Mesh(geometryCenterFerryMain, textureMaterial1);
+                cylinderCenterMain.position.y = 73;
+                cylinderCenterMain.position.z = 17;
+                cylinderCenterMain.rotation.x += 1.6;
+                cylinderCenterMain.rotation.y -= 1.6;
+                ferryCenter.add(cylinderCenterMain);
+                //CENTER GEAR
+                var centerColorMetalOrange = new THREE.MeshLambertMaterial({
+                    color: 0xFF4500,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                var centerColorMetalPurple = new THREE.MeshStandardMaterial({
+                    color: 0x8000BB,
+                    roughness: 0.6,
+                    metalness: 0.5,
+                });
+                
+                var geomGearCenterGeomIntern = new THREE.Geometry();
+                createGear(0, 4, 12, geomGearCenterGeomIntern, 4 / 6, 0, gondolasGroup);
+                geomGearCenterGeomIntern.computeFaceNormals();
+                centerInternGear = new THREE.Mesh(geomGearCenterGeomIntern, centerColorMetalPurple);
+                centerInternGear.position.y = 73;
+                ferry.add(centerInternGear);
+                var geomGearCenterGeom = new THREE.Geometry();
+                createGear(4, 8, 2, geomGearCenterGeom, 50, 1, gondolasGroup);
+                geomGearCenterGeom.computeFaceNormals();
+                centerGear = new THREE.Mesh(geomGearCenterGeom, centerColorMetalOrange);
+                centerGear.position.y = 73;
+                centerGear.position.z = 9;
+                ferry.add(centerGear);
+                var geomGearCenterGeom2 = new THREE.Geometry();
+                createGear(4, 8, 2, geomGearCenterGeom2, 50, 0, gondolasGroup);
+                geomGearCenterGeom2.computeFaceNormals();
+                centerGear2 = new THREE.Mesh(geomGearCenterGeom2, centerColorMetalOrange);
+                centerGear2.position.y = 73;
+                centerGear2.position.z = -9;
+                ferry.add(centerGear2);
+                //Gondolas:
+                gondolasGroup.position.y = 73;
+                ferry.add(gondolasGroup);
+                ferry.position.x = -200;
+                
+            }
+            
+            
+            //initialCounterOfVertices -> index inciial de zona de vertices de la dona de enfrente(pares para inner circle e impares para circulo exterior)
+            //initialCounterOfVertices2 -> index inciial de zona de vertices de la dona de atras(pares para inner circle e impares para circulo exterior)
+            //counterOfVerticesFrontTeeth -> index inicial de la zona de vertices de las puntas de los dientes exteriores de enfrente(tods corridos)
+            //counterOfVerticesBackTeeth -> index inicial de la zona de vertices de las puntas de los dientes exteriores de atras(tods corridos)
+            //counterOfVerticesInnerFrontTeeth -> index inicial de la zona de vertices de las puntas de los dientes interiores de enfrente (tods corridos)
+            //counterOfVerticesInnerBackTeeth -> index inicial de la zona de vertices de las puntas de los dientes interiores de atras (tods corridos)
+            function createGear(innerRadio, externalRadio, centerZ, geometry, lengthExternalTeeth, yesOrNo, gondolasGroup) {
+                //create the circular body:
+                //each iteration creates the vertices of a "line" of the circle
+                //the vertices of each line are: inner circle, bigger circle
+                //after the second iteration the program start to join the 2 vertices that is creating with the ones of the before iteration
+                //front circle
+                var currentAngle = 0;
+                var incrementAngle = 360 / (numberOfTeeth * 2);
+                var initialCounterOfVertices = geometry.vertices.length;
+                var adjustmentangle = -incrementAngle * 0.2;
+                var inneradjustmentangle = -incrementAngle * 0.1;
+                adjustmentangle = adjustmentangle * -1;
+                for (var i = 1; i <= numberOfTeeth * 4; i++) {
+                    adjustmentangle = adjustmentangle * -1;
+                    inneradjustmentangle = inneradjustmentangle * -1;
+                    var innerVertice1x = innerRadio * Math.cos(THREE.Math.degToRad(currentAngle + inneradjustmentangle));
+                    var innerVertice1y = innerRadio * Math.sin(THREE.Math.degToRad(currentAngle + inneradjustmentangle));
+                    var externalVertice1x = externalRadio * Math.cos(THREE.Math.degToRad(currentAngle + adjustmentangle));
+                    var externalVertice1y = externalRadio * Math.sin(THREE.Math.degToRad(currentAngle + adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(innerVertice1x, innerVertice1y, centerZ));
+                    geometry.vertices.push(new THREE.Vector3(externalVertice1x, externalVertice1y, centerZ));
+                    //join with the two before points
+                    if (i > 1) {
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices + i, initialCounterOfVertices + i - 2,
+                        initialCounterOfVertices + i - 1));
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices + i, initialCounterOfVertices + i - 1,
+                        initialCounterOfVertices + i + 1));
+                    }
+                    currentAngle += incrementAngle;
+                }
+                
+                //back circle
+                var currentAngle = 0;
+                var incrementAngle = 360 / (numberOfTeeth * 2);
+                var initialCounterOfVertices2 = geometry.vertices.length;
+                
+                for (var i = 1; i <= numberOfTeeth * 4; i++) {
+                    adjustmentangle = adjustmentangle * -1;
+                    inneradjustmentangle = inneradjustmentangle * -1;
+                    var innerVertice1x = innerRadio * Math.cos(THREE.Math.degToRad(currentAngle + inneradjustmentangle));
+                    var innerVertice1y = innerRadio * Math.sin(THREE.Math.degToRad(currentAngle + inneradjustmentangle));
+                    var externalVertice1x = externalRadio * Math.cos(THREE.Math.degToRad(currentAngle + adjustmentangle));
+                    var externalVertice1y = externalRadio * Math.sin(THREE.Math.degToRad(currentAngle + adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(innerVertice1x, innerVertice1y, -centerZ));
+                    geometry.vertices.push(new THREE.Vector3(externalVertice1x, externalVertice1y, -centerZ));
+                    
+                    //join with the two before points
+                    if (i > 1) {
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2 + i, initialCounterOfVertices2 + i -
+                        1, initialCounterOfVertices2 + i - 2));
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2 + i, initialCounterOfVertices2 + i +
+                        1, initialCounterOfVertices2 + i - 1));
+                    }
+                    currentAngle += incrementAngle;
+                }
+                
+                //add external teeth to the vertices array and faces:
+                currentAngle = 0;
+                var flagPutTeeth = false;
+                var externalHeightTeeth = lengthExternalTeeth;
+                var adjustmentangle = -lengthExternalTeeth * 0.2;
+                //remember of when my new vertices that i will add will be:
+                var counterOfVerticesFrontTeeth = geometry.vertices.length - 1;
+                for (var i = 1; i <= numberOfTeeth * 4; i++) {
+                    
+                    adjustmentangle = adjustmentangle * -1;
+                    var externalTeethX1 = (externalRadio + externalHeightTeeth) * Math.cos(THREE.Math.degToRad(
+                    currentAngle + adjustmentangle));
+                    var externalTeethY1 = (externalRadio + externalHeightTeeth) * Math.sin(THREE.Math.degToRad(
+                    currentAngle + adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(externalTeethX1, externalTeethY1, centerZ));
+                    
+                    if (i != 1 && flagPutTeeth) {
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices + (i + (i - 1)),
+                        initialCounterOfVertices + (i + (i - 1)) - 2, i + counterOfVerticesFrontTeeth));
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices + (i + (i - 1)) - 2, (i +
+                        counterOfVerticesFrontTeeth) - 1, i + counterOfVerticesFrontTeeth));
+                    }
+                    flagPutTeeth = !flagPutTeeth;
+                    currentAngle += incrementAngle;
+                }
+                
+                //add external for the back circle
+                currentAngle = 0;
+                var flagPutTeeth = false;
+                var externalHeightTeeth = lengthExternalTeeth;
+                //remember of when my new vertices that i will add will be:
+                var counterOfVerticesBackTeeth = geometry.vertices.length - 1;
+                for (var i = 1; i <= numberOfTeeth * 4; i++) {
+                    
+                    adjustmentangle = adjustmentangle * -1;
+                    var externalTeethX1 = (externalRadio + externalHeightTeeth) * Math.cos(THREE.Math.degToRad(
+                    currentAngle + adjustmentangle));
+                    var externalTeethY1 = (externalRadio + externalHeightTeeth) * Math.sin(THREE.Math.degToRad(
+                    currentAngle + adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(externalTeethX1, externalTeethY1, -centerZ));
+                    
+                    if (i != 1 && flagPutTeeth) {
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2 + (i + (i - 1)), i +
+                        counterOfVerticesBackTeeth, initialCounterOfVertices2 + (i + (i - 1)) - 2));
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2 + (i + (i - 1)) - 2, i +
+                        counterOfVerticesBackTeeth, (i + counterOfVerticesBackTeeth) - 1));
+                        if (yesOrNo) {
+                            var centerColorMetalPurple = new THREE.MeshStandardMaterial({
+                                color: 0x8000BB,
+                                roughness: 0.6,
+                                metalness: 0.5,
+                            });
+                            var holeColor = new THREE.MeshStandardMaterial({
+                                color: 0x000000,
+                                roughness: 0.6,
+                                metalness: 0.5,
+                            });
+                            var gondola = new THREE.Object3D();
+                            var gondolaGeometry = new THREE.CylinderGeometry(9, 7, 10);
+                            var gondolaTop = new THREE.Mesh(gondolaGeometry, centerColorMetalPurple);
+                            gondolaTop.position.x = externalTeethX1;
+                            gondolaTop.position.y = externalTeethY1;
+                            gondolaTop.position.z = -centerZ + 2;
+                            gondola.add(gondolaTop);
+                            /*
+                            var gondolaGeometryHole = new THREE.CylinderGeometry( 8, 7, 1);
+                            var gondolaTopHole = new THREE.Mesh( gondolaGeometryHole, holeColor );
+                            gondolaTopHole.position.x = externalTeethX1;
+                            gondolaTopHole.position.y = externalTeethY1;
+                            gondolaTopHole.position.z = -centerZ +2;
+                            gondola.add(gondolaTopHole);
+                            gondola.position.y += 4.8;
+                            */
+                            gondolasGroup.add(gondola);
+                        }
+                    }
+                    flagPutTeeth = !flagPutTeeth;
+                    currentAngle += incrementAngle;
+                }
+                
+                //add unions between the external teeth (back and front):
+                //on each iteration i will cover a teeth and a hole
+                var flag = true;
+                for (var i = 1; i <= numberOfTeeth * 2 + 1; i++) {
+                    if (flag) {
+                        //tapa del diente
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth + i, counterOfVerticesBackTeeth +
+                        i + 1, counterOfVerticesFrontTeeth + i + 1));
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth + i, counterOfVerticesBackTeeth + i +
+                        1, counterOfVerticesFrontTeeth + i));
+                        if (i != 1) {
+                            //tapa del hoyo
+                            geometry.faces.push(new THREE.Face3(initialCounterOfVertices + (i * 2) - 1,
+                            initialCounterOfVertices + (i * 2) - 3, initialCounterOfVertices2 + (i * 2) - 1));
+                            geometry.faces.push(new THREE.Face3(initialCounterOfVertices2 + (i * 2) - 1,
+                            initialCounterOfVertices + (i * 2) - 3, initialCounterOfVertices2 + (i * 2) - 3));
+                        }
+                    }
+                    //cara izq del diente visto desde el frente (abajo)
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth + i, initialCounterOfVertices2 + (i *
+                    2) - 1, initialCounterOfVertices + (i * 2) - 1));
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth + i, initialCounterOfVertices2 + (i *
+                    2) - 1, counterOfVerticesFrontTeeth + i));
+                    //cara derecha del diente vusto desde enfrente (arriba)
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesFrontTeeth + i, initialCounterOfVertices + (i *
+                    2) - 1, initialCounterOfVertices2 + (i * 2) - 1));
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesBackTeeth + i, counterOfVerticesFrontTeeth + i,
+                    initialCounterOfVertices2 + (i * 2) - 1));
+                    
+                    flag = !flag;
+                }
+                
+                //add internal teeth to the vertices array and faces:
+                currentAngle = 0;
+                var flagPutTeeth = true;
+                var innerHeightTeeth = innerRadio / 6;
+                //remember of when my new vertices that i will add will be:
+                
+                var counterOfVerticesInnerFrontTeeth = geometry.vertices.length - 1;
+                adjustmentangle = adjustmentangle * -1;
+                for (var i = 1; i <= numberOfTeeth * 4; i++) {
+                    adjustmentangle = adjustmentangle * -1;
+                    var innerTeethX1 = (innerRadio - innerHeightTeeth) * Math.cos(THREE.Math.degToRad(currentAngle +
+                    adjustmentangle));
+                    var innerTeethY1 = (innerRadio - innerHeightTeeth) * Math.sin(THREE.Math.degToRad(currentAngle +
+                    adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(innerTeethX1, innerTeethY1, centerZ));
+                    if (i != 1 && flagPutTeeth) {
+                        geometry.faces.push(new THREE.Face3(i + counterOfVerticesInnerFrontTeeth, (i +
+                        counterOfVerticesInnerFrontTeeth) - 1, initialCounterOfVertices + (i * 2) - 4));
+                        geometry.faces.push(new THREE.Face3(i + counterOfVerticesInnerFrontTeeth, initialCounterOfVertices +
+                        (i * 2) - 4, initialCounterOfVertices + (i * 2) - 2));
+                    }
+                    flagPutTeeth = !flagPutTeeth;
+                    currentAngle += incrementAngle;
+                }
+                
+                //internal teeth for the back
+                
+                //add internal teeth to the vertices array and faces:
+                currentAngle = 0;
+                var flagPutTeeth = true;
+                var innerHeightTeeth = innerRadio / 6;
+                //remember of when my new vertices that i will add will be:
+                
+                var counterOfVerticesInnerBackTeeth = geometry.vertices.length - 1;
+                
+                for (var i = 1; i <= numberOfTeeth * 4; i++) {
+                    adjustmentangle = adjustmentangle * -1;
+                    var innerTeethX1 = (innerRadio - innerHeightTeeth) * Math.cos(THREE.Math.degToRad(currentAngle +
+                    adjustmentangle));
+                    var innerTeethY1 = (innerRadio - innerHeightTeeth) * Math.sin(THREE.Math.degToRad(currentAngle +
+                    adjustmentangle));
+                    geometry.vertices.push(new THREE.Vector3(innerTeethX1, innerTeethY1, -centerZ));
+                    if (i != 1 && flagPutTeeth) {
+                        geometry.faces.push(new THREE.Face3(i + counterOfVerticesInnerBackTeeth, initialCounterOfVertices2 +
+                        (i * 2) - 4, (i + counterOfVerticesInnerBackTeeth) - 1));
+                        geometry.faces.push(new THREE.Face3(i + counterOfVerticesInnerBackTeeth, initialCounterOfVertices2 +
+                        (i * 2) - 2, initialCounterOfVertices2 + (i * 2) - 4));
+                    }
+                    flagPutTeeth = !flagPutTeeth;
+                    currentAngle += incrementAngle;
+                }
+                
+                //add unions between the external teeth (back and front):
+                //on each iteration i will cover a teeth and a hole
+                var flag = false;
+                for (var i = 1; i <= numberOfTeeth * 2 + 1; i++) {
+                    if (flag) {
+                        //tapa del diente
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth + i,
+                        counterOfVerticesInnerFrontTeeth + i + 1, counterOfVerticesInnerBackTeeth + i + 1));
+                        geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth + i,
+                        counterOfVerticesInnerFrontTeeth + i, counterOfVerticesInnerBackTeeth + i + 1));
+                        
+                        
+                    } else {
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices + (i * 2), initialCounterOfVertices2 +
+                        (i * 2), initialCounterOfVertices + (i * 2) - 2));
+                        geometry.faces.push(new THREE.Face3(initialCounterOfVertices2 + (i * 2), initialCounterOfVertices2 +
+                        (i * 2) - 2, initialCounterOfVertices + (i * 2) - 2));
+                    }
+                    //cara izq del diente visto desde el frente (abajo)
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth + i + 1,
+                    initialCounterOfVertices2 + (i * 2), initialCounterOfVertices + (i * 2)));
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth + i, initialCounterOfVertices2 + (
+                    i * 2) - 2, counterOfVerticesInnerFrontTeeth + i));
+                    //cara derecha del diente vusto desde enfrente (arriba)
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerFrontTeeth + i, initialCounterOfVertices + (
+                    i * 2) - 2, initialCounterOfVertices2 + (i * 2) - 2));
+                    geometry.faces.push(new THREE.Face3(counterOfVerticesInnerBackTeeth + i,
+                    counterOfVerticesInnerFrontTeeth + i, initialCounterOfVertices2 + (i * 2) - 2));
+                    
+                    flag = !flag;
+                }
+                
+                
+            }
+            
+            var render = function () {
+                //Do not touch
+                requestAnimationFrame(render);
+                centerInternGear.rotation.z += velocity;
+                centerGear.rotation.z += velocity;
+                centerGear2.rotation.z += velocity;
+                
+                var arrayGondolas = gondolasGroup.children;
+                
+                arrayGondolas.forEach(gondola => {
+                    gondola.children[0].rotation.z -= velocity;
+                    //gondola.children[1].rotation.z -= velocity;
+                });
+                //velocity of the flash game:
+                if (increase) {
+                    goDown = true
+                    velocity2 += 0.00007;
+                    if (velocity2 > 0.1) {
+                        increase = false;
+                    }
+                    if (goUp) {
+                        if (heightOfSpinner > 130)goUp = false;
+                        heightOfSpinner += 0.1;
+                        spinner.position.y = heightOfSpinner;
+                    }
+                } else {
+                    goUp = true
+                    velocity2 -= 0.00007;
+                    if (velocity2 < 0.01) {
+                        increase = true;
+                    }
+                    if (goDown) {
+                        if (heightOfSpinner < 0) goDown = false;
+                        heightOfSpinner -= 0.2;
+                        spinner.position.y = heightOfSpinner;
+                    }
+                }
+                
+                //centerGearForBall.rotation.z += velocity2;
+                spinner.rotation.y += velocity2;
+                carouselrot += 0.005
+                if(carouselrot >= 6.2832)
+                carouselrot = 0
+                carousel.rotation.y = carouselrot
+                
+                
+                if(hammerheadup){
+                    if(hammerhead.position.y + carouselincrease > -7){
+                        hammerhead.position.y -= 0.05
+                        hammerheadup = false
+                    }else hammerhead.position.y += 0.05
+                }
+                else {
+                    if(hammerhead.position.y - carouselincrease < -27){
+                        hammerhead.position.y += 0.05
+                        hammerheadup = true
+                    }else hammerhead.position.y -= 0.05
+                    
+                }
+                if(dolphinup){
+                    if(dolphin.position.y + carouselincrease > -15){
+                        dolphin.position.y -= 0.05
+                        dolphinup = false
+                    }else dolphin.position.y += 0.05
+                }
+                else {
+                    if(dolphin.position.y - carouselincrease < -35){
+                        dolphin.position.y += 0.05
+                        dolphinup = true
+                    }else dolphin.position.y -= 0.05
+                    
+                }
+                if(whaleup){
+                    if(whale.position.y + carouselincrease > -8){
+                        whale.position.y -= 0.05
+                        whaleup = false
+                    }else whale.position.y += 0.05
+                }
+                else {
+                    if(whale.position.y - carouselincrease < -28){
+                        whale.position.y += 0.05
+                        whaleup = true
+                    }else whale.position.y -= 0.05
+                    
+                }
+                if(sharkup){
+                    if(shark.position.y + carouselincrease > -5){
+                        shark.position.y -= 0.05
+                        sharkup = false
+                    }else shark.position.y += 0.05
+                }
+                else {
+                    if(shark.position.y - carouselincrease < -25){
+                        shark.position.y += 0.05
+                        sharkup = true
+                    }else shark.position.y -= 0.05
+                    
+                }
+                if(anglerup){
+                    if(angler.position.y + carouselincrease > -5){
+                        angler.position.y -= 0.05
+                        anglerup = false
+                    }else angler.position.y += 0.05
+                }
+                else {
+                    if(angler.position.y - carouselincrease < -25){
+                        angler.position.y += 0.05
+                        anglerup = true
+                    }else angler.position.y -= 0.05
+                    
+                }
+                
+                //console.log(shark.rotation.y + carouselrot)
+                gondolasGroup.rotation.z += velocity;
+                pointLight.position.x = camera.position.x;
+                pointLight.position.y = camera.position.y;
+                pointLight.position.z = camera.position.x;
+                pointLight2.position.x = camera.position.x;
+                pointLight2.position.y = camera.position.y;
+                pointLight2.position.z = camera.position.z;
+                zpos = (aug * Math.cos(THREE.Math.degToRad(theta)));
+                xpos = (augx * Math.cos(THREE.Math.degToRad(theta)));
+                camera.translateZ(zpos);
+                camera.translateX(xpos);
+                camera.rotation.y = theta;
+                aug = 0;
+                augx = 0;
+                renderer.render(scene, camera);
+                //Ends Here
+            };
+            render();
+        </script>
+    </body>
+    
+    </html>
