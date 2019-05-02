@@ -100,7 +100,7 @@
             var renderer = new THREE.WebGLRenderer();
             
             //define the 'grass'
-            var grass = new THREE.BoxGeometry(2300, 1, 1500);
+            var grass = new THREE.BoxGeometry(2900, 1, 1500);
             var loader = new THREE.TextureLoader();
             var textureMaterialGrass = new THREE.MeshLambertMaterial({
                 map: loader.load("textures/grass.jpg")
@@ -110,9 +110,8 @@
             
             //create the carnival:
             var carnival = new THREE.Object3D();
-
+            
             //create the ferry:
-            var geometryForWheel = new THREE.Geometry();
             var gondolasGroup = new THREE.Object3D();
             
             createRuedaDeLaFortuna(gondolasGroup);
@@ -126,16 +125,19 @@
             
             createCarousel()
             carnival.add(carousel)
-
-
-            carnival.position.x -= 150
-            carnival.position.z = 0
+            
+            
+            carnival.position.x -= 110
+            carnival.position.z = 250
             scene.add(carnival)
             
             var groupOfPyramids = new THREE.Object3D();
             generatorOfPyramids(1, 400);
             groupOfPyramids.position.z = 0;
             scene.add(groupOfPyramids)
+
+            createRoad()
+            scene.add(road)
             
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
@@ -153,7 +155,7 @@
             scene.add(pointLight);
             scene.add(pointLight2);
             renderer.setClearColor(0x00AAAA, 1);
-
+            
             function generatorOfPyramids(numOfPyramids, startX){
                 //create pyramid
                 var positionOnX = startX;
@@ -168,24 +170,74 @@
                     groupOfPyramids.add(pyramid)
                     positionOnX = positionOnX + numberOfLength*2;
                 }
-
+                
             }
-                        
+
+            function createRoad(){
+                road = new THREE.Object3D()
+                var textureRoad = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/road.jpg")
+                });
+                var geomRoadFirstLine = new THREE.BoxGeometry( 45, 6, 45 );
+                for(var xPos = -2500; xPos < 2500; xPos+= 45){
+                    var roadFirstLine = new THREE.Mesh( geomRoadFirstLine, textureRoad );
+                    roadFirstLine.position.z = 400
+                    roadFirstLine.position.x = xPos
+                    road.add(roadFirstLine)
+                }
+
+                var carloader = new THREE.OBJLoader();
+                var textureLoaderCar = new THREE.TextureLoader();
+
+                cars = new THREE.Object3D();
+                var textureCars = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/Car_01.png")
+                });
+                carloader.load(
+                'models/cars.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = textureCars;
+                    });
+                    cars.add(object)
+                    cars.scale.set(0.12, 0.12, 0.12)
+                    //cars.rotation.x = THREE.Math.degToRad(-90)
+                    //cars.rotation.z = THREE.Math.degToRad(110)
+                    cars.position.x += 15.45
+                    cars.position.y = -25
+                    cars.position.z += 47.55
+                    road.add(cars)
+                    
+                }
+                );
+            }
+            
             //Create the Pyramid
             function createPyramid(levels, length, positionX){
                 //colors:
                 var textureBrick = new THREE.MeshLambertMaterial({
-                    map: loader.load("textures/brick3.jpg")
+                    map: loader.load("textures/wall.png")
+                });
+                var textureBrick1 = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/walSmall.png")
+                });
+                var textureBrick2 = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/wallLarge.png")
                 });
                 //pyramid geom and groups:
                 pyramid = new THREE.Object3D();
                 //the pyramid will be divided in 2 main sections: 
                 var pyramidBase = new THREE.Object3D();
                 var pyramidTop = new THREE.Object3D();
+                var groupSteps = new THREE.Object3D();
                 var pyramidStairs = new THREE.Object3D();
                 var heightOfEachLevel = length*0.08
+                var distanceToreduceEachLevel = length*0.5/levels
                 var increaseY = 0
-
+                var startOfStepsY = -18
+                var startOfStepsZ = 350 
+                var startOfStepsX = 500
+                
                 //start of the 9 levels of the pyramid
                 for(var i = 0; i < levels; i++){
                     //angle
@@ -195,14 +247,152 @@
                     base1.position.y += increaseY;
                     increaseY += heightOfEachLevel
                     pyramidBase.add(base1)
-                    length = topOfBase*.9
+                    length = topOfBase - distanceToreduceEachLevel
                 }
-                //stairs
+                //last floor level
+                var geomSidesTop = new THREE.BoxGeometry( 60, 70, 60 );
+                var sideTop1 = new THREE.Mesh( geomSidesTop, textureBrick1 );
+                sideTop1.position.x -= 42
+                sideTop1.position.z += 42
+                pyramidTop.add(sideTop1)
+                var sideTop2 = new THREE.Mesh( geomSidesTop, textureBrick1);
+                sideTop2.position.x += 42
+                sideTop2.position.z += 42
+                pyramidTop.add(sideTop2)
+                var sideTop3 = new THREE.Mesh( geomSidesTop, textureBrick1 );
+                sideTop3.position.x += 42
+                sideTop3.position.z -= 42
+                pyramidTop.add(sideTop3)
+                var sideTop4 = new THREE.Mesh( geomSidesTop, textureBrick1 );
+                sideTop4.position.x -= 42
+                sideTop4.position.z -= 42
+                pyramidTop.add(sideTop4)
+                var geomTop = new THREE.BoxGeometry( 142, 30, 142 );
+                var geomTop2 = new THREE.BoxGeometry( 130, 20, 130 );
+                var mainTop1 = new THREE.Mesh( geomTop, textureBrick1 );
+                mainTop1.position.y += 49
+                pyramidTop.add(mainTop1)
+                var mainTop3 = new THREE.Mesh( geomTop, textureBrick1 );
+                mainTop3.position.y += 90
+                pyramidTop.add(mainTop3)
+                var mainTop2 = new THREE.Mesh( geomTop2, textureBrick1 );
+                mainTop2.position.y += 75
+                pyramidTop.add(mainTop2)
+                pyramidTop.position.y = 350
+                
+                //stairs sides FRONT
+                var frontSides = new THREE.Object3D();
+                var geometryStairsSideFB = new THREE.BoxGeometry( 40, 480, 15 );
+                var geometryStairsSideLR = new THREE.BoxGeometry( 15, 480, 40 );
+                var frontSideStairs1 = new THREE.Mesh( geometryStairsSideFB, textureBrick2 );
+                frontSides.add(frontSideStairs1)
+                var frontSideStairs2 = new THREE.Mesh( geometryStairsSideFB, textureBrick2 );
+                frontSides.add(frontSideStairs2)
+                frontSides.position.y += 145
+                frontSides.position.z = 232
+                frontSides.position.x -= 60
+                frontSideStairs2.position.x += 120
+                frontSides.rotation.x = -0.65
+                pyramidStairs.add(frontSides)
+                //stairs steps:
+                startOfStepsY = -18
+                startOfStepsZ = 350
+                for(var j = 0; j < 8*levels; j++){
+                    var geomSteps = new THREE.BoxGeometry(120, 5, 30)
+                    var steps1 = new THREE.Mesh( geomSteps, textureBrick2)
+                    steps1.position.z = startOfStepsZ
+                    steps1.position.y  = startOfStepsY
+                    groupSteps.add(steps1)
+                    startOfStepsY += 5
+                    startOfStepsZ -= 3.8
+                }
+                
+                //stairs sides BACK
+                var backSides = new THREE.Object3D();
+                var backSideStairs1 = new THREE.Mesh( geometryStairsSideFB, textureBrick2 );
+                backSides.add(backSideStairs1)
+                var backSideStairs2 = new THREE.Mesh( geometryStairsSideFB, textureBrick2 );
+                backSides.add(backSideStairs2)
+                backSides.position.y += 145
+                backSides.position.z = -232
+                backSides.position.x -= 60
+                backSideStairs2.position.x += 120
+                backSides.rotation.x = 0.65
+                pyramidStairs.add(backSides)
+                //stairs steps:
+                startOfStepsY = -18
+                startOfStepsZ = -350
+                for(var j = 0; j < 8*levels; j++){
+                    var geomSteps = new THREE.BoxGeometry(120, 5, 30)
+                    var steps1 = new THREE.Mesh( geomSteps, textureBrick2)
+                    steps1.position.z = startOfStepsZ
+                    steps1.position.y  = startOfStepsY
+                    groupSteps.add(steps1)
+                    startOfStepsY += 5
+                    startOfStepsZ += 3.8
+                }
+                
+                //stairs sides LEFT
+                var leftSides = new THREE.Object3D();
+                var leftSideStairs1 = new THREE.Mesh( geometryStairsSideLR, textureBrick2 );
+                leftSides.add(leftSideStairs1)
+                var leftSideStairs2 = new THREE.Mesh( geometryStairsSideLR, textureBrick2 );
+                leftSides.add(leftSideStairs2)
+                leftSides.position.y += 145
+                leftSides.position.z = -60
+                leftSides.position.x -= 232
+                leftSideStairs2.position.z += 120
+                leftSides.rotation.z = -0.65
+                pyramidStairs.add(leftSides)
+                //stairs steps:
+                startOfStepsX = -350
+                startOfStepsY = -18
+                for(var j = 0; j < 8*levels; j++){
+                    var geomSteps = new THREE.BoxGeometry(30, 5, 120)
+                    var steps1 = new THREE.Mesh( geomSteps, textureBrick2)
+                    steps1.position.x = startOfStepsX
+                    steps1.position.y  = startOfStepsY
+                    groupSteps.add(steps1)   
+                    startOfStepsY += 5
+                    startOfStepsX += 3.8
+                }
+                
+                //stairs sides RIGHT
+                var rightSides = new THREE.Object3D();
+                var rightSideStairs1 = new THREE.Mesh( geometryStairsSideLR, textureBrick2 );
+                rightSides.add(rightSideStairs1)
+                var rightSideStairs2 = new THREE.Mesh( geometryStairsSideLR, textureBrick2 );
+                rightSides.add(rightSideStairs2)
+                rightSides.position.y += 145
+                rightSides.position.z = -60
+                rightSides.position.x += 232
+                rightSideStairs2.position.z += 120
+                rightSides.rotation.z = 0.65
+                pyramidStairs.add(rightSides)
+                //stairs steps:
+                startOfStepsX = 350
+                startOfStepsY = -18
+                for(var j = 0; j < 8*levels; j++){
+                    var geomSteps = new THREE.BoxGeometry(30, 5, 120)
+                    var steps1 = new THREE.Mesh( geomSteps, textureBrick2)
+                    steps1.position.x = startOfStepsX
+                    steps1.position.y  = startOfStepsY
+                    groupSteps.add(steps1)
+                    startOfStepsY += 5
+                    startOfStepsX -= 3.8
+                }
+                
+                
+                
                 
                 pyramid.position.y = 10
                 pyramid.position.x += 140
-                pyramid.rotation.y += 0.8
+                pyramidBase.rotation.y += 0.8
+                
+                pyramid.add(groupSteps)
                 pyramid.add(pyramidBase)
+                pyramid.add(pyramidStairs)
+                pyramid.add(pyramidTop)
             }
             
             function createCarousel(){
@@ -643,6 +833,7 @@
                 gondolasGroup.position.y = 73;
                 ferry.add(gondolasGroup);
                 ferry.position.x = -200;
+                ferry.position.z = 20
                 
             }
             
