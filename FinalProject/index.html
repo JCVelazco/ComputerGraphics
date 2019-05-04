@@ -219,10 +219,13 @@
                     map: loader.load("textures/wall.png")
                 });
                 var textureBrick1 = new THREE.MeshLambertMaterial({
-                    map: loader.load("textures/walSmall.png")
+                    map: loader.load("textures/smalWall.png")
                 });
                 var textureBrick2 = new THREE.MeshLambertMaterial({
                     map: loader.load("textures/wallLarge.png")
+                });
+                var textureBrick3 = new THREE.MeshLambertMaterial({
+                    map: loader.load("textures/stairs.png")
                 });
                 //pyramid geom and groups:
                 pyramid = new THREE.Object3D();
@@ -276,30 +279,30 @@
                 mainTop3.position.y += 90
                 pyramidTop.add(mainTop3)
                 var mainTop2 = new THREE.Mesh( geomTop2, textureBrick1 );
-                mainTop2.position.y += 75
+                mainTop2.position.y += 70
                 pyramidTop.add(mainTop2)
                 pyramidTop.position.y = 350
                 
                 //stairs sides FRONT
                 var frontSides = new THREE.Object3D();
-                var geometryStairsSideFB = new THREE.BoxGeometry( 40, 480, 15 );
-                var geometryStairsSideLR = new THREE.BoxGeometry( 15, 480, 40 );
+                var geometryStairsSideFB = new THREE.BoxGeometry( 40, 475, 15 );
+                var geometryStairsSideLR = new THREE.BoxGeometry( 15, 475, 40 );
                 var frontSideStairs1 = new THREE.Mesh( geometryStairsSideFB, textureBrick2 );
                 frontSides.add(frontSideStairs1)
                 var frontSideStairs2 = new THREE.Mesh( geometryStairsSideFB, textureBrick2 );
                 frontSides.add(frontSideStairs2)
                 frontSides.position.y += 145
-                frontSides.position.z = 232
+                frontSides.position.z = 235
                 frontSides.position.x -= 60
                 frontSideStairs2.position.x += 120
                 frontSides.rotation.x = -0.65
                 pyramidStairs.add(frontSides)
                 //stairs steps:
                 startOfStepsY = -18
-                startOfStepsZ = 350
+                startOfStepsZ = 353
                 for(var j = 0; j < 8*levels; j++){
-                    var geomSteps = new THREE.BoxGeometry(120, 5, 30)
-                    var steps1 = new THREE.Mesh( geomSteps, textureBrick2)
+                    var geomSteps = new THREE.BoxGeometry(80, 5, 30)
+                    var steps1 = new THREE.Mesh( geomSteps, textureBrick3)
                     steps1.position.z = startOfStepsZ
                     steps1.position.y  = startOfStepsY
                     groupSteps.add(steps1)
@@ -314,17 +317,17 @@
                 var backSideStairs2 = new THREE.Mesh( geometryStairsSideFB, textureBrick2 );
                 backSides.add(backSideStairs2)
                 backSides.position.y += 145
-                backSides.position.z = -232
+                backSides.position.z = -235
                 backSides.position.x -= 60
                 backSideStairs2.position.x += 120
                 backSides.rotation.x = 0.65
                 pyramidStairs.add(backSides)
                 //stairs steps:
                 startOfStepsY = -18
-                startOfStepsZ = -350
+                startOfStepsZ = -353
                 for(var j = 0; j < 8*levels; j++){
                     var geomSteps = new THREE.BoxGeometry(120, 5, 30)
-                    var steps1 = new THREE.Mesh( geomSteps, textureBrick2)
+                    var steps1 = new THREE.Mesh( geomSteps, textureBrick3)
                     steps1.position.z = startOfStepsZ
                     steps1.position.y  = startOfStepsY
                     groupSteps.add(steps1)
@@ -349,7 +352,7 @@
                 startOfStepsY = -18
                 for(var j = 0; j < 8*levels; j++){
                     var geomSteps = new THREE.BoxGeometry(30, 5, 120)
-                    var steps1 = new THREE.Mesh( geomSteps, textureBrick2)
+                    var steps1 = new THREE.Mesh( geomSteps, textureBrick3)
                     steps1.position.x = startOfStepsX
                     steps1.position.y  = startOfStepsY
                     groupSteps.add(steps1)   
@@ -374,7 +377,7 @@
                 startOfStepsY = -18
                 for(var j = 0; j < 8*levels; j++){
                     var geomSteps = new THREE.BoxGeometry(30, 5, 120)
-                    var steps1 = new THREE.Mesh( geomSteps, textureBrick2)
+                    var steps1 = new THREE.Mesh( geomSteps, textureBrick3)
                     steps1.position.x = startOfStepsX
                     steps1.position.y  = startOfStepsY
                     groupSteps.add(steps1)
