@@ -8,8 +8,8 @@ class Sphere{
       public static void main(String[] args) {
             //default values
             double radioSphere = 1;
-            int yCuts = 360;
-            int xzCuts = 360;
+            int yCuts = 50;
+            int xzCuts = 50;
 
             try{
                   radioSphere = Double.parseDouble(args[0]);

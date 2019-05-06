@@ -182,7 +182,7 @@ implements KeyListener, FocusListener, MouseListener {
                Color myColor = defineColor(actualIndex, rightindex);
                edges.add(new Edge(actualIndex, rightindex, myColor));
                //RANDOM to check if add tree or not (only in green and brown sections)
-               if(myColor != Color.BLUE && getRandomInt(0, 101) < 2){//1% of prob and check if no lake
+               if(myColor != Color.BLUE && getRandomInt(0, 101) < 1){//1% of prob and check if no lake
                   addTreeEdges(actualIndex);
                }
             }
@@ -194,7 +194,7 @@ implements KeyListener, FocusListener, MouseListener {
                Color myColor = defineColor(actualIndex, downIndex);
                edges.add(new Edge(actualIndex, downIndex, myColor));
                //RANDOM to check if add tree or not (only in green and brown sections)
-               if(myColor != Color.BLUE && getRandomInt(0, 101) <2){//1% of prob and check if no lake
+               if(myColor != Color.BLUE && getRandomInt(0, 101) <1){//1% of prob and check if no lake
                   addTreeEdges(actualIndex);
                }
             }
