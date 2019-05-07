@@ -60,6 +60,11 @@
         var moveRight = false;
         
         var dronefree = false
+        var spikeout = false
+        var spoilerout = false
+        var shoot = false
+        var spoilercount = 0
+        var laserready = true
 
         function doKeyDown(evt) {
             console.log("Tecla presionada: " + evt.keyCode);
@@ -132,15 +137,15 @@
                     break;
                 case 90:
                     /* z was pressed */
-                    if (acc > -0.5) {
-                        if (acc > 0)
-                            acc -= 0.05
-                        else acc -= 0.01
-                    }
+                    spikeout = !spikeout
                     break;
                 case 88:
                     /* x was pressed */
-                    dronefree = !dronefree
+                    shoot = true
+                    break;
+                case 67:
+                    /* c was pressed */
+                    spoilerout = !spoilerout
                     break;
             }
         }
@@ -520,6 +525,12 @@
             car.add(window)
 
             gun = new THREE.Object3D();
+            lasergeom = new THREE.CylinderGeometry(20,20,200,32)
+            lasermaterial = new THREE.MeshBasicMaterial( {color: 0xB22222} );
+            laser = new THREE.Mesh(lasergeom,lasermaterial)
+            gun.add(laser)
+            laser.position.z +=200
+
             var texturegun = new THREE.MeshLambertMaterial({
                 map: loader.load("textures/gun.png")
             });
@@ -533,9 +544,12 @@
                     gun.position.z += 5.5
                     gun.position.y -= 6
                     gun.scale.set(0.01, 0.01, 0.01)
+                    
                     car.add(gun)
+                    
                 }
             );
+            
             spoiler = new THREE.Object3D();
             var texturespoiler = new THREE.MeshLambertMaterial({
                 map: loader.load("textures/spoiler.png")
@@ -565,7 +579,7 @@
                     spike.add(object)
 
                     spike.scale.set(0.02, 0.02, 0.02)
-                    spike.position.y -= 12
+                    spike.position.y -= 6
                     spike.position.z += 2.5
                     spike.rotation.x = THREE.Math.degToRad(90)
                     car.add(spike)
@@ -1601,8 +1615,45 @@
 
 
         function moveSpike() {
-
+            if(spikeout){
+                if(spike.position.y > -11)
+                    spike.position.y -= 0.1
+            }else if(spike.position.y < -6)
+                spike.position.y += 0.1 
         }
+
+        function shootGun() {
+            if(shoot && laserready){
+                shoot= false
+                laserready = false    
+            }
+            if(laserready == false){
+                laser.position.y -=100
+                if(laser.position.y < -5000){
+                    laser.position.y = 0
+                    laserready=true
+                }
+
+            }
+        }
+
+        function moveSpoiler() {
+            if(spoilerout){
+                if(spoilercount < 20){
+                    spoilercount+=1
+                    spoiler.rotation.x = THREE.Math.degToRad(-spoilercount)
+                    spoiler.position.y -= 0.1
+                    spoiler.position.z -= 0.075
+                }
+            }else if(spoilercount>0){
+                    spoilercount-=1
+                    spoiler.rotation.x = THREE.Math.degToRad(2-spoilercount)
+                    spoiler.position.y += 0.1
+                    spoiler.position.z += 0.075
+            }
+                
+        }
+                
 
         function droneMovement() {
             if (dronefree) {
@@ -1622,6 +1673,9 @@
             rotateWheels()
             accelerationCar()
             droneMovement()
+            moveSpike()
+            moveSpoiler()
+            shootGun()
             centerInternGear.rotation.z += velocity;
             centerGear.rotation.z += velocity;
             centerGear2.rotation.z += velocity;
