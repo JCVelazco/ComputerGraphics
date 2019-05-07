@@ -23,8 +23,7 @@
 
 <body>
     <p>Instructions for the DC Carnival: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go
-        forward<br>Down = gobackwards<br>
-        Left = rotate left<br>Right = rotate right<br>F/G = more/less speed for wheel</p>
+        forward<br>Down = gobackwards<br>Left = rotate left<br>Right = rotate right<br>T/G = car Forward and Back
     <script src="three.min.js"> </script>
     <script src='https://mamboleoo.be/learnThree/demos/OBJLoader.js'></script>
     <script>
@@ -51,8 +50,15 @@
         var sharkup = false
         var anglerup = true
         var numberOfTeeth = 10;
+
         var wheelrot = 0;
         var acc = 0.0
+        var carOrientation = -3.1416/2;
+        var moveForward = false;
+        var moveBackward = false;
+        var moveLeft = false;
+        var moveRight = false;
+        
         var dronefree = false
 
         function doKeyDown(evt) {
@@ -90,34 +96,30 @@
                     /* s was pressed */
                     camera.position.y -= 1;
                     break;
-                case 70:
-                    /* f was pressed */
-                    velocity += 0.002;
-                    break;
-                case 71:
-                    /* g was pressed */
-                    velocity -= 0.002;
-                    break;
                 case 78:
-                    /* n was pressed */
+                    /* n was pressed */ //izq
+                    moveLeft= true;
                     if (wheelrot < 32)
                         wheelrot += 2;
                     break;
                 case 77:
-                    /* m was pressed */
+                    /* m was pressed */ //der
+                    moveRight = true;
                     if (wheelrot > -32)
                         wheelrot -= 2;
                     break;
-                case 86:
-                    /* v was pressed */
+                case 71:
+                    /* g was pressed */ //move back
+                    moveBackward = true;
                     if (acc < 2) {
                         if (acc < 0)
                             acc += 0.05
                         else acc += 0.01
                     }
                     break;
-                case 66:
-                    /* b was pressed */
+                case 84:
+                    /* t was pressed */ //move forward
+                    moveForward = true;
                     if (acc > -0.5) {
                         if (acc > 0)
                             acc -= 0.05
@@ -129,7 +131,7 @@
                     dronefree = !dronefree
                     break;
                 case 90:
-                    /* b was pressed */
+                    /* z was pressed */
                     if (acc > -0.5) {
                         if (acc > 0)
                             acc -= 0.05
@@ -137,7 +139,7 @@
                     }
                     break;
                 case 88:
-                    /* l was pressed */
+                    /* x was pressed */
                     dronefree = !dronefree
                     break;
             }
@@ -1566,13 +1568,25 @@
         }
 
         function rotateWheels() {
-            pivotw1.rotation.z = THREE.Math.degToRad(wheelrot)
-            pivotw2.rotation.z = THREE.Math.degToRad(wheelrot + 180)
+            pivotw1.rotation.z = THREE.Math.degToRad(wheelrot) 
+            pivotw2.rotation.z = THREE.Math.degToRad(wheelrot + 180) 
             //stwheel.rotation.y = THREE.Math.degToRad(wheelrot)
         }
 
         function accelerationCar() {
-            car.position.x += acc
+            carOrientation -= ( acc * 0.02 ) * wheelrot/2;
+
+            // movement of car
+			car.position.x -= Math.sin( carOrientation ) * acc * 5;
+			car.position.z -= Math.cos( carOrientation ) * acc * 5;
+
+			// angle of car
+			car.rotation.z = carOrientation;
+            //pivotw1.rotation.z += 2*3.1416;
+            //pivotw2.rotation.z +=  2*3.1416;
+
+
+            //car.position.x += acc
             if (acc > 0 && acc > 0.001)
                 acc -= 0.001
             else if (acc < 0 && acc < -0.001)
@@ -1585,11 +1599,6 @@
             pivotw4.rotation.x -= acc / 2
         }
 
-        function rotateWheels() {
-            pivotw1.rotation.z = THREE.Math.degToRad(wheelrot)
-            pivotw2.rotation.z = THREE.Math.degToRad(wheelrot + 180)
-            //stwheel.rotation.y = THREE.Math.degToRad(wheelrot)
-        }
 
         function moveSpike() {
 
@@ -1730,6 +1739,12 @@
             camera.translateZ(zpos);
             camera.translateX(xpos);
             camera.rotation.y = theta;
+            /* as passanger
+            camera.position.z = car.position.z;
+            camera.position.x = car.position.x;
+            camera.position.y = car.position.y + 10;
+            camera.rotation.y = 3.14+car.rotation.y;
+            */
             aug = 0;
             augx = 0;
             renderer.render(scene, camera);
