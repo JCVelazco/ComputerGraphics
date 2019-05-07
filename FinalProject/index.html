@@ -51,17 +51,20 @@
         var sharkup = false
         var anglerup = true
         var numberOfTeeth = 10;
+        var wheelrot = 0;
+        var acc = 0.0
+        var dronefree = false
 
         function doKeyDown(evt) {
             console.log("Tecla presionada: " + evt.keyCode);
             switch (evt.keyCode) {
                 case 38:
                     /* Up arrow was pressed */
-                    aug -= 4;
+                    aug -= 1;
                     break;
                 case 40:
                     /* Down arrow was pressed */
-                    aug += 4;
+                    aug += 1;
                     break;
                 case 37:
                     /* Left arrow was pressed */
@@ -73,19 +76,19 @@
                     break;
                 case 65:
                     /* a was pressed */
-                    augx -= 4;
+                    augx -= 1;
                     break;
                 case 68:
                     /* d was pressed */
-                    augx += 4;
+                    augx += 1;
                     break;
                 case 87:
                     /* w was pressed */
-                    camera.position.y += 4;
+                    camera.position.y += 1;
                     break;
                 case 83:
                     /* s was pressed */
-                    camera.position.y -= 4;
+                    camera.position.y -= 1;
                     break;
                 case 70:
                     /* f was pressed */
@@ -94,6 +97,48 @@
                 case 71:
                     /* g was pressed */
                     velocity -= 0.002;
+                    break;
+                case 78:
+                    /* n was pressed */
+                    if (wheelrot < 32)
+                        wheelrot += 2;
+                    break;
+                case 77:
+                    /* m was pressed */
+                    if (wheelrot > -32)
+                        wheelrot -= 2;
+                    break;
+                case 86:
+                    /* v was pressed */
+                    if (acc < 2) {
+                        if (acc < 0)
+                            acc += 0.05
+                        else acc += 0.01
+                    }
+                    break;
+                case 66:
+                    /* b was pressed */
+                    if (acc > -0.5) {
+                        if (acc > 0)
+                            acc -= 0.05
+                        else acc -= 0.01
+                    }
+                    break;
+                case 76:
+                    /* l was pressed */
+                    dronefree = !dronefree
+                    break;
+                case 90:
+                    /* b was pressed */
+                    if (acc > -0.5) {
+                        if (acc > 0)
+                            acc -= 0.05
+                        else acc -= 0.01
+                    }
+                    break;
+                case 88:
+                    /* l was pressed */
+                    dronefree = !dronefree
                     break;
             }
         }
@@ -146,9 +191,6 @@
 
         createCar()
         scene.add(car)
-
-
-
 
 
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -283,7 +325,6 @@
                     car.add(susback)
                 }
             );
-            frontWheels = new THREE.Object3D();
             wheels = new THREE.Object3D();
             wheel1 = new THREE.Object3D();
             tire1 = new THREE.Object3D();
@@ -314,10 +355,13 @@
                     wheel1.add(rim1)
                 }
             );
-            wheel1.position.x += 8.5
-            wheel1.position.y -= 13
-            wheel1.position.z -= 2
-            frontWheels.add(wheel1)
+            wheel1.position.z -= 3.51
+            pivotw1 = new THREE.Object3D();
+            pivotw1.position.y -= 13
+            pivotw1.position.z += 1.515
+            pivotw1.position.x += 8.5
+            wheels.add(pivotw1)
+            pivotw1.add(wheel1)
 
             wheel2 = new THREE.Object3D();
             tire2 = new THREE.Object3D();
@@ -342,12 +386,13 @@
                     wheel2.add(rim2)
                 }
             );
-            wheel2.position.x -= 8.5
-            wheel2.position.y -= 13
-            wheel2.position.z -= 2
-            wheel2.rotation.z = THREE.Math.degToRad(180)
-            frontWheels.add(wheel2)
-            wheels.add(frontWheels)
+            wheel2.position.z -= 3.51
+            pivotw2 = new THREE.Object3D();
+            pivotw2.position.y -= 13
+            pivotw2.position.z += 1.515
+            pivotw2.position.x -= 8.5
+            wheels.add(pivotw2)
+            pivotw2.add(wheel2)
 
             wheel3 = new THREE.Object3D();
             tire3 = new THREE.Object3D();
@@ -372,11 +417,14 @@
                     wheel3.add(rim3)
                 }
             );
-            wheel3.position.x += 8.5
-            wheel3.position.y += 10
-            wheel3.position.z -= 2
-            wheels.add(wheel3)
-            
+            wheel3.position.z -= 3.51
+            pivotw3 = new THREE.Object3D();
+            pivotw3.position.y += 10
+            pivotw3.position.z += 1.515
+            pivotw3.position.x += 8.57
+            wheels.add(pivotw3)
+            pivotw3.add(wheel3)
+
             wheel4 = new THREE.Object3D();
             tire4 = new THREE.Object3D();
             carloader.load(
@@ -400,14 +448,17 @@
                     wheel4.add(rim4)
                 }
             );
-            wheel4.position.x -= 8.5
-            wheel4.position.y += 10
-            wheel4.position.z -= 2
+            wheel4.position.z -= 3.51
             wheel4.rotation.z = THREE.Math.degToRad(180)
-            wheels.add(wheel4)    
+            pivotw4 = new THREE.Object3D();
+            pivotw4.position.y += 10
+            pivotw4.position.z += 1.515
+            pivotw4.position.x -= 8.57
+            wheels.add(pivotw4)
+            pivotw4.add(wheel4)
 
             car.add(wheels)
-            
+
             exhaust = new THREE.Object3D();
             carloader.load(
                 'models/exhaust.obj ',
@@ -417,7 +468,7 @@
                     });
                     exhaust.add(object)
                     exhaust.position.y += 13
-                    exhaust.position.z += 4    
+                    exhaust.position.z += 4
                     car.add(exhaust)
                 }
             );
@@ -431,9 +482,9 @@
                     object.traverse(function (node) {
                         if (node.isMesh) node.material = textureshift;
                     });
-                    shift.add(object) 
-                    shift.position.z += 3 
-                    shift.position.y += 0.5 
+                    shift.add(object)
+                    shift.position.z += 3
+                    shift.position.y += 0.5
                     car.add(shift)
                 }
             );
@@ -448,19 +499,24 @@
                         if (node.isMesh) node.material = texturelights;
                     });
                     lights.add(object)
-                    lights.position.y -= 13 
-                    lights.position.z += 4 
+                    lights.position.y -= 13
+                    lights.position.z += 4
                     car.add(lights)
                 }
             );
-            var planegeom = new THREE.PlaneGeometry(11.5,3.5)
-            var glass = new THREE.MeshBasicMaterial( {color: 0x00FFFF, transparent: true, opacity: 0.5, side: THREE.DoubleSide} );
-            var window = new THREE.Mesh(planegeom,glass)
+            var planegeom = new THREE.PlaneGeometry(11.5, 3.5)
+            var glass = new THREE.MeshBasicMaterial({
+                color: 0x00FFFF,
+                transparent: true,
+                opacity: 0.5,
+                side: THREE.DoubleSide
+            });
+            var window = new THREE.Mesh(planegeom, glass)
             window.position.z += 8
             window.position.y -= 2.1
             window.rotation.x = THREE.Math.degToRad(68)
             car.add(window)
-            
+
             gun = new THREE.Object3D();
             var texturegun = new THREE.MeshLambertMaterial({
                 map: loader.load("textures/gun.png")
@@ -474,7 +530,7 @@
                     gun.add(object)
                     gun.position.z += 5.5
                     gun.position.y -= 6
-                    gun.scale.set(0.01,0.01,0.01)
+                    gun.scale.set(0.01, 0.01, 0.01)
                     car.add(gun)
                 }
             );
@@ -505,8 +561,8 @@
                         if (node.isMesh) node.material = texturespike;
                     });
                     spike.add(object)
-                   
-                    spike.scale.set(0.02,0.02,0.02)
+
+                    spike.scale.set(0.02, 0.02, 0.02)
                     spike.position.y -= 12
                     spike.position.z += 2.5
                     spike.rotation.x = THREE.Math.degToRad(90)
@@ -525,11 +581,11 @@
                         if (node.isMesh) node.material = texturedrone;
                     });
                     drone.add(object)
-                    drone.scale.set(0.0012,0.0012,0.0012)
+                    drone.scale.set(0.0012, 0.0012, 0.0012)
                     drone.rotation.x = THREE.Math.degToRad(-10)
                     drone.position.y += 9.5
                     drone.position.z += 7
-                    car.add(drone)
+
                 }
             );
             var texturehelix = new THREE.MeshLambertMaterial({
@@ -537,6 +593,10 @@
             });
             helix = new THREE.Object3D();
             helix1 = new THREE.Object3D();
+            pivot1 = new THREE.Object3D();
+            pivot1.position.y += 11.65
+            pivot1.position.z += 8.5
+            pivot1.position.x += 0.1
             carloader.load(
                 'models/helix.obj ',
                 function (object) {
@@ -544,14 +604,22 @@
                         if (node.isMesh) node.material = texturehelix;
                     });
                     helix1.add(object)
-                    helix1.scale.set(0.0012,0.0012,0.0012)
+                    helix1.scale.set(0.0012, 0.0012, 0.0012)
                     helix1.rotation.x = THREE.Math.degToRad(-10)
-                    helix1.position.y += 9.5
-                    helix1.position.z += 7
-                    helix.add(helix1)
+                    helix1.position.y -= 2.14
+                    helix1.position.z -= 1.5
+                    helix1.position.x -= 0.1
+                    pivot1.add(helix1)
+                    helix.add(pivot1)
                 }
             );
+
+
             helix2 = new THREE.Object3D();
+            pivot2 = new THREE.Object3D();
+            pivot2.position.y += 7.89
+            pivot2.position.z += 8.95
+            pivot2.position.x += 2.65
             carloader.load(
                 'models/helix.obj ',
                 function (object) {
@@ -559,15 +627,20 @@
                         if (node.isMesh) node.material = texturehelix;
                     });
                     helix2.add(object)
-                    helix2.scale.set(0.0012,0.0012,0.0012)
+                    helix2.scale.set(0.0012, 0.0012, 0.0012)
                     helix2.rotation.x = THREE.Math.degToRad(-10)
-                    helix2.position.y += 5.75
-                    helix2.position.z += 7.4
-                    helix2.position.x += 2.5
-                    helix.add(helix2)
+                    helix2.position.y -= 2.125
+                    helix2.position.z -= 1.5
+                    helix2.position.x -= 0.1
+                    pivot2.add(helix2)
+                    helix.add(pivot2)
                 }
             );
             helix3 = new THREE.Object3D();
+            pivot3 = new THREE.Object3D();
+            pivot3.position.y += 7.89
+            pivot3.position.z += 8.95
+            pivot3.position.x -= 2.45
             carloader.load(
                 'models/helix.obj ',
                 function (object) {
@@ -575,14 +648,16 @@
                         if (node.isMesh) node.material = texturehelix;
                     });
                     helix3.add(object)
-                    helix3.scale.set(0.0012,0.0012,0.0012)
+                    helix3.scale.set(0.0012, 0.0012, 0.0012)
                     helix3.rotation.x = THREE.Math.degToRad(-10)
-                    helix3.position.y += 5.75
-                    helix3.position.z += 7.4
-                    helix3.position.x -= 2.5
-                    helix.add(helix3)
+                    helix3.position.y -= 2.125
+                    helix3.position.z -= 1.5
+                    helix3.position.x -= 0.1
+                    pivot3.add(helix3)
+                    helix.add(pivot3)
                 }
             );
+            helix.add(drone)
             car.add(helix)
         }
 
@@ -1490,9 +1565,54 @@
 
         }
 
+        function rotateWheels() {
+            pivotw1.rotation.z = THREE.Math.degToRad(wheelrot)
+            pivotw2.rotation.z = THREE.Math.degToRad(wheelrot + 180)
+            //stwheel.rotation.y = THREE.Math.degToRad(wheelrot)
+        }
+
+        function accelerationCar() {
+            car.position.x += acc
+            if (acc > 0 && acc > 0.001)
+                acc -= 0.001
+            else if (acc < 0 && acc < -0.001)
+                acc += 0.001
+            else
+                acc = 0
+            pivotw1.rotation.x -= acc / 2
+            pivotw2.rotation.x -= acc / 2
+            pivotw3.rotation.x -= acc / 2
+            pivotw4.rotation.x -= acc / 2
+        }
+
+        function rotateWheels() {
+            pivotw1.rotation.z = THREE.Math.degToRad(wheelrot)
+            pivotw2.rotation.z = THREE.Math.degToRad(wheelrot + 180)
+            //stwheel.rotation.y = THREE.Math.degToRad(wheelrot)
+        }
+
+        function moveSpike() {
+
+        }
+
+        function droneMovement() {
+            if (dronefree) {
+                if (helix.position.z < 20)
+                    helix.position.z += 0.1
+            } else if (helix.position.z > 0)
+                helix.position.z -= 0.1
+            if (helix.position.z > 0) {
+                pivot1.rotation.z += 0.5
+                pivot2.rotation.z += 0.5
+                pivot3.rotation.z += 0.5
+            }
+        }
         var render = function () {
             //Do not touch
             requestAnimationFrame(render);
+            rotateWheels()
+            accelerationCar()
+            droneMovement()
             centerInternGear.rotation.z += velocity;
             centerGear.rotation.z += velocity;
             centerGear2.rotation.z += velocity;
