@@ -22,8 +22,10 @@
 </head>
 
 <body>
-    <p>Instructions for the DC Carnival: <br>A = go left<br>D = go right<br>W = go up<br>S = go down<br>UP = go
-        forward<br>Down = gobackwards<br>Left = rotate left<br>Right = rotate right<br>T/G = car Forward and Back
+    <p>CONTROLS: <br>-Camera:<br>A = o left<br>D = go right<br>W = go up<br>S = go down<br>UP = go
+        forward<br>Down = gobackwards<br>Left = rotate left<br>Right = rotate right<br>-Car:<br>T/G = forward/backwards
+        <br>F/H = steer left/right<br>U = show/hide spike<br>J = rise/lower spoiler<br>R/Y = rotate gun left/right<br>V = shoot
+        <br>B = eject!<br>X = release/retach drone<br>
     <script src="three.min.js"> </script>
     <script src='https://mamboleoo.be/learnThree/demos/OBJLoader.js'></script>
     <script>
@@ -50,7 +52,6 @@
         var sharkup = false
         var anglerup = true
         var numberOfTeeth = 10;
-
         var wheelrot = 0;
         var acc = 0.0
         var carOrientation = -3.1416/2;
@@ -58,13 +59,20 @@
         var moveBackward = false;
         var moveLeft = false;
         var moveRight = false;
-        
         var dronefree = false
         var spikeout = false
         var spoilerout = false
         var shoot = false
         var spoilercount = 0
         var laserready = true
+        var seatout = false
+        var seatacc = 2.5
+        var seatup = true
+        var seatdown = false
+        var seatrot = 0
+        var seatflag = true
+        var gunrot = 0
+
 
         function doKeyDown(evt) {
             console.log("Tecla presionada: " + evt.keyCode);
@@ -101,14 +109,14 @@
                     /* s was pressed */
                     camera.position.y -= 1;
                     break;
-                case 78:
-                    /* n was pressed */ //izq
+                case 70:
+                    /* f was pressed */ //izq
                     moveLeft= true;
                     if (wheelrot < 32)
                         wheelrot += 2;
                     break;
-                case 77:
-                    /* m was pressed */ //der
+                case 72:
+                    /* h was pressed */ //der
                     moveRight = true;
                     if (wheelrot > -32)
                         wheelrot -= 2;
@@ -131,21 +139,49 @@
                         else acc -= 0.01
                     }
                     break;
-                case 76:
-                    /* l was pressed */
-                    dronefree = !dronefree
-                    break;
-                case 90:
-                    /* z was pressed */
-                    spikeout = !spikeout
-                    break;
                 case 88:
                     /* x was pressed */
+                    dronefree = !dronefree
+                    break;
+                case 85:
+                    /* u was pressed */
+                    spikeout = !spikeout
+                    break;
+                case 86:
+                    /* v was pressed */
                     shoot = true
                     break;
-                case 67:
-                    /* c was pressed */
+                case 82:
+                    /* r was pressed */
+                    if(gunrot<60){
+                        gunrot+=5
+                        gun.rotation.z = THREE.Math.degToRad(gunrot)
+                    }
+                    break;
+                case 89:
+                    /* y was pressed */
+                    if(gunrot>-60){
+                        gunrot-=5
+                        gun.rotation.z = THREE.Math.degToRad(gunrot)  
+                    }
+                    break;
+                    
+                case 74:
+                    /* j was pressed */
                     spoilerout = !spoilerout
+                    break;
+                case 66:
+                    /* b was pressed */
+                    if(!seatout){
+                    car.remove(carseat2)
+                    scene.add(carseat2)
+                    carseat2.position.z = car.position.z - 3
+                    carseat2.position.y = car.position.y + 3
+                    carseat2.position.x = car.position.x +3
+                    carseat2.rotation.x = THREE.Math.degToRad(-90)
+                    carseat2.rotation.z = car.rotation.z
+                    seatout = true
+                    }
                     break;
             }
         }
@@ -288,7 +324,26 @@
                     car.add(carseat2)
                 }
             );
+            parachute = new THREE.Object3D();
+            var textureParachute = new THREE.MeshLambertMaterial({
+                map: loader.load("textures/parachute.png")
+            });
+            carloader.load(
+                'models/Parachute.obj ',
+                function (object) {
+                    object.traverse(function (node) {
+                        if (node.isMesh) node.material = textureParachute;
+                    });
+                    parachute.scale.set(0.05, 0.05, 0.05)
+                    parachute.position.y += 2.5
+                    parachute.position.z += 4.5
+                    parachute.add(object)
+                    
+                }
+            );
             stwheel = new THREE.Object3D();
+
+            pivotst = new THREE.Object3D();
             var textureStwheel = new THREE.MeshLambertMaterial({
                 map: loader.load("textures/steering wheel.png")
             });
@@ -299,9 +354,14 @@
                         if (node.isMesh) node.material = textureStwheel;
                     });
                     stwheel.add(object)
-                    stwheel.position.z += 5.2
-                    stwheel.position.x += 3.4
-                    car.add(stwheel)
+                    stwheel.position.z -= 1
+                    pivotst.position.z += 6.1
+                    pivotst.position.x += 3.4
+                    pivotst.position.y -= 0.5
+                    pivotst.rotation.x = THREE.Math.degToRad(30)
+                    stwheel.rotation.x = THREE.Math.degToRad(-25)
+                    car.add(pivotst)
+                    pivotst.add(stwheel)
                 }
             );
             sus = new THREE.Object3D();
@@ -364,11 +424,14 @@
             );
             wheel1.position.z -= 3.51
             pivotw1 = new THREE.Object3D();
-            pivotw1.position.y -= 13
-            pivotw1.position.z += 1.515
-            pivotw1.position.x += 8.5
+            pivotw1r = new THREE.Object3D();
             wheels.add(pivotw1)
             pivotw1.add(wheel1)
+            pivotw1r.position.y -= 13
+            pivotw1r.position.z += 1.515
+            pivotw1r.position.x += 8.5
+            wheels.add(pivotw1r)
+            pivotw1r.add(pivotw1)
 
             wheel2 = new THREE.Object3D();
             tire2 = new THREE.Object3D();
@@ -395,11 +458,14 @@
             );
             wheel2.position.z -= 3.51
             pivotw2 = new THREE.Object3D();
-            pivotw2.position.y -= 13
-            pivotw2.position.z += 1.515
-            pivotw2.position.x -= 8.5
+            pivotw2r = new THREE.Object3D();
             wheels.add(pivotw2)
             pivotw2.add(wheel2)
+            pivotw2r.position.y -= 13
+            pivotw2r.position.z += 1.515
+            pivotw2r.position.x -= 8.5
+            wheels.add(pivotw2r)
+            pivotw2r.add(pivotw2)
 
             wheel3 = new THREE.Object3D();
             tire3 = new THREE.Object3D();
@@ -1582,9 +1648,9 @@
         }
 
         function rotateWheels() {
-            pivotw1.rotation.z = THREE.Math.degToRad(wheelrot) 
-            pivotw2.rotation.z = THREE.Math.degToRad(wheelrot + 180) 
-            //stwheel.rotation.y = THREE.Math.degToRad(wheelrot)
+            pivotw1r.rotation.z = THREE.Math.degToRad(wheelrot) 
+            pivotw2r.rotation.z = THREE.Math.degToRad(wheelrot + 180) 
+            pivotst.rotation.y = THREE.Math.degToRad(wheelrot)
         }
 
         function accelerationCar() {
@@ -1596,8 +1662,6 @@
 
 			// angle of car
 			car.rotation.z = carOrientation;
-            //pivotw1.rotation.z += 2*3.1416;
-            //pivotw2.rotation.z +=  2*3.1416;
 
 
             //car.position.x += acc
@@ -1607,10 +1671,10 @@
                 acc += 0.001
             else
                 acc = 0
-            pivotw1.rotation.x -= acc / 2
-            pivotw2.rotation.x -= acc / 2
-            pivotw3.rotation.x -= acc / 2
-            pivotw4.rotation.x -= acc / 2
+            pivotw1.rotation.x -= acc 
+            pivotw2.rotation.x += acc 
+            pivotw3.rotation.x -= acc 
+            pivotw4.rotation.x -= acc 
         }
 
 
@@ -1653,6 +1717,35 @@
             }
                 
         }
+
+        function ejectSeat() {
+            if(seatout){
+                if(seatdown){
+                    if(carseat2.position.y > 3){
+                    carseat2.position.y -= 0.1
+                    if(seatflag){
+                        if(seatrot > 10){
+                        seatflag = false
+                        }else seatrot += 0.1
+                    }else{
+                        if(seatrot < -10){
+                        seatflag = true
+                        }else seatrot -= 0.1
+                    }
+                    carseat2.rotation.y = THREE.Math.degToRad(seatrot)
+                    }else {
+                        carseat2.remove(parachute)
+                        carseat2.rotation.y = THREE.Math.degToRad(0)
+                    }
+                }else if(seatacc < 0.1){
+                    seatdown = true
+                    carseat2.add(parachute)
+                }else{
+                    carseat2.position.y += seatacc
+                    seatacc -= 0.05
+                }             
+            }
+        }
                 
 
         function droneMovement() {
@@ -1676,6 +1769,7 @@
             moveSpike()
             moveSpoiler()
             shootGun()
+            ejectSeat()
             centerInternGear.rotation.z += velocity;
             centerGear.rotation.z += velocity;
             centerGear2.rotation.z += velocity;
