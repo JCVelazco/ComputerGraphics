@@ -1,4 +1,4 @@
 # GraphicsDrawing
-Repo for the ComputerGraphics class of Dan Perez, Tec 2019.
+Repo for the ComputerGraphics class of ITESM, 2019.
 
 JC Velazco and Pato Parrodi
